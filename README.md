@@ -18,9 +18,9 @@
 
 :small_blue_diamond: [Funcionalidades](#funcionalidades)
 
-:small_blue_diamond: [Pré-requisitos](#pré-requisitos-books)
+<!-- :small_blue_diamond: [Pré-requisitos](#pré-requisitos-books) -->
 
-:small_blue_diamond: [Como rodar a aplicação](#como-rodar-a-aplicação-arrow_forward)
+<!-- :small_blue_diamond: [Como rodar a aplicação](#como-rodar-a-aplicação-arrow_forward) -->
 
 ## Descrição do projeto 
 

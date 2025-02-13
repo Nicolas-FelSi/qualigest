@@ -84,7 +84,7 @@ ainda não pronto
 
 Equipe responsável pelo desenvolvimento do projeto
 
-| [<img src="./img/gabriel.jfif" width=115><br><sub>Gabriel</sub>](https://github.com/B41el) |  [<img src="./img/nicolas.jfif" width=115><br><sub>Nicolas</sub>](https://github.com/Nicolas-FelSi) |  [<img src="" width=115><br><sub>Alexandre</sub>]()  |
+| [<img src="https://avatars.githubusercontent.com/u/149525930?v=4" width=115><br><sub>Gabriel</sub>](https://github.com/B41el) |  [<img src="https://avatars.githubusercontent.com/u/56174366?v=4" width=115><br><sub>Nicolas</sub>](https://github.com/Nicolas-FelSi) |  [<img src="" width=115><br><sub>Alexandre</sub>]()  |
 | :---: | :---: | :---: |
 
 ## Licença 

@@ -31,12 +31,19 @@
 ## Funcionalidades
 
 🚧 O sistema deve permitir que o usuário crie projetos;
-🚧 O sistema deve calcular a pontuação do usuário de acordo com o tempo da entrega;  
+<br>
+🚧 O sistema deve calcular a pontuação do usuário de acordo com o tempo da entrega;
+<br>  
 🚧 O sistema deve permitir que o organizador adicione participantes no projeto;
+<br>
 🚧 O sistema deve permitir que o organizador gerencie tarefas;
+<br>
 🚧 O organizador deve ser capaz de atribuir um ou mais responsáveis para cada tarefa criada;
+<br>
 🚧 O sistema deve permitir que os responsáveis por uma tarefa marquem-na como concluída, registrando a data de entrega;
+<br>
 🚧 Os usuários devem ter acesso a informações do projeto, como tarefas pendentes, concluídas, e o ranking dos participantes por ponto no projeto;
+<br>
 🚧 O sistema deve manter atualizadas as informações exibidas na tela de detalhes do projeto.
 
 

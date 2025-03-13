@@ -1,5 +1,5 @@
 <template>
-  <aside class="bg-white w-auto d-inline-block h-100">
+  <aside class="bg-white w-auto d-lg-inline-block h-100 d-none">
     <nav>
       <ul class="d-flex flex-column justify-content-between">
         <div>
@@ -33,6 +33,33 @@
       </ul>
     </nav>
   </aside>
+
+  <aside class="bg-white w-auto d-lg-none h-100">
+    <nav>
+      <ul class="d-flex flex-column justify-content-between">
+        <div>
+          <li class="li-border">
+            <button class="bi bi-list fs-2 border-0 bg-transparent" data-bs-toggle="offcanvas" data-bs-target="#menuAside" aria-controls="menuAside"></button>
+          </li>
+          <router-Link to="/projetos" class="li-border justify-content-center" :class="{ 'li-ativo': $route.path == '/projetos' }">
+            <i class="bi bi-stack"></i>
+          </router-Link>
+          <router-Link to="/lista-tarefas" class="li-border justify-content-center" :class="{ 'li-ativo': $route.path == '/lista-tarefas' }">
+            <i class="bi bi-check-circle-fill"></i>
+          </router-Link>
+          <router-Link to="/detalhes-projeto" class="li-border justify-content-center" :class="{ 'li-ativo': $route.path == '/detalhes-projeto' }">
+            <i class="bi bi-info-circle-fill"></i>
+          </router-Link>
+          <router-Link to="/perfil" class="li-border justify-content-center" :class="{ 'li-ativo': $route.path == '/perfil' }">
+            <i class="bi bi-person-circle"></i>
+          </router-Link>
+        </div>
+        <router-Link to="/" class="li-border-logout justify-content-center">
+          <i class="bi bi-box-arrow-right"></i>
+        </router-Link>
+      </ul>
+    </nav>
+  </aside>
 </template>
 
 <script setup>
@@ -42,6 +69,9 @@
 <style scoped>
 aside {
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.171);
+}
+
+aside.d-lg-inline-block {
   min-width: 250px;
 }
 
@@ -55,7 +85,7 @@ ul {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem .5rem;
   width: 100%;
   text-decoration: none;
   color: black;

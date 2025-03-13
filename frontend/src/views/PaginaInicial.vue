@@ -9,7 +9,7 @@
         Cadastrar
       </button>
     </nav>
-    <button type="button" class="border-0 bg-transparent d-sm-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+    <button type="button" class="border-0 bg-transparent d-sm-none" data-bs-toggle="offcanvas" data-bs-target="#menuPaginaInicial" aria-controls="menuPaginaInicial">
       <i class="bi bi-list fs-1 btn-menu"></i>
     </button>
   </header>
@@ -39,9 +39,9 @@
   </main>
 
   <!-- Menu -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="menuPaginaInicial" aria-labelledby="menuPaginaInicialLabel">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasExampleLabel">QualiGest</h5>
+      <h5 class="offcanvas-title" id="menuPaginaInicialLabel">QualiGest</h5>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body p-0">
@@ -177,12 +177,12 @@ h2:first-child {
   color: var(--amarelo);
 }
 
-header button {
+header nav button {
   padding: 0.25rem 1.5rem !important;
   background-color: var(--azul);
 }
 
-header button:hover {
+header nav button:hover {
   background-color: rgb(40, 40, 136);
   transition: all .5s;
   color: white;

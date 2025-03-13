@@ -1,7 +1,7 @@
 <template>
-  <header class="bg-white d-flex justify-content-between align-items-center py-2 px-5">
+  <header class="bg-white d-flex justify-content-between align-items-center py-2 px-3">
     <h1>Qualigest</h1>
-    <nav class="d-flex gap-4">
+    <nav class="d-sm-flex d-none gap-4">
       <button class="rounded-1 border-0" data-bs-toggle="modal" data-bs-target="#loginModal">
         Entrar
       </button>
@@ -9,12 +9,15 @@
         Cadastrar
       </button>
     </nav>
+    <button type="button" class="border-0 bg-transparent d-sm-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+      <i class="bi bi-list fs-1 btn-menu"></i>
+    </button>
   </header>
-  <main class="d-flex align-items-center flex-column pb-3">
+  <main class="d-flex align-items-center flex-column pb-3 p-2">
     <h2 class="py-3">Bem-vindo ao QualiGest</h2>
     <p class="fw-bold">Gerencie suas tarefas com eficiência e colaboração</p>
-    <div class="imagem-central py-5">
-      <img src="@/assets/images/equipe-tarefa.png" alt="" />
+    <div class="py-5">
+      <img class="img-fluid" src="@/assets/images/equipe-tarefa.png" alt="" />
     </div>
     <div class="d-flex gap-3 flex-wrap justify-content-center">
       <div class="bg-white p-4 rounded-1 d-flex flex-column gap-2">
@@ -34,6 +37,24 @@
       </div>
     </div>
   </main>
+
+  <!-- Menu -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">QualiGest</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <nav class="d-flex gap-4 flex-column text-center w-100">
+        <a class="rounded-1 border-0 text-decoration-none border-bottom w-100" data-bs-toggle="modal" data-bs-target="#loginModal">
+          Entrar
+        </a>
+        <a class="rounded-1 border-0 text-decoration-none border-bottom w-100" data-bs-toggle="modal" data-bs-target="#cadastroModal">
+          Cadastrar
+        </a>
+      </nav>
+    </div>
+  </div>
 
   <!-- Modal Login -->
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -159,6 +180,20 @@ h2:first-child {
 header button {
   padding: 0.25rem 1.5rem !important;
   background-color: var(--azul);
+}
+
+header button:hover {
+  background-color: rgb(40, 40, 136);
+  transition: all .5s;
+  color: white;
+}
+
+.btn-menu {
+  color: var(--amarelo);
+}
+
+.offcanvas-title {
+  color: var(--amarelo);
 }
 
 .d-flex>.bg-white {

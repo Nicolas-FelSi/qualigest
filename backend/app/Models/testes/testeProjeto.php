@@ -1,20 +1,20 @@
 <?php
-include_once __DIR__ . '/../Database.php';
-include_once __DIR__ . '/../ProjetoDAO.php';
-$id_projeto = 1;
+require_once __DIR__ . '/../../../config/Database.php';
+include_once __DIR__ . '/../DAO/ProjetoDAO.php';
 
-// Criando conexão com o banco de dados
 $database = new Database();
 $db = $database->getConnection();
 
 // Criando instância do ProjetoDAO
 $projetoDAO = new ProjetoDAO($db);
 
-// Teste de Exclusão
-if ($id_projeto) {
-    if ($projetoDAO->excluirProjeto($id_projeto)) {
-        echo "Projeto excluído com sucesso!<br>";
-    } else {
-        echo "Erro ao excluir o projeto.<br>";
-    }
+// Teste de Inserção de Projeto
+$nome_projeto = "Projeto chiquititas";
+$id_usuario = 2; // Substitua por um ID de usuário válido do seu banco
+
+if ($projetoDAO->inserirProjeto($nome_projeto, $id_usuario)) {
+    echo "Projeto inserido com sucesso!<br>";
+} else {
+    echo "Erro ao inserir o projeto.<br>";
 }
+?>

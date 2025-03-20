@@ -1,6 +1,8 @@
 <?php
-include_once __DIR__ . '/../Database.php';
-include_once __DIR__ . '/../UsuarioDAO.php';
+
+require_once __DIR__ . '/../../../config/Database.php';
+include_once __DIR__ . '/../DAO/UsuarioDAO.php';
+include_once __DIR__ . '/../classes/Usuario.php';
 
 $id_usuario = 1;
 $usuario =1;
@@ -9,15 +11,19 @@ $usuario =1;
 $database = new Database();
 $db = $database->getConnection();
 
-// Criar instância do UsuarioDAO
 $usuarioDAO = new UsuarioDAO($db);
 
-if ($usuario) {
-    if ($usuarioDAO->excluirUsuario($id_usuario)) {
-        echo "Usuário excluído com sucesso!<br>";
-    } else {
-        echo "Erro ao excluir usuário.<br>";
-    }
+// Testar inserção de um novo usuário
+$nome_completo = "Maria aparecida";
+$nome_usuario = "mariazinha";
+$email = "Maria@email.com";
+$senha = password_hash("marietta", PASSWORD_DEFAULT); // Hash da senha
+
+if ($usuarioDAO->inserirUsuario($nome_completo, $nome_usuario, $email, $senha)) {
+    echo "Usuário inserido com sucesso!<br>";
+} else {
+    echo "Erro ao inserir usuário.<br>";
 }
+
 
 ?>

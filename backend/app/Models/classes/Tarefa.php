@@ -8,7 +8,15 @@ class Tarefa {
     private $pontuacaoTarefa;
     private $status;
     private $id_tarefa;	
-    private $id_projeto;	
+    private $id_projeto;
+    
+    public function set_id_tarefa($id_tarefa) {
+        $this->id_tarefa = $id_tarefa;
+    }
+
+    public function get_id_tarefa() {
+        return $this->id_tarefa;
+    }
 
     public function set_titulo($titulo) {
         $this->titulo = $titulo;
@@ -64,5 +72,13 @@ class Tarefa {
 
     public function get_status() {
         return $this->status;
+    }
+
+    public function set_id_projeto($id_projeto) {
+        $this->id_projeto = $id_projeto;
+    }
+
+    public function get_id_projeto() {
+        return $this->id_projeto;
     }
 }

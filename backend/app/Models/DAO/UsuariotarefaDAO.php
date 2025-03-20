@@ -1,7 +1,7 @@
 <?php
 
-include_once 'Database.php';
-include_once 'UsuarioTarefa.php';
+require_once __DIR__ . '/../../../config/Database.php';
+include_once __DIR__ . '/../classes/UsuarioTarefa.php';
 
 class UsuarioTarefaDAO {
     private $conn;

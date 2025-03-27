@@ -16,7 +16,7 @@ $data_limite = "2025-04-04";
 $prioridade = "Moderada";
 $pontuacao_tarefa = 20;
 $status = "Em andamento";
-$id_projeto = 2; // ID do projeto associado
+$id_projeto = 1; // ID do projeto associado
 
 // Inserindo a tarefa
 if ($tarefaDAO->inserirTarefa($titulo_tarefa, $descricao_tarefa, $data_inicio, $data_limite, $prioridade, $pontuacao_tarefa, $status, $id_projeto)) {

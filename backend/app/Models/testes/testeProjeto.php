@@ -10,7 +10,7 @@ $projetoDAO = new ProjetoDAO($db);
 
 // Teste de Inserção de Projeto
 $nome_projeto = "Projeto chiquititas";
-$id_usuario = 2; // Substitua por um ID de usuário válido do seu banco
+$id_usuario = 1; // Substitua por um ID de usuário válido do seu banco
 
 if ($projetoDAO->inserirProjeto($nome_projeto, $id_usuario)) {
     echo "Projeto inserido com sucesso!<br>";

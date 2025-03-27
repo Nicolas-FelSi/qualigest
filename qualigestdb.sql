@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `qualigestdb`.`Tarefas` (
   `descricao` TEXT NOT NULL,
   `data_inicio` DATE NOT NULL,
   `data_limite` DATE NOT NULL,
-  `prioridade` ENUM('baixa', 'moderada', 'alta', 'urgente') NOT NULL DEFAULT 'média',
+  `prioridade` ENUM('baixa', 'moderada', 'alta', 'imediato') NOT NULL DEFAULT 'moderada',
   `pontuacao_tarefa` INT NULL,
   `status` ENUM('agendado', 'em andamento', 'concluído', 'atrasado', 'cancelado') NULL DEFAULT 'agendado',
   PRIMARY KEY (`id_tarefa`),

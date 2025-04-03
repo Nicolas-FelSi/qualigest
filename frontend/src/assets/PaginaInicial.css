@@ -1,0 +1,43 @@
+header {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.089);
+  }
+  
+  h1,
+  h2:first-child {
+    color: var(--amarelo);
+  }
+  
+  header nav button {
+    padding: 0.25rem 1.5rem !important;
+    background-color: var(--azul);
+  }
+  
+  header nav button:hover {
+    background-color: rgb(40, 40, 136);
+    transition: all .5s;
+    color: white;
+  }
+  
+  .btn-menu {
+    color: var(--amarelo);
+  }
+  
+  .offcanvas-title {
+    color: var(--amarelo);
+  }
+  
+  .d-flex>.bg-white {
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.089);
+  }
+  
+  .img-padrao {
+    width: 150px;
+  }
+  
+  .img-menor {
+    width: 100px;
+  }
+  
+  .imagem-central img {
+    width: 500px;
+  }

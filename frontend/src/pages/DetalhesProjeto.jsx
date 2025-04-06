@@ -1,5 +1,4 @@
 import Aside from '../components/Aside';
-import '../assets/DetalhesProjeto.css'
 
 function DetalhesProjeto() {
   return (

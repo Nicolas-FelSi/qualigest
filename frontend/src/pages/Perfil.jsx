@@ -1,5 +1,4 @@
 import Aside from "../components/Aside";
-import '../assets/Perfil.css'
 
 function Perfil() {
   return (

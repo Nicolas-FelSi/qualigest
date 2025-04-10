@@ -103,19 +103,19 @@
   <!-- Modal Cadastro -->
   <div class="modal fade" id="cadastroModal" tabindex="-1" aria-labelledby="cadastroModalLabel">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <form class="modal-content" @submit.prevent="enviarCadastro">
         <div class="modal-header">
           <h2 class="modal-title fs-5" id="cadastroModalLabel">Cadastro</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form method="post" id="formCadastro">
+          <div>
             <div class="input-group mb-3">
               <span class="input-group-text">
                 <i class="bi bi-person-fill"></i>
               </span>
               <div class="form-floating">
-                <input type="text" class="form-control" id="inputNomeCompleto" placeholder="" />
+                <input type="text" class="form-control" id="inputNomeCompleto" placeholder="" v-model="nomeCompleto" />
                 <label for="inputNomeCompleto">Nome completo</label>
               </div>
             </div>
@@ -124,7 +124,7 @@
                 <i class="bi bi-person-circle"></i>
               </span>
               <div class="form-floating">
-                <input type="text" class="form-control" id="inputNomeUsuario" placeholder="" />
+                <input type="text" class="form-control" id="inputNomeUsuario" placeholder="" v-model="nomeUsuario" />
                 <label for="inputNomeUsuario">Nome de usuário</label>
               </div>
             </div>
@@ -133,7 +133,7 @@
                 <i class="bi bi-envelope-at-fill"></i>
               </span>
               <div class="form-floating">
-                <input type="email" class="form-control" id="inputEmailCadastro" placeholder="" />
+                <input type="email" class="form-control" id="inputEmailCadastro" placeholder="" v-model="emailCadastro" />
                 <label for="inputEmailCadastro">E-mail</label>
               </div>
             </div>
@@ -142,7 +142,7 @@
                 <i class="bi bi-key-fill"></i>
               </span>
               <div class="form-floating">
-                <input type="password" class="form-control" id="inputSenhaCadastro" placeholder="" />
+                <input type="password" class="form-control" id="inputSenhaCadastro" placeholder="" v-model="senhaCadastro" />
                 <label for="inputSenhaCadastro">Senha</label>
               </div>
             </div>
@@ -151,14 +151,14 @@
                 <i class="bi bi-key-fill"></i>
               </span>
               <div class="form-floating">
-                <input type="password" class="form-control" id="inputConfirmarSenha" placeholder="" />
+                <input type="password" class="form-control" id="inputConfirmarSenha" placeholder="" v-model="confirmarSenha" />
                 <label for="inputConfirmarSenha">Confirme sua senha</label>
               </div>
             </div>
-          </form>
+          </div>
         </div>
         <div class="modal-footer justify-content-center">
-          <button type="button" class="btn btn-dark w-100" data-bs-dismiss="modal">
+          <button type="submit" class="btn btn-dark w-100" data-bs-dismiss="modal">
             Cadastrar
           </button>
           <p>
@@ -167,7 +167,7 @@
               class="text-decoration-underline text-primary fw-semibold">Fazer login</span>
           </p>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -177,6 +177,12 @@ import { ref } from 'vue';
 
 const emailLogin = ref("");
 const senhaLogin = ref("");
+
+const nomeCompleto = ref("");
+const nomeUsuario = ref("");
+const emailCadastro = ref("");
+const senhaCadastro = ref("");
+const confirmarSenha = ref("");
 
 const enviarLogin = async () => {
   if (!(emailLogin.value && senhaLogin.value)) {
@@ -194,6 +200,40 @@ const enviarLogin = async () => {
       },
       body: `email=${encodeURIComponent(emailLogin.value)}&senha=${encodeURIComponent(senhaLogin.value)}`
     });
+
+  } catch (error) {
+    console.log("Erro ao enviar login: ", error);
+  }
+}
+
+const enviarCadastro = async () => {
+  if (!(emailCadastro.value && senhaCadastro.value && nomeCompleto.value && confirmarSenha.value && nomeUsuario.value)) {
+    alert("Preencha os campos!");
+    return;
+  }
+
+  if (!(senhaCadastro != confirmarSenha)) {
+    alert("Senhas diferentes!");
+    return;
+  }
+
+  try {
+    const response = await fetch({
+      host: "http://localhost:8080/qualigest/backend/app/Controllers/cadastroUsuario.php",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nome_completo: nomeCompleto.value,
+        nome_usuario: nomeUsuario.value,
+        email: emailCadastro.value,
+        senha: senhaCadastro.value
+      })
+    });
+
+    const resultado = await response.json();
+    console.log(resultado);
 
   } catch (error) {
     console.log("Erro ao enviar login: ", error);

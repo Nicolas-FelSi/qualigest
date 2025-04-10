@@ -1,144 +1,82 @@
 <template>
-  <div class="d-flex gap-3">
+  <div class="d-flex gap-1 gap-lg-3">
     <Aside />
     <main class="w-100">
-      <form @submit.prevent class="px-5 py-3 py-1 bg-white d-flex align-items-center justify-content-between">
-        <div class="input-group w-50">
+      <form @submit.prevent class="px-2 py-2 bg-white d-flex flex-column gap-2 flex-md-row justify-content-between">
+        <div class="input-group w-100">
           <input type="text" class="form-control" placeholder="Pesquisar" aria-label="Pesquisar" aria-describedby="basic-addon1">
           <button class="input-group-text" id="basic-addon1">
             <i class="bi bi-search"></i>
           </button>
         </div>
-        <button class="border-0 rounded-1 p-2 text-nowrap btn-nova-tarefa" data-bs-toggle="modal" data-bs-target="#novaTarefaModal">Nova tarefa</button>
+        <button class="border-0 rounded-1 p-2 text-nowrap btn-nova-tarefa me-md-5" data-bs-toggle="modal" data-bs-target="#novaTarefaModal">Nova tarefa</button>
       </form>
-      <section class="mt-3">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th class="text-center" scope="col">Hoje</th>
-              <th class="text-center"></th>
-              <th class="text-center" scope="col">Data limite</th>
-              <th class="text-center" scope="col">Status</th>
-              <th class="text-center" scope="col">Prioridade</th>
-              <th class="text-center" scope="col">Responsáveis</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr role="button">
-              <th class="text-center" scope="row">
-                <input type="checkbox" name="" id="" />
-              </th>
-              <td>Relatório mensal finalizado</td>
-              <td class="text-center">Hoje</td>
-              <td class="text-center">
-                <span class="badge text-bg-secondary">Concluído</span>
-              </td>
-              <td class="text-center">
-                <span class="badge text-bg-danger">Alta</span>
-              </td>
-              <td class="text-center">
-                <img src="../assets/images/pessoa6.jpg" alt="" />
-              </td>
-            </tr>
-            <tr role="button">
-              <th class="text-center" scope="row">
-                <input type="checkbox" name="" id="" />
-              </th>
-              <td>Assinatura de contrato</td>
-              <td class="text-center">Hoje</td>
-              <td class="text-center">
-                <span class="badge text-bg-secondary">Em andamento</span>
-              </td>
-              <td class="text-center">
-                <span class="badge text-bg-warning">Média</span>
-              </td>
-              <td class="text-center">
-                <img src="../assets/images/pessoa5.jpg" alt="" />
-                <img src="../assets/images/pessoa1.jpg" alt="" />
-              </td>
-            </tr>
-            <tr role="button">
-              <th class="text-center" scope="row">
-                <input type="checkbox" name="" id="" />
-              </th>
-              <td>Visão geral do mercado</td>
-              <td class="text-center">Hoje</td>
-              <td class="text-center">
-                <span class="badge text-bg-secondary">Em andamento</span>
-              </td>
-              <td class="text-center">
-                <span class="badge text-bg-success">Baixa</span>
-              </td>
-              <td class="text-center">
-                <img src="../assets/images/pessoa4.jpg" alt="" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="table table-hover">
-          <thead>
-            <tr role="button">
-              <th class="text-center" scope="col">Hoje</th>
-              <th class="text-center"></th>
-              <th class="text-center" scope="col">Data limite</th>
-              <th class="text-center" scope="col">Status</th>
-              <th class="text-center" scope="col">Prioridade</th>
-              <th class="text-center" scope="col">Responsáveis</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr role="button">
-              <th class="text-center" scope="row">
-                <input type="checkbox" name="" id="" />
-              </th>
-              <td>Proposta de marca</td>
-              <td class="text-center">Hoje</td>
-              <td class="text-center">
-                <span class="badge text-bg-secondary">Concluído</span>
-              </td>
-              <td class="text-center">
-                <span class="badge text-bg-danger">Alta</span>
-              </td>
-              <td class="text-center">
-                <img src="../assets/images/pessoa3.jpg" alt="" />
-              </td>
-            </tr>
-            <tr role="button">
-              <th class="text-center" scope="row">
-                <input type="checkbox" name="" id="" />
-              </th>
-              <td>Assinatura de contrato</td>
-              <td class="text-center">Hoje</td>
-              <td class="text-center">
-                <span class="badge text-bg-secondary">Em andamento</span>
-              </td>
-              <td class="text-center">
-                <span class="badge text-bg-warning">Média</span>
-              </td>
-              <td class="text-center">
-                <img src="../assets/images/pessoa2.jpg" alt="" />
-                <img src="../assets/images/pessoa3.jpg" alt="" />
-              </td>
-            </tr>
-            <tr role="button">
-              <th class="text-center" scope="row">
-                <input type="checkbox" name="" id="" />
-              </th>
-              <td>Visão geral do mercado</td>
-              <td class="text-center">Hoje</td>
-              <td class="text-center">
-                <span class="badge text-bg-secondary">Em andamento</span>
-              </td>
-              <td class="text-center">
-                <span class="badge text-bg-danger">Alta</span>
-              </td>
-              <td class="text-center">
-                <img src="../assets/images/pessoa1.jpg" alt="" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <section class="mt-1 mt-md-3">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="text-center">
+              <tr>
+                <th scope="col">Hoje</th>
+                <th></th>
+                <th scope="col">Data limite</th>
+                <th scope="col">Status</th>
+                <th scope="col">Prioridade</th>
+                <th scope="col">Responsáveis</th>
+              </tr>
+            </thead>
+            <tbody class="text-center">
+              <tr>
+                <th scope="row">
+                  <input type="checkbox" name="" id="" />
+                </th>
+                <td>Relatório mensal finalizado</td>
+                <td>Hoje</td>
+                <td>
+                  <span class="badge text-bg-secondary">Concluído</span>
+                </td>
+                <td>
+                  <span class="badge text-bg-danger">Alta</span>
+                </td>
+                <td>
+                  <img src="../assets/images/pessoa6.jpg" alt="" />
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  <input type="checkbox" name="" id="" />
+                </th>
+                <td>Assinatura de contrato</td>
+                <td>Hoje</td>
+                <td>
+                  <span class="badge text-bg-secondary">Em andamento</span>
+                </td>
+                <td>
+                  <span class="badge text-bg-warning">Média</span>
+                </td>
+                <td>
+                  <img src="../assets/images/pessoa5.jpg" alt="" />
+                  <img src="../assets/images/pessoa1.jpg" alt="" />
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  <input type="checkbox" name="" id="" />
+                </th>
+                <td>Visão geral do mercado</td>
+                <td>Hoje</td>
+                <td>
+                  <span class="badge text-bg-secondary">Em andamento</span>
+                </td>
+                <td>
+                  <span class="badge text-bg-success">Baixa</span>
+                </td>
+                <td>
+                  <img src="../assets/images/pessoa4.jpg" alt="" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
   </div>
@@ -164,6 +102,16 @@
               <label for="tituloTarefaId">Título da tarefa</label>
             </div>
             <div class="form-floating mb-3">
+              <textarea
+                class="form-control"
+                name="descricaoTarefaId1"
+                id="descricaoTarefaId1"
+                placeholder=""
+              />
+              <label for="descricaoTarefaId1">Descrição da tarefa</label>
+            </div>
+            
+            <div class="form-floating mb-3">
               <input
                 type="date"
                 class="form-control"
@@ -176,9 +124,10 @@
             <div class="form-floating mb-3">
               <select class="form-select" id="prioridadeSelect" aria-label="prioridade select">
                 <option class="text-body-tertiary" selected>Prioridade</option>
-                <option value="Facil">Fácil</option>
-                <option value="Media">Média</option>
-                <option value="Dificil">Difícil</option>
+                <option value="Baixa">Baixa</option>
+                <option value="Moderada">Moderada</option>
+                <option value="Alta">Alta</option>
+                <option value="Urgente">Urgente</option>
               </select>
               <label for="prioridadeSelect">Selecione uma prioridade</label>
             </div>
@@ -191,17 +140,6 @@
                 placeholder=""
               />
               <label for="tituloTarefaId">Responsável</label>
-            </div>
-            <div class="form-check me-0">
-              <legend>Dificuldade</legend>
-              <input class="form-check-input" type="radio" name="dificuldade" id="dificuldadeFacil"/>
-              <label class="form-check-label" for="dificuldadeFacil">Fácil</label>
-              <br>
-              <input class="form-check-input" type="radio" name="dificuldade" id="dificuldadeMedia"/>
-              <label class="form-check-label" for="dificuldadeMedia">Média</label>
-              <br>
-              <input class="form-check-input" type="radio" name="dificuldade" id="dificuldadeDificil"/>
-              <label class="form-check-label" for="dificuldadeDificil">Difícil</label>
             </div>
           </form>
         </div>
@@ -233,11 +171,8 @@ form input {
   background-color: var(--amarelo);
 }
 
-main table {
-  padding: 1rem !important;
-}
-
 td img {
+  max-width: 100%;
   width: 30px;
   height: 30px;
   object-fit: cover;
@@ -247,5 +182,11 @@ td img {
 input[type="checkbox"] {
   width: 15px;
   height: 15px;
+}
+
+@media (min-width: 768px) {
+  main form > div {
+    width: 50% !important;
+  }
 }
 </style>

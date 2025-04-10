@@ -49,6 +49,21 @@ class UsuarioDAO {
         }
     }
 
+    // Método para consultar um usuário pelo E-mail
+    public function buscarUsuarioPorEmail($email) {
+        $query = "SELECT * FROM usuarios WHERE email = :email";
+    
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+    
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return null;
+        }
+    }
+
     // Método para atualizar os dados de um usuário
     public function atualizarUsuario($id_usuario, $nome_completo, $email, $senha) {
         $query = "UPDATE usuarios 

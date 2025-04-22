@@ -1,0 +1,23 @@
+  .dados-projeto h2 {
+    font-size: 20px;
+  }
+  
+  .ranking img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid black;
+  }
+  
+  .tag-table img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .podio {
+    background-color: var(--azul);
+    border-radius: .25rem;
+  }

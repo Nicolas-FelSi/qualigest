@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-require_once __DIR__ . '../../config/database.php';
-require_once __DIR__ . '../Models/classes/Usuario.php';
-require_once __DIR__ . '../Models/DAO/UsuarioDAO.php';
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../Models/classes/Usuario.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioDAO.php';
 
 // Pega o conteúdo do corpo da requisição (JSON)
 $data = json_decode(file_get_contents("php://input"), true);

@@ -1,0 +1,22 @@
+.h2 {
+    color: var(--amarelo);
+}
+
+.img {
+    border-radius: 25%;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.button-edit:hover {
+    background-color: rgb(189, 146, 7) !important;
+    transition: all .5s;
+}
+
+.button-delete:hover {
+    background-color: rgb(156, 16, 16) !important;
+    color: white;
+    transition: all .5s;
+}

@@ -1,0 +1,30 @@
+.h1,
+.h2 {
+  color: var(--amarelo);
+}
+
+.header nav button {
+  background-color: var(--azul);
+}
+
+.header nav button:hover {
+  background-color: rgb(30, 102, 184);
+  transition: all .5s;
+  color: white;
+}
+
+.btn-menu {
+  color: var(--amarelo);
+}
+
+.offcanvas-title {
+  color: var(--amarelo);
+}
+
+.img-padrao {
+  width: 150px;
+}
+
+.img-menor {
+  width: 100px;
+}

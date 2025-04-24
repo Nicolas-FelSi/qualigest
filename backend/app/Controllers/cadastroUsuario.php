@@ -1,9 +1,25 @@
 <?php
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../../config/database.php';
-require_once __DIR__ . '/../Models/classes/Usuario.php';
-require_once __DIR__ . '/../dao/UsuarioDAO.php';
+// Verificar se é uma requisição OPTIONS (pré-requisito para CORS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Verificar se é uma requisição POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['status' => 'erro', 'mensagem' => 'Método não permitido. Use POST.']);
+    http_response_code(405);
+    exit;
+}
+
+require_once __DIR__ . '../../config/database.php';
+require_once __DIR__ . '../Models/classes/Usuario.php';
+require_once __DIR__ . '../Models/DAO/UsuarioDAO.php';
 
 // Pega o conteúdo do corpo da requisição (JSON)
 $data = json_decode(file_get_contents("php://input"), true);

@@ -15,7 +15,7 @@
   </header>
   <main class="d-flex align-items-center flex-column pb-3 p-2">
     <h2 class="py-3">Bem-vindo ao QualiGest</h2>
-    <p class="fw-semibold fs-5">Gerencie suas tarefas com eficiência e colaboração</p>
+    <p class="fw-semibold fs-5 text-center">Gerencie suas tarefas com eficiência e colaboração</p>
     <div class="py-5">
       <img class="img-fluid" src="@/assets/images/equipe-tarefa.png" alt="" />
     </div>
@@ -175,14 +175,18 @@
 <script setup>
 import { ref } from 'vue';
 
-const emailLogin = ref("");
-const senhaLogin = ref("");
+const formLogin = ref({
+  emailLogin: "",
+  senhaLogin: ""
+})
 
-const nomeCompleto = ref("");
-const nomeUsuario = ref("");
-const emailCadastro = ref("");
-const senhaCadastro = ref("");
-const confirmarSenha = ref("");
+const formCadastro = ref({
+  nomeCompleto: "",
+  nomeUsuario: "",
+  emailCadastro: "",
+  senhaCadastro: "",
+  confirmarSenha: ""
+})
 
 const enviarLogin = async () => {
   if (!(emailLogin.value && senhaLogin.value)) {
@@ -207,12 +211,18 @@ const enviarLogin = async () => {
 }
 
 const enviarCadastro = async () => {
-  if (!(emailCadastro.value && senhaCadastro.value && nomeCompleto.value && confirmarSenha.value && nomeUsuario.value)) {
+  if (!(
+    formCadastro.value.emailCadastro && 
+    formCadastro.value.senhaCadastro && 
+    formCadastro.value.nomeCompleto && 
+    formCadastro.value.confirmarSenha && 
+    formCadastro.value.nomeUsuario
+  )) {
     alert("Preencha os campos!");
     return;
   }
 
-  if (!(senhaCadastro != confirmarSenha)) {
+  if (!(formCadastro.value.senhaCadastro != formCadastro.value.confirmarSenha)) {
     alert("Senhas diferentes!");
     return;
   }
@@ -225,10 +235,10 @@ const enviarCadastro = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        nome_completo: nomeCompleto.value,
-        nome_usuario: nomeUsuario.value,
-        email: emailCadastro.value,
-        senha: senhaCadastro.value
+        nome_completo: formCadastro.value.nomeCompleto,
+        nome_usuario: formCadastro.value.nomeUsuario,
+        email: formCadastro.value.emailCadastro,
+        senha: formCadastro.value.senhaCadastro
       })
     });
 

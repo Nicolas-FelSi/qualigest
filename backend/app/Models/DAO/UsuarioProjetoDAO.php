@@ -12,16 +12,15 @@ class UsuarioProjetoDAO {
     }
 
     // Método para inserir uma nova associação entre usuário e projeto
-    public function inserirAssociacao($id_usuario, $id_projeto, $pontos_projeto) {
-        $query = "INSERT INTO usuario_projeto (id_usuario, id_projeto, pontos_projeto)
-                  VALUES (:id_usuario, :id_projeto, :pontos_projeto)";
+    public function inserirAssociacao($id_usuario, $id_projeto) {
+        $query = "INSERT INTO usuario_projeto (id_usuario, id_projeto)
+                  VALUES (:id_usuario, :id_projeto)";
         
         $stmt = $this->conn->prepare($query);
 
         // Vinculando os parâmetros aos valores
         $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->bindParam(':id_projeto', $id_projeto);
-        $stmt->bindParam(':pontos_projeto', $pontos_projeto);
 
         // Executando a query
         if ($stmt->execute()) {
@@ -42,7 +41,6 @@ class UsuarioProjetoDAO {
         // Vinculando os parâmetros aos valores
     //    $stmt->bindParam(':id_usuario', $id_usuario);
     //    $stmt->bindParam(':id_projeto', $id_projeto);
-    //    $stmt->bindParam(':pontos_projeto', $pontos_projeto);
 
         // Executando a query
     //    if ($stmt->execute()) {

@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white"/>
   <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D"/>
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/>
   <img src="https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white"/>
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white"/>
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white"/>
@@ -18,9 +18,9 @@
 
 :small_blue_diamond: [Funcionalidades](#funcionalidades)
 
-<!-- :small_blue_diamond: [Pré-requisitos](#pré-requisitos-books) -->
+:small_blue_diamond: [Pré-requisitos](#pré-requisitos-books)
 
-<!-- :small_blue_diamond: [Como rodar a aplicação](#como-rodar-a-aplicação-arrow_forward) -->
+:small_blue_diamond: [Como rodar a aplicação](#como-rodar-a-aplicação-arrow_forward)
 
 ## Descrição do projeto 
 
@@ -50,35 +50,45 @@
 
 <!-- <span style="color: red;">Liste todas as linguagens, dependencias e libs que o usuário deve ter instalado na máquina antes de rodar a aplicação</span> -->
 
-<!-- ## Como rodar a aplicação :arrow_forward:
-Ainda não pronto
+## Pré-requisitos :books:
+
+- Node.js (versão 18 ou superior) instalado
+- XAMPP instalado
+- Git (opcional, para clonar o repositório)
+
+## Como rodar a aplicação :arrow_forward:
+Este projeto utiliza ReactJS com Vite para o frontend e PHP puro com XAMPP para o backend. Siga os passos abaixo para configurar e executar o projeto localmente.
 
 No terminal, clone o projeto: 
 
 ```
-Ainda não pronto
+git clone https://github.com/Nicolas-FelSi/qualigest.git
+cd qualigest
+code .
 ```
 
-### Configuração do banco de dados
+<!-- ### Configuração do banco de dados
+
+- Inicie o XAMPP e ative os módulos Apache e MySQL.
+
+- Copie a pasta do projeto para a pasta htdocs do XAMPP (exemplo: C:\xampp\htdocs\).
+
+- Acesse http://localhost/phpmyadmin.
+
+- Importe o arquivo SQL  no phpMyAdmin:
+
+
+Crie um banco de dados.
+
+Importe o arquivo .sql na aba "Importar".
+
+Verifique se as configurações de conexão com o banco (ex.: host, user, password, database) estão corretas no arquivo de configuração do PHP (ex.: config.php).
+
+
+### Como usar a aplicação
 
 Ainda não pronto -->
 
-
-<!-- ### Como usar a aplicação
-
-Ainda não pronto
-
-|name|email|password|token|
-| -------- |-------- |-------- |-------- |
-|Lais Lima|laislima98@hotmail.com|lais123|true| -->
-
-<!-- ## Como rodar os testes
-
-Coloque um passo a passo para executar os testes
-
-```
-ainda não pronto
-``` -->
 
 ## Desenvolvedores e Contribuintes :octocat:
 

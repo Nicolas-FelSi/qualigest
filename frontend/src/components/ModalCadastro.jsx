@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { ToastContainer} from "react-toastify";
+import URL_BASE from "../urlBase"
 
 function ModalCadastro() {
+  const urlBase = URL_BASE;
+  const host = import.meta.env.VITE_HOST_BACKEND;
+  const port = import.meta.env.VITE_PORT_BACKEND;
+
   const [formData, setFormData] = useState({
     nome_completo: "",
     nome_usuario: "",
@@ -39,7 +44,7 @@ function ModalCadastro() {
 
     try {
       const response = await fetch(
-        "http://localhost/qualigest-copia/backend/app/Controllers/cadastroUsuario.php",
+        `${host}${port ? ":" : ""}${port}${urlBase}/cadastroUsuario.php`,
         {
           method: "POST",
           headers: {
@@ -58,6 +63,8 @@ function ModalCadastro() {
           email: "",
           senha: "",
         });
+
+        setConfirmPassword("");
       }
     } catch (error) {
       console.error("Erro ao cadastrar:", error);

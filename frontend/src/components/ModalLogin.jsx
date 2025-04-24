@@ -11,6 +11,13 @@ function ModalLogin() {
     senha: ""
   })
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,7 +77,9 @@ function ModalLogin() {
                     type="email"
                     className="form-control"
                     id="inputEmailLogin"
+                    name="email"
                     value={formData.email}
+                    onChange={handleChange}
                     placeholder=""
                     required
                   />
@@ -86,7 +95,9 @@ function ModalLogin() {
                     type="password"
                     className="form-control"
                     id="inputSenhaLogin"
+                    name="senha"
                     value={formData.senha}
+                    onChange={handleChange}
                     placeholder=""
                     required
                   />

@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
@@ -61,16 +61,63 @@ if ($usuarioDAO->buscarUsuarioPorEmail($usuario->getEmail())) {
     exit;
 }
 
+
+$erros = validarCadastro($data);
+
+if (!empty($erros)) {
+    echo json_encode(['status' => 'erro', 'mensagens' => $erros]);
+    exit;
+} else {
 // Tenta cadastrar
-$sucesso = $usuarioDAO->inserirUsuario(
+    $sucesso = $usuarioDAO->inserirUsuario(
     $usuario->getNomeCompleto(),
     $usuario->getNomeUsuario(),
     $usuario->getEmail(),
     $usuario->getSenha()
 );
 
-if ($sucesso) {
-    echo json_encode(['status' => 'sucesso', 'mensagem' => 'Usuário cadastrado com sucesso.']);
-} else {
-    echo json_encode(['status' => 'erro', 'mensagem' => 'Erro ao cadastrar usuário.']);
+    if ($sucesso) {
+        echo json_encode(['status' => 'sucesso', 'mensagem' => 'Usuário cadastrado com sucesso.']);
+    } else {
+        echo json_encode(['status' => 'erro', 'mensagem' => 'Erro ao cadastrar usuário.']);
+    }
+
 }
+
+
+function validarCadastro($data) {
+    $erros = [];
+
+    // Nome completo
+    if (empty($data['nome_completo'])) {
+        $erros[] = 'O nome completo é obrigatório.';
+    } elseif (!preg_match('/^[a-zA-ZÀ-ú\s]+$/u', $data['nome_completo'])) {
+        $erros[] = 'O nome completo deve conter apenas letras e espaços.';
+    }
+
+    // Nome de usuário
+    if (empty($data['nome_usuario'])) {
+        $erros[] = 'O nome de usuário é obrigatório.';
+    } elseif (strpos($data['nome_usuario'], '@') !== false) {
+        $erros[] = 'O nome de usuário não pode conter "@".';
+    } elseif (!preg_match('/^[a-zA-Z0-9._-]+$/', $data['nome_usuario'])) {
+        $erros[] = 'O nome de usuário só pode conter letras, números, ponto, hífen e underline.';
+    }
+
+    // E-mail
+    if (empty($data['email'])) {
+        $erros[] = 'O e-mail é obrigatório.';
+    } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        $erros[] = 'O e-mail informado não é válido.';
+    }
+
+    // Senha
+    if (empty($data['senha'])) {
+        $erros[] = 'A senha é obrigatória.';
+    } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/', $data['senha'])) {
+        $erros[] = 'A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número.';
+    }
+
+    return $erros;
+}
+

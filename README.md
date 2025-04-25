@@ -54,7 +54,7 @@
 
 - Node.js (versão 18 ou superior) instalado
 - XAMPP instalado
-- Git (opcional, para clonar o repositório)
+- Git
 
 ## Como rodar a aplicação :arrow_forward:
 Este projeto utiliza ReactJS com Vite para o frontend e PHP puro com XAMPP para o backend. Siga os passos abaixo para configurar e executar o projeto localmente.
@@ -67,7 +67,7 @@ cd qualigest
 code .
 ```
 
-<!-- ### Configuração do banco de dados
+### Configurar o Backend (PHP com XAMPP):
 
 - Inicie o XAMPP e ative os módulos Apache e MySQL.
 
@@ -75,20 +75,28 @@ code .
 
 - Acesse http://localhost/phpmyadmin.
 
-- Importe o arquivo SQL  no phpMyAdmin:
+- Importe o arquivo SQL (que está na raiz do projeto) no phpMyAdmin:
+
+- Importe o arquivo .sql na aba "Importar".
+
+- Verifique se as configurações de conexão com o banco (ex.: host, user, password, database) estão corretas no arquivo de configuração do PHP (ex.: database.php).
 
 
-Crie um banco de dados.
+### Configurar o Frontend (ReactJs com Vite):
 
-Importe o arquivo .sql na aba "Importar".
-
-Verifique se as configurações de conexão com o banco (ex.: host, user, password, database) estão corretas no arquivo de configuração do PHP (ex.: config.php).
-
-
-### Como usar a aplicação
-
-Ainda não pronto -->
-
+- Navegue até a pasta do frontend (ex.: cd frontend):
+```
+cd frontend
+```
+- Instale as dependências:
+```
+npm install
+```
+- Inicie o servidor de desenvolvimento do Vite:
+```
+npm run dev
+```
+- O frontend estará disponível em http://localhost:5173 (ou outra porta indicada no terminal).
 
 ## Desenvolvedores e Contribuintes :octocat:
 

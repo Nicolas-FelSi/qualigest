@@ -1,24 +1,7 @@
-.aside {
-    min-width: 250px;
-}
-
-.li-border,
-.li-border-logout {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem .5rem;
-    width: 100%;
-    text-decoration: none;
-    color: black;
-}
-
-.li-border {
-    border-bottom: 2px solid var(--cinza-claro);
-}
-
-.li-border-logout {
-    border-top: 2px solid var(--cinza-claro);
+@media (min-width: 576px) {
+    .aside {
+        min-width: 250px;
+    }
 }
 
 .h1 {

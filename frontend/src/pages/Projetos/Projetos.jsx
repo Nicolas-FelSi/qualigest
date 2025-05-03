@@ -2,6 +2,8 @@ import styles from "./Projetos.module.css";
 import Aside from "../../components/Aside/Aside"
 
 function Projetos() {
+  
+
   return (
     <div className="d-flex gap-1 gap-lg-3">
       <Aside />

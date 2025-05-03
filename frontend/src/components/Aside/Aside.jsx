@@ -25,20 +25,24 @@ function Aside() {
                 <i className={`${styles.icones} bi bi-stack`}></i>
                 <span className="d-none d-md-block">Projetos</span>
               </NavLink>
-              <NavLink
-                to="/lista-tarefas"
-                className={`d-flex align-items-center gap-md-3 p-2 w-100 text-decoration-none text-black border-bottom ${urlPath.pathname == "/lista-tarefas" && styles["li-ativo"]}`}
-              >
-                <i className={`${styles.icones} bi bi-check-circle-fill`}></i>
-                <span className="d-none d-md-block">Tarefas</span>
-              </NavLink>
-              <NavLink
-                to="/detalhes-projeto"
-                className={`d-flex align-items-center gap-md-3 p-2 w-100 text-decoration-none text-black border-bottom ${urlPath.pathname == "/detalhes-projeto" && styles["li-ativo"]}`}
-              >
-                <i className={`${styles.icones} bi bi-info-circle-fill`}></i>
-                <span className="d-none d-md-block">Detalhes do projeto</span>
-              </NavLink>
+              { urlPath.pathname != "/projetos" &&
+                <NavLink
+                  to="/lista-tarefas"
+                  className={`d-flex align-items-center gap-md-3 p-2 w-100 text-decoration-none text-black border-bottom ${urlPath.pathname == "/lista-tarefas" && styles["li-ativo"]}`}
+                >
+                  <i className={`${styles.icones} bi bi-check-circle-fill`}></i>
+                  <span className="d-none d-md-block">Tarefas</span>
+                </NavLink>
+              }
+              { urlPath.pathname != "/projetos" &&
+                <NavLink
+                  to="/detalhes-projeto"
+                  className={`d-flex align-items-center gap-md-3 p-2 w-100 text-decoration-none text-black border-bottom ${urlPath.pathname == "/detalhes-projeto" && styles["li-ativo"]}`}
+                >
+                  <i className={`${styles.icones} bi bi-info-circle-fill`}></i>
+                  <span className="d-none d-md-block">Detalhes do projeto</span>
+                </NavLink>
+              }
               <NavLink
                 to="/perfil"
                 className={`d-flex align-items-center gap-md-3 p-2 w-100 text-decoration-none text-black border-bottom ${urlPath.pathname == "/perfil" && styles["li-ativo"]}`}

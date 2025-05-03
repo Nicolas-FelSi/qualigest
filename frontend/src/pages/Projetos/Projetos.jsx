@@ -28,7 +28,7 @@ function Projetos() {
                 <div className="py-2 px-5 text-center d-flex flex-column">
                     <p className="badge text-bg-secondary fs-6 fw-normal">5 tarefas designadas para você</p>
                     <p className="badge text-bg-warning">1 tarefa está atrasada</p>
-                    <ul className="d-flex justify-content-end list-unstyled mt-4 m-0">
+                    <ul className="d-flex justify-content-end list-unstyled mt-4">
                         <li>
                             <img className={styles.img} src="/images/pessoa1.jpg" alt="" />
                         </li>

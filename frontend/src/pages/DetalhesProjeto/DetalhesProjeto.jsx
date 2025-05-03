@@ -3,64 +3,36 @@ import styles from "./DetalhesProjeto.module.css";
 
 function DetalhesProjeto() {
   return (
-    <div className="d-flex gap-3 vh-100">
+    <div className="d-flex gap-1 gap-sm-3 vh-100">
       <Aside />
       <main className="w-100">
-        <section className={`${styles["dados-projeto"]} d-flex flex-column gap-3`}>
+        <section className="d-flex flex-column gap-1 gap-sm-3">
           <div className={`p-3 bg-white ${styles["detalhe-projeto"]} shadow-sm`}>
-            <h2>Nome do projeto</h2>
+            <h2 className={styles.h2}>Nome do projeto</h2>
           </div>
           <div className={`p-3 bg-white ${styles["detalhe-projeto"]} shadow-sm`}>
-            <h2>
+            <h2 className="fs-5">
               Pontuação total: <span>500pts</span>
             </h2>
           </div>
-          <div className="d-flex gap-3 mb-3">
+          <div className="d-flex flex-column flex-lg-row gap-1 gap-sm-3 mb-3">
             <div className={`p-3 bg-white w-100 ${styles["detalhe-projeto"]} shadow-sm`}>
-              <h2>Tarefas Pendentes</h2>
+              <h2 className="fs-5">Tarefas Pendentes</h2>
               <p>Quantidade</p>
             </div>
             <div className={`p-3 bg-white w-100 ${styles["detalhe-projeto"]} shadow-sm`}>
-              <h2>Tarefas em Andamento</h2>
+              <h2 className="fs-5">Tarefas em Andamento</h2>
               <p>Quantidade</p>
             </div>
             <div className={`p-3 bg-white w-100 ${styles["detalhe-projeto"]} shadow-sm`}>
-              <h2>Tarefas Concluídas</h2>
+              <h2 className="fs-5">Tarefas Concluídas</h2>
               <p>Quantidade</p>
             </div>
           </div>
         </section>
-        <section className="d-flex gap-3">
-          <div className={`${styles.ranking} w-50`}>
-            <h2>Ranking do Grupo</h2>
-            <div className="d-flex justify-content-between text-center">
-              <div className="flex-column ">
-                <img src="/images/pessoa1.jpg" alt="" />
-                <p className={`${styles.podio} mt-3`}>Roberto</p>
-                <div className={`${styles.podio} mt-3`}>
-                  <i></i>
-                  <p>110 Pontos</p>
-                </div>
-              </div>
-              <div>
-                <img src="/images/pessoa6.jpg" alt="" />
-                <p className={`${styles.podio} mt-3`}>Carla</p>
-                <div className={`${styles.podio} mt-3`}>
-                  <i></i>
-                  <p>110 Pontos</p>
-                </div>
-              </div>
-              <div>
-                <img src="/images/pessoa3.jpg" alt="" />
-                <p className={`${styles.podio} mt-3`}>Nicolas</p>
-                <div className={`${styles.podio} mt-3`}>
-                  <i></i>
-                  <p>110 Pontos</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <table className={`${styles["tag-table"]} table w-50 text-center rounded-4 shadow-sm`}>
+        <section>
+          <h2>Ranking do Grupo</h2>
+          <table className={`${styles["tag-table"]} table text-center rounded-4 shadow-sm mt-2`}>
             <thead>
               <tr>
                 <th scope="col">Rank</th>

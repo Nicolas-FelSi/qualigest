@@ -1,22 +1,17 @@
-.form input {
-  background-color: var(--cinza-claro);
-}
-
-.btn-nova-tarefa {
+/* .btn-nova-tarefa {
   background-color: var(--amarelo);
+} */
+
+.cards-tarefas {
+  max-width: 430px;
 }
 
-.td img {
+.img {
   max-width: 100%;
   width: 30px;
   height: 30px;
   object-fit: cover;
   border-radius: 50%;
-}
-
-.input-checkbox {
-  width: 15px;
-  height: 15px;
 }
 
 @media (min-width: 768px) {

@@ -1,13 +1,13 @@
 import { useState } from "react";
+import { toast, ToastContainer } from "react-toastify"
 import URL_BASE from "../urlBase";
 
 function ModalLogin() {
   const urlBase = URL_BASE;
-  const host = import.meta.env.VITE_HOST_BACKEND;
-  const port = import.meta.env.VITE_PORT_BACKEND;
+  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
-    email: "",
+    login: "",
     senha: ""
   })
 
@@ -21,14 +21,14 @@ function ModalLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.email == "" || formData.senha == "") {
+    if (formData.login == "" || formData.senha == "") {
       alert("Preencha todos os campos!");
       return;
     }
 
     try {
       const response = await fetch(
-        `${host}${port ? ":" : ""}${port}${urlBase}/login.php`,
+        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/login.php`,
         {
           method: "POST",
           headers: {
@@ -40,7 +40,12 @@ function ModalLogin() {
 
       const data = await response.json();
 
-      console.log(data);
+      if (data) {
+        const notify = () => toast.error(data.mensagem);
+        notify();
+      } else {
+        window.location.href = "/projetos"
+      }
     } catch (error) {
       console.error("Erro ao logar:", error);
     }
@@ -77,13 +82,13 @@ function ModalLogin() {
                     type="email"
                     className="form-control"
                     id="inputEmailLogin"
-                    name="email"
-                    value={formData.email}
+                    name="login"
+                    value={formData.login}
                     onChange={handleChange}
                     placeholder=""
                     required
                   />
-                  <label htmlFor="inputEmailLogin">E-mail</label>
+                  <label htmlFor="inputEmailLogin">Login (e-mail)</label>
                 </div>
               </div>
               <div className="input-group mb-3">

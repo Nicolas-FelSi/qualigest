@@ -34,7 +34,7 @@ function ListaTarefas() {
             </button> */}
           </form>
           <section className="mt-1 mt-md-3 row gap-3 d-flex flex-grow-1">
-            <div className={`${styles["cards-tarefas"]} bg-info-subtle border-info border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
+            <div className={`${styles["cards-tarefas"]} bg-white border-secondary-subtle border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
               <div className="d-flex justify-content-between">
                 <h3 className="fs-5">Fazer tela criação de projetos</h3>
                 <p>Pontos: 20</p>
@@ -51,7 +51,7 @@ function ListaTarefas() {
               </div>
             </div>
 
-            <div className={`${styles["cards-tarefas"]} bg-info-subtle border-info border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
+            <div className={`${styles["cards-tarefas"]} bg-white border-secondary-subtle border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
               <div className="d-flex justify-content-between">
                 <h3 className="fs-5">Fazer tela criação de projetos</h3>
                 <p>Pontos: 20</p>
@@ -68,7 +68,7 @@ function ListaTarefas() {
               </div>
             </div>
 
-            <div className={`${styles["cards-tarefas"]} bg-info-subtle border-info border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
+            <div className={`${styles["cards-tarefas"]} bg-white border-secondary-subtle border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
               <div className="d-flex justify-content-between">
                 <h3 className="fs-5">Fazer tela criação de projetos</h3>
                 <p>Pontos: 20</p>
@@ -85,7 +85,7 @@ function ListaTarefas() {
               </div>
             </div>
 
-                        <div className={`${styles["cards-tarefas"]} bg-info-subtle border-info border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
+                        <div className={`${styles["cards-tarefas"]} bg-white border-secondary-subtle border p-3 rounded-2 shadow-sm col-12 col-lg-5 col-xl-3 flex-fill`}>
               <div className="d-flex justify-content-between">
                 <h3 className="fs-5">Fazer tela criação de projetos</h3>
                 <p>Pontos: 20</p>

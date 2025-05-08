@@ -4,6 +4,7 @@ import Perfil from './pages/Perfil/Perfil';
 import Projetos from './pages/Projetos/Projetos';
 import DetalhesProjeto from './pages/DetalhesProjeto/DetalhesProjeto';
 import ListaTarefas from './pages/ListaTarefas/ListaTarefas';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path='/detalhes-projeto' element={ <DetalhesProjeto/> }/>
         <Route path='/projetos' element={ <Projetos/> }/>
       </Routes>
+      <ToastContainer/>
     </BrowserRouter>
   )
 }

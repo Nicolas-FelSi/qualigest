@@ -16,24 +16,24 @@ function Perfil() {
                 <form className="w-100">
                   <div className="mb-3">
                     <label htmlFor="emailId" className="form-label">E-mail</label>
-                    <input type="email" className="form-control p-2 bg-secondary-subtle border border-secondary" id="emailId" placeholder="exemplo@gmail.com"/>
+                    <input type="email" className="form-control p-2 bg-secondary-subtle border" disabled id="emailId" placeholder="exemplo@gmail.com"/>
                   </div>
                   <div className="mb-3">
                     <label htmlFor="senhaId" className="form-label">Senha</label>
-                    <input type="password" className="form-control p-2 bg-secondary-subtle border border-secondary" id="senhaId" placeholder="*******"/>
+                    <input type="password" className="form-control p-2 bg-secondary-subtle border" disabled id="senhaId" placeholder="*******"/>
                   </div>
                 </form>
               </div>
               <div className="d-flex flex-column flex-lg-row gap-4">
-                <div className={`bg-primary-subtle border border-primary p-4 rounded-5 fw-semibold d-flex align-items-center flex-column w-100`}>
+                <div className={`bg-primary-subtle border border-primary-subtle p-4 rounded-5 fw-semibold d-flex align-items-center flex-column w-100`}>
                   <p className="fs-6">Pontuação total</p>
                   <span className="fs-3 fw-normal">0</span>
                 </div>
-                <div className={`bg-primary-subtle border border-primary p-4 rounded-5 fw-semibold d-flex align-items-center flex-column w-100`}>
+                <div className={`bg-primary-subtle border border-primary-subtle p-4 rounded-5 fw-semibold d-flex align-items-center flex-column w-100`}>
                   <p className="fs-6">Tarefas concluídas</p>
                   <span className="fs-3 fw-normal">0</span>
                 </div>
-                <div className={`bg-primary-subtle border border-primary p-4 rounded-5 fw-semibold d-flex align-items-center flex-column w-100`}>
+                <div className={`bg-primary-subtle border border-primary-subtle p-4 rounded-5 fw-semibold d-flex align-items-center flex-column w-100`}>
                   <p className="fs-6">Tarefas atrasadas</p>
                   <span className="fs-3 fw-normal">0</span>
                 </div>

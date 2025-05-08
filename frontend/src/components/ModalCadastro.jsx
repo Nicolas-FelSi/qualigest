@@ -4,7 +4,7 @@ import URL_BASE from "../urlBase"
 
 function ModalCadastro() {
   const urlBase = URL_BASE;
-  const port = import.meta.env.VITE_PORT_BACKEND || 80;
+  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
     nome_completo: "",
@@ -68,7 +68,11 @@ function ModalCadastro() {
 
         setConfirmPassword("");
       } else {
-        const notify = () => toast.error(data.mensagem);
+        const notify = () => {
+          data.mensagens.forEach(mensagem => {
+            toast.error(mensagem);
+          })
+        }
         notify();
       }
     } catch (error) {
@@ -218,8 +222,6 @@ function ModalCadastro() {
           </div>
         </form>
       </div>
-
-      <ToastContainer />
     </div>
   );
 }

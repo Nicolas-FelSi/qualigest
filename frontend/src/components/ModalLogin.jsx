@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { toast, ToastContainer } from "react-toastify"
+import { toast } from "react-toastify"
+import { Modal } from "bootstrap"
+import { useNavigate } from "react-router-dom"
 import URL_BASE from "../urlBase";
 
 function ModalLogin() {
   const urlBase = URL_BASE;
+  const navigate = useNavigate();
   const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
@@ -40,11 +43,18 @@ function ModalLogin() {
 
       const data = await response.json();
 
-      if (data) {
+      if (data.status == "erro") {
         const notify = () => toast.error(data.mensagem);
         notify();
       } else {
-        window.location.href = "/projetos"
+        const notify = () => toast.success(data.mensagem);
+        notify(); 
+
+        const modalElement = document.getElementById('loginModal');
+        const modal = Modal.getInstance(modalElement);
+        modal.hide();
+
+        navigate("/projetos");
       }
     } catch (error) {
       console.error("Erro ao logar:", error);
@@ -115,7 +125,6 @@ function ModalLogin() {
             <button
               type="submit"
               className="btn btn-dark w-100"
-              data-bs-dismiss=""
             >
               Entrar
             </button>

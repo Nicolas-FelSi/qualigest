@@ -17,16 +17,13 @@ class ProjetoDAO {
                   VALUES (:nome_projeto, :id_usuario)";
         
         $stmt = $this->conn->prepare($query);
-
-        // Vinculando os parâmetros aos valores
         $stmt->bindParam(':nome_projeto', $nome_projeto);
         $stmt->bindParam(':id_usuario', $id_usuario);
-
-        // Executando a query
+    
         if ($stmt->execute()) {
-            return true; // Retorna true se a inserção for bem-sucedida
+            return $this->conn->lastInsertId(); // Retorna o ID do projeto inserido
         } else {
-            return false; // Caso contrário, retorna false
+            return false;
         }
     }
 
@@ -48,24 +45,21 @@ class ProjetoDAO {
     }
 
     // Método para atualizar um projeto
-    public function atualizarProjeto($id_projeto, $nome_projeto, $pontuacao_projeto) {
+    public function atualizarProjeto($id_projeto, $nome_projeto, $pontuacao_projeto, $id_usuario_lider) {
         $query = "UPDATE projetos 
-                  SET nome_projeto = :nome_projeto, pontuacao_projeto = :pontuacao_projeto
+                  SET nome_projeto = :nome_projeto, 
+                      pontuacao_projeto = :pontuacao_projeto, 
+                      id_usuario = :id_usuario
                   WHERE id_projeto = :id_projeto";
-
+    
         $stmt = $this->conn->prepare($query);
-
-        // Vinculando os parâmetros aos valores
+    
         $stmt->bindParam(':id_projeto', $id_projeto);
         $stmt->bindParam(':nome_projeto', $nome_projeto);
         $stmt->bindParam(':pontuacao_projeto', $pontuacao_projeto);
-
-        // Executando a query
-        if ($stmt->execute()) {
-            return true; // Retorna true se a atualização for bem-sucedida
-        } else {
-            return false; // Caso contrário, retorna false
-        }
+        $stmt->bindParam(':id_usuario', $id_usuario_lider);
+    
+        return $stmt->execute();
     }
 
     // Método para excluir um projeto

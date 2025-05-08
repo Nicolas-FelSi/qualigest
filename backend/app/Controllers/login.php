@@ -4,7 +4,7 @@ header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Models/classes/Usuario.php';
 require_once __DIR__ . '/../Models/DAO/UsuarioDAO.php';
 

@@ -50,7 +50,8 @@ if (password_verify($senha, $usuario['senha'])) {
     // Armazena informações do usuário na sessão (ex: ID e nome)
     $_SESSION['usuario_id'] = $usuario['id_usuario'];
     $_SESSION['usuario_nome'] = $usuario['nome_completo'];
-    header('Location: /qualigest/frontend/src/pages/Projetos');
+    
+    echo json_encode(['status' => 'sucesso', 'mensagem' => 'Login realizado com sucesso.']);
 
 } else {
     echo json_encode(['status' => 'erro', 'mensagem' => 'Senha incorreta.']);

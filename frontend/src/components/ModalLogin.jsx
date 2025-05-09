@@ -1,10 +1,10 @@
 import { useState } from "react";
 import URL_BASE from "../urlBase";
+import { toast, ToastContainer } from "react-toastify";
 
 function ModalLogin() {
   const urlBase = URL_BASE;
-  const host = import.meta.env.VITE_HOST_BACKEND;
-  const port = import.meta.env.VITE_PORT_BACKEND;
+  const port = import.meta.env.VITE_PORT_BACKEND || 80;
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,7 +28,7 @@ function ModalLogin() {
 
     try {
       const response = await fetch(
-        `${host}${port ? ":" : ""}${port}${urlBase}/login.php`,
+        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/login.php`,
         {
           method: "POST",
           headers: {
@@ -41,6 +41,20 @@ function ModalLogin() {
       const data = await response.json();
 
       console.log(data);
+
+      if (data.status === "sucesso") {
+        setFormData({
+          email: "",
+          senha: ""
+        })
+
+        const notify = () => toast.success(data.mensagem);
+        notify();
+      } else {
+        const notify = () => toast.error(data.mensagem);
+        notify();
+      }
+
     } catch (error) {
       console.error("Erro ao logar:", error);
     }
@@ -68,7 +82,8 @@ function ModalLogin() {
           </div>
           <div className="modal-body">
             <div>
-              <div className="input-group mb-3">
+              <div>
+                <div className="input-group mb-1">
                 <span className="input-group-text">
                   <i className="bi bi-envelope-at-fill"></i>
                 </span>
@@ -85,6 +100,8 @@ function ModalLogin() {
                   />
                   <label htmlFor="inputEmailLogin">E-mail</label>
                 </div>
+              </div>
+                <p>asdas</p>
               </div>
               <div className="input-group mb-3">
                 <span className="input-group-text">
@@ -128,6 +145,8 @@ function ModalLogin() {
           </div>
         </form>
       </div>
+
+      <ToastContainer/>
     </div>
   )
 }

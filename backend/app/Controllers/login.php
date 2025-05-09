@@ -4,10 +4,6 @@ header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../../config/database.php';
-require_once __DIR__ . '/../Models/classes/Usuario.php';
-require_once __DIR__ . '/../dao/UsuarioDAO.php';
-
 // Verificar se é uma requisição OPTIONS (pré-requisito para CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -18,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Verifica se os campos foram enviados
-if (empty($data['login']) || empty($data['senha'])) {
-    echo json_encode(['status' => 'erro', 'mensagem' => 'login ou senha em branco.']);
+if (empty($data['email']) || empty($data['senha'])) {
+    echo json_encode(['status' => 'erro', 'mensagem' => 'email ou senha em branco.']);
     exit;
 }
 
-$login = trim($data['login']);
+$email = trim($data['email']);
 $senha = trim($data['senha']);
 
 // Conecta ao banco
@@ -32,10 +28,10 @@ $db = $database->getConnection();
 $usuarioDAO = new UsuarioDAO($db);
 
 // Verifica se o login é um e-mail ou nome de usuário
-if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-    $usuario = $usuarioDAO->buscarUsuarioPorEmail($login);
+if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $usuario = $usuarioDAO->buscarUsuarioPorEmail($email);
 } else {
-    $usuario = $usuarioDAO->buscarUsuarioPorNome($login);
+    $usuario = $usuarioDAO->buscarUsuarioPorNome($email);
 }
 
 if (!$usuario) {

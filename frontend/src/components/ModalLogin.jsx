@@ -84,23 +84,23 @@ function ModalLogin() {
             <div>
               <div>
                 <div className="input-group mb-1">
-                <span className="input-group-text">
-                  <i className="bi bi-envelope-at-fill"></i>
-                </span>
-                <div className="form-floating">
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="inputEmailLogin"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder=""
-                    required
-                  />
-                  <label htmlFor="inputEmailLogin">E-mail</label>
+                  <span className="input-group-text">
+                    <i className="bi bi-envelope-at-fill"></i>
+                  </span>
+                  <div className="form-floating">
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="inputEmailLogin"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder=""
+                      required
+                    />
+                    <label htmlFor="inputEmailLogin">E-mail</label>
+                  </div>
                 </div>
-              </div>
                 <p>asdas</p>
               </div>
               <div className="input-group mb-3">

@@ -6,6 +6,8 @@ function ModalCadastro() {
   const urlBase = URL_BASE;
   const port = import.meta.env.VITE_PORT_BACKEND || 80;
 
+  const [errors, setErrors] = useState([]);
+
   const [formData, setFormData] = useState({
     nome_completo: "",
     nome_usuario: "",
@@ -32,7 +34,8 @@ function ModalCadastro() {
         formData.senha == "" ||
         confirmPassword == ""
     ) {
-      alert("Preencha todos os campos!");
+      setErrors()
+      setErrors()
       return;
     }
 
@@ -84,7 +87,7 @@ function ModalCadastro() {
       aria-labelledby="cadastroModalLabel"
     >
       <div className="modal-dialog modal-dialog-centered">
-        <form className="modal-content" onSubmit={handleSubmit}>
+        <form className="modal-content needs-validation" noValidate onSubmit={handleSubmit}>
           <div className="modal-header">
             <h2 className="modal-title fs-5" id="cadastroModalLabel">
               Cadastro
@@ -105,8 +108,9 @@ function ModalCadastro() {
                   </span>
                   <div className="form-floating">
                     <input
+                      required
                       type="text"
-                      className="form-control"
+                      className={`form-control ${formData.nome_completo == "" ? "is-invalid" : "is-valid"}`}
                       id="inputNomeCompleto"
                       name="nome_completo"
                       placeholder=""
@@ -124,6 +128,7 @@ function ModalCadastro() {
                   </span>
                   <div className="form-floating">
                     <input
+                      required
                       type="text"
                       className="form-control"
                       id="inputNomeUsuario"
@@ -143,6 +148,7 @@ function ModalCadastro() {
                   </span>
                   <div className="form-floating">
                     <input
+                      required
                       type="email"
                       className="form-control"
                       id="inputEmailCadastro"
@@ -162,6 +168,7 @@ function ModalCadastro() {
                   </span>
                   <div className="form-floating">
                     <input
+                      required
                       type="password"
                       className="form-control"
                       id="inputSenhaCadastro"
@@ -181,6 +188,7 @@ function ModalCadastro() {
                   </span>
                   <div className="form-floating">
                     <input
+                      required
                       type="password"
                       className="form-control"
                       id="inputConfirmarSenha"

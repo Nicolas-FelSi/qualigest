@@ -16,11 +16,11 @@ function Perfil() {
                 <form className="w-100">
                   <div className="mb-3">
                     <label htmlFor="emailId" className="form-label">E-mail</label>
-                    <input type="email" className="form-control p-2 bg-secondary-subtle border border-secondary" id="emailId" placeholder="exemplo@gmail.com"/>
+                    <input type="email" className="form-control p-2 bg-primary-subtle border border-secondary-subtle" id="emailId" placeholder="exemplo@gmail.com"/>
                   </div>
                   <div className="mb-3">
                     <label htmlFor="senhaId" className="form-label">Senha</label>
-                    <input type="password" className="form-control p-2 bg-secondary-subtle border border-secondary" id="senhaId" placeholder="*******"/>
+                    <input type="password" className="form-control p-2 bg-primary-subtle border border-secondary-subtle" id="senhaId" placeholder="*******"/>
                   </div>
                 </form>
               </div>

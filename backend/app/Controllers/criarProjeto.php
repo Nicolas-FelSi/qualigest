@@ -1,10 +1,8 @@
 <?php
-
 session_start();
 
 // Verifica se o usuário está autenticado
 if (!isset($_SESSION['usuario_id'])) {
-    // Redireciona para a página principal se não estiver logado
     header('Location: /qualigest/frontend/src/pages/PaginaInicial');
     exit;
 }
@@ -23,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Models/classes/Projeto.php';
 require_once __DIR__ . '/../Models/DAO/ProjetoDAO.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioProjetoDAO.php';
 
 // Lê os dados enviados pelo frontend
 $data = json_decode(file_get_contents("php://input"), true);
@@ -33,24 +32,36 @@ if (empty($data['nome_projeto'])) {
     exit;
 }
 
+$participantes = isset($data['participantes']) && is_array($data['participantes']) ? $data['participantes'] : [];
+
 // Cria o objeto Projeto
 $projeto = new Projeto();
 $projeto->setNomeProjeto(trim($data['nome_projeto']));
-$projeto->setIdUsuario($_SESSION['usuario_id']); // ID do usuário autenticado
+$projeto->setIdUsuario($_SESSION['usuario_id']); // ID do líder
 
 // Conecta ao banco
 $database = new Database();
 $db = $database->getConnection();
 $projetoDAO = new ProjetoDAO($db);
+$usuarioProjetoDAO = new UsuarioProjetoDAO($db);
 
-// Insere o projeto
-$sucesso = $projetoDAO->inserirProjeto($projeto->getNomeProjeto(), $projeto->getIdUsuario());
+// Insere o projeto e obtém o ID gerado
+$idProjeto = $projetoDAO->inserirProjeto($projeto->getNomeProjeto(), $projeto->getIdUsuario());
 
-if ($sucesso) {
-    echo json_encode(['status' => 'sucesso', 'mensagem' => 'Projeto inserido com sucesso.']);
+if ($idProjeto !== false) {
+    // Associa o líder ao projeto também
+    $usuarioProjetoDAO->inserirAssociacao($projeto->getIdUsuario(), $idProjeto);
+
+    // Associa os participantes enviados (se houver)
+    foreach ($participantes as $idParticipante) {
+        // Evita duplicar o líder se ele estiver incluído na lista
+        if ($idParticipante != $projeto->getIdUsuario()) {
+            $usuarioProjetoDAO->inserirAssociacao($idParticipante, $idProjeto);
+        }
+    }
+
+    echo json_encode(['status' => 'sucesso', 'mensagem' => 'Projeto criado com sucesso.']);
 } else {
     echo json_encode(['status' => 'erro', 'mensagem' => 'Erro ao inserir projeto.']);
 }
-
-
 ?>

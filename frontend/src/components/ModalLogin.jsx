@@ -1,13 +1,17 @@
 import { useState } from "react";
+import { toast } from "react-toastify"
+import { Modal } from "bootstrap"
+import { useNavigate } from "react-router-dom"
 import URL_BASE from "../urlBase";
 import { toast, ToastContainer } from "react-toastify";
 
 function ModalLogin() {
   const urlBase = URL_BASE;
-  const port = import.meta.env.VITE_PORT_BACKEND || 80;
+  const navigate = useNavigate();
+  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
-    email: "",
+    login: "",
     senha: ""
   })
 
@@ -21,7 +25,7 @@ function ModalLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.email == "" || formData.senha == "") {
+    if (formData.login == "" || formData.senha == "") {
       alert("Preencha todos os campos!");
       return;
     }
@@ -40,21 +44,19 @@ function ModalLogin() {
 
       const data = await response.json();
 
-      console.log(data);
-
-      if (data.status === "sucesso") {
-        setFormData({
-          email: "",
-          senha: ""
-        })
-
-        const notify = () => toast.success(data.mensagem);
-        notify();
-      } else {
+      if (data.status == "erro") {
         const notify = () => toast.error(data.mensagem);
         notify();
-      }
+      } else {
+        const notify = () => toast.success(data.mensagem);
+        notify(); 
 
+        const modalElement = document.getElementById('loginModal');
+        const modal = Modal.getInstance(modalElement);
+        modal.hide();
+
+        navigate("/projetos");
+      }
     } catch (error) {
       console.error("Erro ao logar:", error);
     }
@@ -82,26 +84,23 @@ function ModalLogin() {
           </div>
           <div className="modal-body">
             <div>
-              <div>
-                <div className="input-group mb-1">
-                  <span className="input-group-text">
-                    <i className="bi bi-envelope-at-fill"></i>
-                  </span>
-                  <div className="form-floating">
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="inputEmailLogin"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder=""
-                      required
-                    />
-                    <label htmlFor="inputEmailLogin">E-mail</label>
-                  </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">
+                  <i className="bi bi-envelope-at-fill"></i>
+                </span>
+                <div className="form-floating">
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="inputEmailLogin"
+                    name="login"
+                    value={formData.login}
+                    onChange={handleChange}
+                    placeholder=""
+                    required
+                  />
+                  <label htmlFor="inputEmailLogin">Login (e-mail)</label>
                 </div>
-                <p>asdas</p>
               </div>
               <div className="input-group mb-3">
                 <span className="input-group-text">
@@ -127,7 +126,6 @@ function ModalLogin() {
             <button
               type="submit"
               className="btn btn-dark w-100"
-              data-bs-dismiss=""
             >
               Entrar
             </button>

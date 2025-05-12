@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import { MdSearch } from "react-icons/md";
 import ModalCriarProjeto from "../components/ModalCriarProjeto";
+import { useNavigate } from "react-router-dom";
 
 function Projetos() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
+
+  useEffect(() => {
+    if (!localStorage.getItem("isLoggedIn")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <div className="flex gap-1 lg:gap-3">

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import URL_BASE from "../urlBase";
+import { useNavigate } from "react-router-dom";
 
 function ModalCriarProjeto({ isOpen, closeModal }) {
   const urlBase = URL_BASE;
+  const navigate = useNavigate();
   const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
@@ -46,6 +48,10 @@ function ModalCriarProjeto({ isOpen, closeModal }) {
       } else {
         const notify = () => toast.error(data.mensagem);
         notify();
+        if (response.status === 401) {
+          localStorage.removeItem("isLoggedIn");
+          navigate("/"); 
+        }
       }
     } catch (error) {
       console.error("Erro ao criar projeto:", error);

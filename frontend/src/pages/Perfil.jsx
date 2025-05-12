@@ -1,6 +1,13 @@
+import { useState } from "react";
 import Aside from "../components/Aside";
+import ModalPerfil from "../components/ModalPerfil";
 
 function Perfil() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
+
   return (
     <div className="flex gap-1 lg:gap-3">
       <Aside />
@@ -65,33 +72,32 @@ function Perfil() {
               </form>
             </div>
             <div className="flex flex-col lg:flex-row gap-4">
-              <div
-                className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full"
-              >
+              <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
                 <p className="text-md">Pontuação total</p>
                 <span className="text-lg font-normal">0</span>
               </div>
-              <div
-                className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full"
-              >
+              <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
                 <p className="text-md">Tarefas concluídas</p>
                 <span className="text-lg font-normal">0</span>
               </div>
-              <div
-                className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full"
-              >
+              <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
                 <p className="text-md">Tarefas atrasadas</p>
                 <span className="text-lg font-normal">0</span>
               </div>
             </div>
             <div>
-              <button type="button" className="bg-black text-white rounded-md cursor-pointer hover:bg-black/80 transition-all w-full p-2">
+              <button
+                type="button"
+                onClick={openModal}
+                className="bg-black text-white rounded-md cursor-pointer hover:bg-black/80 transition-all w-full p-2"
+              >
                 Editar perfil
               </button>
             </div>
           </div>
         </section>
       </main>
+      <ModalPerfil isOpen={isOpen} closeModal={closeModal} />
     </div>
   );
 }

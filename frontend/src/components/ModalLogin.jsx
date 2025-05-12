@@ -34,6 +34,7 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
         `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/login.php`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -47,6 +48,7 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
         const notify = () => toast.error(data.mensagem);
         notify();
       } else {
+        localStorage.setItem("isLoggedIn", "true")
         const notify = () => toast.success(data.mensagem);
         notify();
 

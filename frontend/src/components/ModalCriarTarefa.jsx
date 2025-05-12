@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import URL_BASE from "../urlBase";
-import { MdAccountCircle, MdEmail, MdKey, MdPerson } from "react-icons/md";
 
-function ModalCadastro({isOpen, closeModal, openModalLogin}) {
+function ModalCriarTarefa({ isOpen, closeModal }) {
   const urlBase = URL_BASE;
   const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
@@ -99,26 +98,23 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
           onClick={e => e.stopPropagation()}
         >
           <h2 className="text-xl text-gray-900 font-semibold">
-            Cadastro
+            Criar tarefa
           </h2>
           <hr className="mx-[-1.3rem] opacity-15 mt-4" />
           <div className="mt-2">
             <label
-              htmlFor="inputNomeCompleto"
+              htmlFor="tituloTarefaId"
               className="mb-2 text-sm font-medium"
             >
-              Nome completo
+              Título da tarefa
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                <MdPerson />
-              </span>
               <input
                 type="text"
-                id="inputNomeCompleto"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Informe seu nome completo"
-                name="nome_completo"
+                id="tituloTarefaId"
+                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                placeholder="Informe um título para a tarefa"
+                name="titulo"
                 value={formData.nome_completo}
                 onChange={handleChange}
               />
@@ -126,21 +122,18 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
           </div>
           <div className="mt-2">
             <label
-              htmlFor="inputNomeUsuario"
+              htmlFor="descricaoTarefaId1"
               className="mb-2 text-sm font-medium"
             >
-              Usuário
+              Descrição da tarefa
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                  <MdAccountCircle />
-              </span>
-              <input
+              <textarea
                 type="text"
-                id="inputNomeUsuario"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Informe seu nome de usuário"
-                name="nome_usuario"
+                id="descricaoTarefaId1"
+                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                placeholder="Informe uma descrição para a tarefa"
+                name="descricao"
                 value={formData.nome_usuario}
                 onChange={handleChange}
               />
@@ -148,21 +141,17 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
           </div>
           <div className="mt-2">
             <label
-              htmlFor="inputEmailLogin"
+              htmlFor="dataEntregaId"
               className="mb-2 text-sm font-medium"
             >
-              E-mail
+              Data de entrega
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                <MdEmail />
-              </span>
               <input
-                type="text"
-                id="inputEmailLogin"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="email@exemplo.com"
-                name="email"
+                type="date"
+                id="dataEntregaId"
+                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                name="data_entrega"
                 value={formData.email}
                 onChange={handleChange}
               />
@@ -170,66 +159,55 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
           </div>
           <div className="mt-2">
             <label
-              htmlFor="inputSenhaLogin"
+              htmlFor="prioridadeTarefaId"
               className="mb-2 text-sm font-medium"
             >
-              Senha
+              Prioridade
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                <MdKey />
-              </span>
-              <input
-                type="password"
-                id="inputSenhaLogin"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="**********"
-                name="senha"
+              <select
+                id="prioridadeTarefaId"
+                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                name="prioridade"
                 value={formData.senha}
                 onChange={handleChange}
-              />
+              >
+                <option className="text-body-tertiary" defaultValue={true}>
+                  Selecione uma prioridade
+                </option>
+                <option value="Baixa">Baixa</option>
+                <option value="Moderada">Moderada</option>
+                <option value="Alta">Alta</option>
+                <option value="Urgente">Urgente</option>
+              </select>
             </div>
           </div>
           <div className="mt-2">
             <label
-              htmlFor="confirmarSenha"
+              htmlFor="responsavelTarefaId"
               className="mb-2 text-sm font-medium"
             >
-              Confirmar senha
+              Responsável
             </label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                <MdKey />
-              </span>
-              <input
-                type="password"
-                id="confirmarSenha"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="**********"
-                name="confirmarSenha"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+              <select
+                id="responsavelTarefaId"
+                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                name="responsavel"
+                value={formData.senha}
+                onChange={handleChange}
+              >
+                <option className="text-body-tertiary" defaultValue={true}>
+                  Selecione um responsável
+                </option>
+              </select>
             </div>
           </div>
           <hr className="mx-[-1.3rem] mt-5 opacity-15"/>
           <div>
             <button type="submit" className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all">
-              Cadastrar
+              Criar tarefa
             </button>
-            <p className="text-center mt-2">
-              Já tem uma conta?
-              <span
-                className="underline cursor-pointer hover:text-blue-900 text-blue-600 font-semibold"
-                onClick={() => {
-                  closeModal()
-                  openModalLogin()
-                }}
-              >
-                {" "}
-                Fazer login
-              </span>
-            </p>
           </div>
         </form>
       </div>
@@ -237,4 +215,4 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
   }
 }
 
-export default ModalCadastro;
+export default ModalCriarTarefa;

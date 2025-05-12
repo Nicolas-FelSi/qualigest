@@ -1,19 +1,18 @@
 import { useState } from "react";
-import { toast } from "react-toastify"
-import { Modal } from "bootstrap"
-import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import URL_BASE from "../urlBase";
-import { toast, ToastContainer } from "react-toastify";
+import { MdEmail, MdKey, MdLock } from "react-icons/md";
 
-function ModalLogin() {
+function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
   const urlBase = URL_BASE;
   const navigate = useNavigate();
   const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
-    login: "",
-    senha: ""
-  })
+    email: "",
+    senha: "",
+  });
 
   const handleChange = (e) => {
     setFormData({
@@ -25,7 +24,7 @@ function ModalLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.login == "" || formData.senha == "") {
+    if (formData.email == "" || formData.senha == "") {
       alert("Preencha todos os campos!");
       return;
     }
@@ -49,104 +48,105 @@ function ModalLogin() {
         notify();
       } else {
         const notify = () => toast.success(data.mensagem);
-        notify(); 
+        notify();
 
-        const modalElement = document.getElementById('loginModal');
-        const modal = Modal.getInstance(modalElement);
-        modal.hide();
+        closeModal();
 
         navigate("/projetos");
       }
     } catch (error) {
       console.error("Erro ao logar:", error);
     }
-  }
+  };
 
-  return (
-    <div
-      className="modal fade"
-      id="loginModal"
-      tabIndex="-1"
-      aria-labelledby="loginModalLabel"
-    >
-      <div className="modal-dialog modal-dialog-centered">
-        <form className="modal-content" onSubmit={handleSubmit}>
-          <div className="modal-header">
-            <h2 className="modal-title fs-5" id="loginModalLabel">
-              Login
-            </h2>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div className="modal-body">
-            <div>
-              <div className="input-group mb-3">
-                <span className="input-group-text">
-                  <i className="bi bi-envelope-at-fill"></i>
+  if (isOpen) {
+    return (
+      <div
+        className="inset-0 bg-black/75 fixed flex items-center justify-center"
+        onClick={closeModal}
+      >
+        <form
+          className="bg-white p-5 rounded-lg z-50 w-lg mx-2"
+          noValidate
+          onSubmit={handleSubmit}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2
+            className="text-xl text-gray-900 font-semibold"
+            id="cadastroModalLabel"
+          >
+            Login
+          </h2>
+          <hr className="mx-[-1.3rem] opacity-15 mt-4" />
+          <div>
+            <div className="mt-4">
+              <label
+                htmlFor="inputEmailLogin"
+                className="mb-2 text-sm font-medium"
+              >
+                E-mail
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
+                  <MdEmail />
                 </span>
-                <div className="form-floating">
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="inputEmailLogin"
-                    name="login"
-                    value={formData.login}
-                    onChange={handleChange}
-                    placeholder=""
-                    required
-                  />
-                  <label htmlFor="inputEmailLogin">Login (e-mail)</label>
-                </div>
+                <input
+                  type="email"
+                  id="inputEmailLogin"
+                  className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                  placeholder="email@exemplo.com"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
               </div>
-              <div className="input-group mb-3">
-                <span className="input-group-text">
-                  <i className="bi bi-key-fill"></i>
+            </div>
+            <div className="mt-4">
+              <label
+                htmlFor="inputSenhaLogin"
+                className="mb-2 text-sm font-medium"
+              >
+                Senha
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
+                  <MdKey />
                 </span>
-                <div className="form-floating">
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="inputSenhaLogin"
-                    name="senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                    placeholder=""
-                    required
-                  />
-                  <label htmlFor="inputSenhaLogin">Senha</label>
-                </div>
+                <input
+                  type="password"
+                  id="inputSenhaLogin"
+                  className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                  placeholder="**************"
+                  name="senha"
+                  value={formData.senha}
+                  onChange={handleChange}
+                />
               </div>
             </div>
           </div>
-          <div className="modal-footer justify-content-center">
-            <button
-              type="submit"
-              className="btn btn-dark w-100"
-            >
+          <hr className="mx-[-1.3rem] mt-5 opacity-15"/>
+          <div>
+            <button type="submit" className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all">
               Entrar
             </button>
-            <p>
+            <p className="text-center mt-2">
               Não tem uma conta?
               <span
-                role="button"
-                data-bs-toggle="modal"
-                data-bs-target="#cadastroModal"
-                className="text-decoration-underline text-primary fw-semibold"
+                className="underline cursor-pointer hover:text-blue-900 text-blue-600 font-semibold"
+                onClick={() => {
+                  closeModal()
+                  openModalCadastro()
+                }}
               >
-                {" "}Cadastre-se
+                {" "}
+                Cadastre-se
               </span>
             </p>
           </div>
         </form>
       </div>
-
-      <ToastContainer/>
-    </div>
-  )
+    );
+  }
 }
 
 export default ModalLogin;

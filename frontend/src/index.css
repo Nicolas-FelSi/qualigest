@@ -1,6 +1,1 @@
-:root {
-  --azul: #B2D7FF;
-  --cinza: #E5E7EB;
-  --amarelo: #f08710;
-  --cinza-claro: #eeeeee;
-}
+@import "tailwindcss";

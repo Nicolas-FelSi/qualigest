@@ -33,11 +33,39 @@ function PaginaInicial() {
             Cadastrar
           </button>
         </nav>
-        <button type="button" className="sm:hidden cursor-pointer">
+        <button class="relative group sm:hidden cursor-pointer">
           <MdMenu className="text-4xl text-amber-600" />
+          <div class="absolute left-0 top-full w-[600px] bg-white shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-all duration-300 z-10 p-6 rounded-lg">
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Categoria 1</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 1</a></li>
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 2</a></li>
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 3</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Categoria 2</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 4</a></li>
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 5</a></li>
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 6</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Categoria 3</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 7</a></li>
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 8</a></li>
+                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 9</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </button>
       </header>
-      <main className="flex items-center flex-col my-5 p-2">
+      <main className="flex items-center flex-col py-6 p-2">
         <h2 className="text-amber-600 text-2xl lg:text-3xl font-semibold">
           Bem-vindo ao QualiGest
         </h2>
@@ -65,44 +93,6 @@ function PaginaInicial() {
           </div>
         </div>
       </main>
-
-      {/* <!-- Menu --> */}
-      <div
-        className="offcanvas offcanvas-start"
-        tabIndex="-1"
-        id="menuPaginaInicial"
-        aria-labelledby="menuPaginaInicialLabel"
-      >
-        <div className="offcanvas-header">
-          <h5 className="" id="menuPaginaInicialLabel">
-            QualiGest
-          </h5>
-          <button
-            type="button"
-            className="btn-close"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div className="offcanvas-body p-0">
-          <nav className="d-flex gap-4 flex-column text-center w-100">
-            <a
-              className="rounded-1 border-0 text-decoration-none border-bottom w-100"
-              data-bs-toggle="modal"
-              data-bs-target="#loginModal"
-            >
-              Entrar
-            </a>
-            <a
-              className="rounded-1 border-0 text-decoration-none border-bottom w-100"
-              data-bs-toggle="modal"
-              data-bs-target="#cadastroModal"
-            >
-              Cadastrar
-            </a>
-          </nav>
-        </div>
-      </div>
 
       <ModalLogin
         isOpen={isOpenLogin}

@@ -6,6 +6,9 @@ import { useState } from "react";
 function PaginaInicial() {
   const [isOpenLogin, setIsOpenLogin] = useState(false);
   const [isOpenCadastro, setIsOpenCadastro] = useState(false);
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
+
+  const toggleMenu = () => setIsOpenMenu(!isOpenMenu);
 
   const closeModalCadastro = () => setIsOpenCadastro(false);
   const openModalCadastro = () => setIsOpenCadastro(true);
@@ -33,36 +36,30 @@ function PaginaInicial() {
             Cadastrar
           </button>
         </nav>
-        <button class="relative group sm:hidden cursor-pointer">
+        <button
+          className="relative group sm:hidden cursor-pointer"
+          onClick={toggleMenu}
+        >
           <MdMenu className="text-4xl text-amber-600" />
-          <div class="absolute left-0 top-full w-[600px] bg-white shadow-lg opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-all duration-300 z-10 p-6 rounded-lg">
-            <div class="grid grid-cols-3 gap-4">
+          {isOpenMenu && (
+            <div className="absolute right-0 top-full bg-gray-100 shadow-lg z-10 rounded-lg">
               <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Categoria 1</h3>
-                <ul class="space-y-2">
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 1</a></li>
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 2</a></li>
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 3</a></li>
-                </ul>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Categoria 2</h3>
-                <ul class="space-y-2">
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 4</a></li>
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 5</a></li>
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 6</a></li>
-                </ul>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Categoria 3</h3>
-                <ul class="space-y-2">
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 7</a></li>
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 8</a></li>
-                  <li><a href="#" class="text-gray-600 hover:text-blue-500">Item 9</a></li>
-                </ul>
+                <p
+                  className="py-3 px-8 hover:bg-gray-500 hover:text-white rounded-t-lg transition-all"
+                  onClick={openModalLogin}
+                >
+                  Entrar
+                </p>
+                <hr className="mx-[-0.05rem] opacity-10" />
+                <p
+                  className="py-3 px-8 hover:bg-gray-500 hover:text-white rounded-b-lg transition-all"
+                  onClick={openModalCadastro}
+                >
+                  Cadastrar
+                </p>
               </div>
             </div>
-          </div>
+          )}
         </button>
       </header>
       <main className="flex items-center flex-col py-6 p-2">

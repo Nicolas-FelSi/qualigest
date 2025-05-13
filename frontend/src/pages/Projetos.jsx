@@ -3,13 +3,43 @@ import Aside from "../components/Aside";
 import { MdSearch } from "react-icons/md";
 import ModalCriarProjeto from "../components/ModalCriarProjeto";
 import { useNavigate } from "react-router-dom";
+import URL_BASE from "../urlBase";
+import ProjetoCard from "../components/ProjetoCard";
 
 function Projetos() {
   const [isOpen, setIsOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+
+  const urlBase = URL_BASE;
+  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
   const navigate = useNavigate();
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
+
+  useEffect(() => {
+    async function getProjects() {
+      try {
+        const response = await fetch(
+          `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        const data = await response.json();
+  
+        setProjects(data.projetos);
+      } catch (error) {
+        console.error("Erro ao pegar projetos:", error);
+      }
+    }
+    getProjects();
+  }, [port, urlBase]);
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
@@ -39,122 +69,11 @@ function Projetos() {
           </div>
         </form>
         <section className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-white shadow-sm">
-            <h2 className="border-b border-gray-300 p-2 text-2xl text-amber-600">
-              Marketing Digital
-            </h2>
-            <div className="py-2 px-5 text-center flex flex-col">
-              <p className="bg-gray-500 py-0.5 px-3 rounded-md text-white">
-                5 tarefas designadas para você
-              </p>
-              <p className="bg-amber-300 text-sm mt-2 py-0.5 px-3 rounded-md">
-                1 tarefa está atrasada
-              </p>
-              <ul className="flex justify-end mt-4">
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa1.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa2.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa3.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa4.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa5.jpg"
-                    alt=""
-                  />
-                </li>
-              </ul>
-            </div>
-            <div className="flex gap-5 border-t border-gray-300 p-2">
-              <button className="bg-amber-300 rounded-sm hover:bg-amber-500 cursor-pointer transition-all font-semibold p-2 w-full">
-                Editar
-              </button>
-              <button className="bg-red-500 rounded-sm hover:bg-red-700 cursor-pointer transition-all font-semibold p-2 w-full">
-                Deletar
-              </button>
-            </div>
-          </div>
-          <div className="bg-white shadow-sm">
-            <h2 className="border-b border-gray-300 p-2 text-2xl text-amber-600">
-              Marketing Digital
-            </h2>
-            <div className="py-2 px-5 text-center flex flex-col">
-              <p className="bg-gray-500 py-0.5 px-3 rounded-md text-white">
-                5 tarefas designadas para você
-              </p>
-              <p className="bg-amber-300 text-sm mt-2 py-0.5 px-3 rounded-md">
-                1 tarefa está atrasada
-              </p>
-              <ul className="flex justify-end mt-4">
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa1.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa2.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa3.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa4.jpg"
-                    alt=""
-                  />
-                </li>
-                <li>
-                  <img
-                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                    src="/images/pessoa5.jpg"
-                    alt=""
-                  />
-                </li>
-              </ul>
-            </div>
-            <div className="flex gap-5 border-t border-gray-300 p-2">
-              <button className="bg-amber-300 rounded-sm hover:bg-amber-500 cursor-pointer transition-all font-semibold p-2 w-full">
-                Editar
-              </button>
-              <button className="bg-red-500 rounded-sm hover:bg-red-700 cursor-pointer transition-all font-semibold p-2 w-full">
-                Deletar
-              </button>
-            </div>
-          </div>
+          { 
+            projects.map(project => (
+              <ProjetoCard key={project.id_projeto} project={project}/>
+            ))
+          }
           <div className="bg-white shadow-sm flex justify-center items-center">
             <div 
               className="bg-gray-300 w-40 h-40 rounded-full flex items-center justify-center text-6xl cursor-pointer hover:scale-105 transition-all"

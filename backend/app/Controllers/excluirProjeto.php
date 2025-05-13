@@ -37,7 +37,7 @@ $projetoDAO = new ProjetoDAO($db);
 $usuarioProjetoDAO = new UsuarioProjetoDAO($db);
 
 // Exclui todas as associações do projeto com usuários
-$query = "DELETE FROM usuario_projeto WHERE id_projeto = :id_projeto";
+$query = "DELETE FROM participantesprojeto WHERE id_projeto = :id_projeto";
 $stmt = $db->prepare($query);
 $stmt->bindParam(':id_projeto', $id_projeto);
 $stmt->execute();

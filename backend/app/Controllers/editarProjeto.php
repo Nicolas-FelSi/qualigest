@@ -44,7 +44,7 @@ $usuarioProjetoDAO = new UsuarioProjetoDAO($db);
 $projetoAtualizado = $projetoDAO->atualizarProjeto($id_projeto, $nome_projeto, $pontuacao_projeto, $id_usuario_lider);
 
 // Busca participantes atuais do projeto
-$query = "SELECT id_usuario FROM usuario_projeto WHERE id_projeto = :id_projeto";
+$query = "SELECT id_usuario FROM participantesprojeto WHERE id_projeto = :id_projeto";
 $stmt = $db->prepare($query);
 $stmt->bindParam(':id_projeto', $id_projeto);
 $stmt->execute();

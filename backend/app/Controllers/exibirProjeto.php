@@ -28,7 +28,7 @@ $projetoDAO = new ProjetoDAO($db);
 // Busca os projetos que o usuário participa
 $query = "SELECT p.id_projeto, p.nome_projeto, p.pontuacao_projeto, p.id_usuario AS id_lider
           FROM projetos p
-          INNER JOIN usuario_projeto up ON p.id_projeto = up.id_projeto
+          INNER JOIN participantesprojeto up ON p.id_projeto = up.id_projeto
           WHERE up.id_usuario = :id_usuario";
 
 $stmt = $db->prepare($query);

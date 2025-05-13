@@ -13,7 +13,7 @@ class UsuarioProjetoDAO {
 
     // Método para inserir uma nova associação entre usuário e projeto
     public function inserirAssociacao($id_usuario, $id_projeto) {
-        $query = "INSERT INTO usuario_projeto (id_usuario, id_projeto)
+        $query = "INSERT INTO participantesprojeto (id_usuario, id_projeto)
                   VALUES (:id_usuario, :id_projeto)";
         
         $stmt = $this->conn->prepare($query);

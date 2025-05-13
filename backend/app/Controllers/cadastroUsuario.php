@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 // Verificar se é uma requisição OPTIONS (pré-requisito para CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+    http_response_code(204);
     exit;
 }
 

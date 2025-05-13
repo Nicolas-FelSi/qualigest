@@ -13,7 +13,7 @@ class UsuarioTarefaDAO {
 
     // Método para inserir uma nova associação entre usuário e tarefa
     public function inserirAssociacao($id_usuario, $id_tarefa) {
-        $query = "INSERT INTO usuario_tarefa (id_usuario, id_tarefa)
+        $query = "INSERT INTO responsaveistarefa (id_usuario, id_tarefa)
                   VALUES (:id_usuario, :id_tarefa)";
         
         $stmt = $this->conn->prepare($query);

@@ -87,6 +87,40 @@ class TarefaDAO {
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // Conta quantas tarefas estão concluídas para um usuário
+public function contarTarefasConcluidas($id_usuario) {
+    $query = "
+        SELECT COUNT(*) 
+        FROM usuario_tarefa ut
+        JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
+        WHERE ut.id_usuario = :id_usuario AND t.status = 'concluido'
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->execute();
+
+    return (int) $stmt->fetchColumn();
+}
+
+// Conta quantas tarefas estão em atraso para um usuário
+public function contarTarefasEmAtraso($id_usuario) {
+    $query = "
+        SELECT COUNT(*) 
+        FROM usuario_tarefa ut
+        JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
+        WHERE ut.id_usuario = :id_usuario 
+        AND t.status != 'concluido' 
+        AND t.data_limite < NOW()
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->execute();
+
+    return (int) $stmt->fetchColumn();
+}
 }
 
 ?>

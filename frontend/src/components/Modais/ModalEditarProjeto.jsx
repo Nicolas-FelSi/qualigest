@@ -41,6 +41,7 @@ function ModalEditarProjeto({ isOpen, closeModal, data }) {
       if (data.status === "sucesso") {
         closeModal();
         setFormData({
+          ...formData,
           nome_projeto: "",
         });
 

@@ -3,19 +3,22 @@
 require_once __DIR__ . '/../../../config/Database.php';  // Caminho correto para o Database.php
 include_once __DIR__ . '/../classes/Tarefa.php'; // Caminho correto para Tarefa.php
 
-class TarefaDAO {
+class TarefaDAO
+{
     private $conn;
 
     // Construtor que recebe a conexão com o banco de dados
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
     // Método para inserir uma nova tarefa
-    public function inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status, $id_projeto) {
+    public function inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status, $id_projeto)
+    {
         $query = "INSERT INTO tarefas (titulo, descricao, data_inicio, data_limite, prioridade, pontuacao_Tarefa, status, id_projeto) 
                   VALUES (:titulo, :descricao, :dataInicio, :dataLimite, :prioridade, :pontuacaoTarefa, :status, :id_projeto)";
-        
+
         $stmt = $this->conn->prepare($query);
 
         // Vinculando os parâmetros aos valores
@@ -32,19 +35,21 @@ class TarefaDAO {
     }
 
     // Método para buscar uma tarefa pelo ID
-    public function buscarTarefaPorId($id_tarefa) {
+    public function buscarTarefaPorId($id_tarefa)
+    {
         $query = "SELECT * FROM tarefas WHERE id_tarefa = :id_tarefa";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_tarefa', $id_tarefa);
-        
+
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null; // Retorna a tarefa ou null se não encontrar
     }
 
     // Método para atualizar uma tarefa
-    public function atualizarTarefa($id_tarefa, $titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status) {
+    public function atualizarTarefa($id_tarefa, $titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status)
+    {
         $query = "UPDATE tarefas 
                   SET titulo = :titulo, descricao = :descricao, data_inicio = :dataInicio, 
                       data_limite = :dataimite, prioridade = :prioridade, 
@@ -67,7 +72,8 @@ class TarefaDAO {
     }
 
     // Método para excluir uma tarefa
-    public function excluirTarefa($id_tarefa) {
+    public function excluirTarefa($id_tarefa)
+    {
         $query = "DELETE FROM tarefas WHERE id_tarefa = :id_tarefa";
 
         $stmt = $this->conn->prepare($query);
@@ -77,50 +83,51 @@ class TarefaDAO {
     }
 
     // Método para buscar todas as tarefas de um projeto específico
-    public function buscarTarefasPorProjeto($id_projeto) {
+    public function buscarTarefasPorProjeto($id_projeto)
+    {
         $query = "SELECT * FROM tarefas WHERE id_projeto = :id_projeto";
-        
+
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_projeto', $id_projeto);
-        
+
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Conta quantas tarefas estão concluídas para um usuário
-public function contarTarefasConcluidas($id_usuario) {
-    $query = "
+    public function contarTarefasConcluidas($id_usuario)
+    {
+        $query = "
+            SELECT COUNT(*) 
+            FROM responsaveistarefa ut
+            JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
+            WHERE ut.id_usuario = :id_usuario AND t.status = 'concluido'
+        ";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->execute();
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    // Conta quantas tarefas estão em atraso para um usuário
+    public function contarTarefasEmAtraso($id_usuario)
+    {
+        $query = "
         SELECT COUNT(*) 
-        FROM usuario_tarefa ut
-        JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
-        WHERE ut.id_usuario = :id_usuario AND t.status = 'concluido'
-    ";
-
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(':id_usuario', $id_usuario);
-    $stmt->execute();
-
-    return (int) $stmt->fetchColumn();
-}
-
-// Conta quantas tarefas estão em atraso para um usuário
-public function contarTarefasEmAtraso($id_usuario) {
-    $query = "
-        SELECT COUNT(*) 
-        FROM usuario_tarefa ut
+        FROM responsaveistarefa ut
         JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
         WHERE ut.id_usuario = :id_usuario 
         AND t.status != 'concluido' 
         AND t.data_limite < NOW()
     ";
 
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(':id_usuario', $id_usuario);
-    $stmt->execute();
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->execute();
 
-    return (int) $stmt->fetchColumn();
+        return (int) $stmt->fetchColumn();
+    }
 }
-}
-
-?>

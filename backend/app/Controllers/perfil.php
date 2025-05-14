@@ -53,4 +53,3 @@ $perfil = [
 ];
 
 echo json_encode($perfil);
-?>

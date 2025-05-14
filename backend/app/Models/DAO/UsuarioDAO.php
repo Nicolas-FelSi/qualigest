@@ -118,7 +118,7 @@ class UsuarioDAO {
                         (
                             SELECT COUNT(*) 
                             FROM tarefas t 
-                            INNER JOIN usuario_projeto up ON t.id_projeto = up.id_projeto
+                            INNER JOIN participantesprojeto up ON t.id_projeto = up.id_projeto
                             WHERE up.id_usuario = u.id_usuario AND t.status = 'atrasada'
                         ) AS tarefas_atrasadas
                   FROM usuarios u

@@ -32,7 +32,7 @@ class UsuarioProjetoDAO {
 
     // Método para atualizar a pontuação de um projeto de um usuário
     //public function atualizarPontosProjeto($id_usuario, $id_projeto, $pontos_projeto) {
-    //    $query = "UPDATE usuario_projeto 
+    //    $query = "UPDATE participantesprojeto 
     //              SET pontos_projeto = :pontos_projeto
     //              WHERE id_usuario = :id_usuario AND id_projeto = :id_projeto";
 
@@ -52,7 +52,7 @@ class UsuarioProjetoDAO {
 
     // Método para excluir uma associação entre usuário e projeto
     public function excluirAssociacao($id_usuario, $id_projeto) {
-        $query = "DELETE FROM usuario_projeto WHERE id_usuario = :id_usuario AND id_projeto = :id_projeto";
+        $query = "DELETE FROM participantesprojeto WHERE id_usuario = :id_usuario AND id_projeto = :id_projeto";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_usuario', $id_usuario);
@@ -65,5 +65,24 @@ class UsuarioProjetoDAO {
             return false; // Caso contrário, retorna false
         }
     }
+
+    //busca os usuários que estão no mesmo projeto
+    public function buscarUsuariosPorProjeto($id_projeto) {
+    $query = "
+        SELECT u.id_usuario, u.nome, u.nick, u.foto
+        FROM participantesprojeto pp
+        JOIN usuarios u ON pp.id_usuario = u.id_usuario
+        WHERE pp.id_projeto = :id_projeto
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id_projeto', $id_projeto);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+
 }
 ?>

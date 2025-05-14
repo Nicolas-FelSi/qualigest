@@ -32,7 +32,7 @@ class UsuarioTarefaDAO {
 
     // Método para buscar todas as tarefas de um usuário
     //public function buscarTarefasPorUsuario($id_usuario) {
-    //    $query = "SELECT * FROM usuario_tarefa WHERE id_usuario = :id_usuario";
+    //    $query = "SELECT * FROM responsaveistarefa WHERE id_usuario = :id_usuario";
         
     //    $stmt = $this->conn->prepare($query);
     //    $stmt->bindParam(':id_usuario', $id_usuario);
@@ -45,7 +45,7 @@ class UsuarioTarefaDAO {
 
     // Método para buscar a associação entre um usuário e uma tarefa específica
     public function buscarAssociacaoPorUsuarioETarefa($id_usuario, $id_tarefa) {
-        $query = "SELECT * FROM usuario_tarefa WHERE id_usuario = :id_usuario AND id_tarefa = :id_tarefa";
+        $query = "SELECT * FROM responsaveistarefa WHERE id_usuario = :id_usuario AND id_tarefa = :id_tarefa";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_usuario', $id_usuario);
@@ -64,7 +64,7 @@ class UsuarioTarefaDAO {
     // Método para atualizar o usuário relacionado a uma tarefa
     public function atualizarUsuarioNaTarefa($id_tarefa, $novo_id_usuario) {
         // Query de atualização
-        $query = "UPDATE usuario_tarefa 
+        $query = "UPDATE responsaveistarefa 
               SET id_usuario = :novo_id_usuario
               WHERE id_tarefa = :id_tarefa";
 
@@ -84,7 +84,7 @@ class UsuarioTarefaDAO {
 
     // Método para excluir uma associação entre usuário e tarefa
     public function excluirAssociacao($id_usuario, $id_tarefa) {
-        $query = "DELETE FROM usuario_tarefa WHERE id_usuario = :id_usuario AND id_tarefa = :id_tarefa";
+        $query = "DELETE FROM responsaveistarefa WHERE id_usuario = :id_usuario AND id_tarefa = :id_tarefa";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id_usuario', $id_usuario);
@@ -96,6 +96,22 @@ class UsuarioTarefaDAO {
         } else {
             return false; // Caso contrário, retorna false
         }
+    }
+
+    // Método para buscar os responsáveis de uma tarefa
+    public function buscarResponsaveisPorTarefa($id_tarefa) {
+    $query = "
+        SELECT u.id_usuario, u.nome, u.nick, u.foto 
+        FROM responsaveistarefa rt
+        JOIN usuarios u ON rt.id_usuario = u.id_usuario
+        WHERE rt.id_tarefa = :id_tarefa
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id_tarefa', $id_tarefa);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

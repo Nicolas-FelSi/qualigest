@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Aside from "../components/Aside";
-import ModalPerfil from "../components/ModalPerfil";
+import ModalPerfil from "../components/Modais/ModalPerfil";
 
 function Perfil() {
   const [isOpen, setIsOpen] = useState(false);

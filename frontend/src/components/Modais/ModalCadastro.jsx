@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import URL_BASE from "../urlBase";
+import URL_BASE from "../../urlBase";
 import { MdAccountCircle, MdEmail, MdKey, MdPerson } from "react-icons/md";
 
 function ModalCadastro({isOpen, closeModal, openModalLogin}) {

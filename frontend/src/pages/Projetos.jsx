@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import { MdSearch } from "react-icons/md";
-import ModalCriarProjeto from "../components/ModalCriarProjeto";
+import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
 import { useNavigate } from "react-router-dom";
 import URL_BASE from "../urlBase";
 import ProjetoCard from "../components/ProjetoCard";
@@ -17,29 +17,30 @@ function Projetos() {
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
 
-  useEffect(() => {
-    async function getProjects() {
-      try {
-        const response = await fetch(
-          `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-  
-        const data = await response.json();
-  
-        setProjects(data.projetos);
-      } catch (error) {
-        console.error("Erro ao pegar projetos:", error);
-      }
+  async function getProjects() {
+    try {
+      const response = await fetch(
+        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      setProjects(data.projetos);
+    } catch (error) {
+      console.error("Erro ao pegar projetos:", error);
     }
+  }
+
+  useEffect(() => {
     getProjects();
-  }, [port, urlBase]);
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
@@ -68,13 +69,13 @@ function Projetos() {
             </button>
           </div>
         </form>
-        <section className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <section className="mt-1 lg:mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           { 
             projects.map(project => (
-              <ProjetoCard key={project.id_projeto} project={project}/>
+              <ProjetoCard key={project.id_projeto} project={project} setProjects={setProjects}/>
             ))
           }
-          <div className="bg-white shadow-sm flex justify-center items-center">
+          <div className="bg-white shadow-sm flex justify-center items-center p-4">
             <div 
               className="bg-gray-300 w-40 h-40 rounded-full flex items-center justify-center text-6xl cursor-pointer hover:scale-105 transition-all"
               onClick={openModal}
@@ -85,7 +86,7 @@ function Projetos() {
         </section>
       </main>
 
-      <ModalCriarProjeto isOpen={isOpen} closeModal={closeModal} />
+      <ModalCriarProjeto isOpen={isOpen} closeModal={closeModal} setProjects={setProjects}/>
     </div>
   );
 }

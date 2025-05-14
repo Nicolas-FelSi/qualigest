@@ -3,35 +3,15 @@ import { toast } from "react-toastify";
 import URL_BASE from "../../urlBase";
 import { useNavigate } from "react-router-dom";
 
-function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
+function ModalEditarProjeto({ isOpen, closeModal, data }) {
   const urlBase = URL_BASE;
   const navigate = useNavigate();
   const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
   const [formData, setFormData] = useState({
-    nome_projeto: "",
+    id_projeto: data.id_projeto,
+    nome_projeto: data.nome_projeto,
   });
-
-    async function getProjects() {
-    try {
-      const response = await fetch(
-        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      setProjects(data.projetos);
-    } catch (error) {
-      console.error("Erro ao pegar projetos:", error);
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,9 +25,9 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
       const response = await fetch(
         `http://localhost${
           port != 80 ? `:${port}` : ""
-        }${urlBase}/criarProjeto.php`,
+        }${urlBase}/editarProjeto.php`,
         {
-          method: "POST",
+          method: "PUT",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
@@ -74,9 +54,8 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
           navigate("/"); 
         }
       }
-      getProjects();
     } catch (error) {
-      console.error("Erro ao criar projeto:", error);
+      console.error("Erro ao editar projeto:", error);
     }
   };
 
@@ -92,7 +71,7 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
           onSubmit={handleSubmit}
           onClick={(e) => e.stopPropagation()}
         >
-          <h2 className="text-xl text-gray-900 font-semibold">Criar projeto</h2>
+          <h2 className="text-xl text-gray-900 font-semibold">Editar projeto</h2>
           <hr className="mx-[-1.3rem] opacity-15 mt-4" />
           <div className="mt-2">
             <label
@@ -119,7 +98,7 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
               type="submit"
               className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
             >
-              Criar projeto
+              Editar projeto
             </button>
           </div>
         </form>
@@ -128,4 +107,4 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
   }
 }
 
-export default ModalCriarProjeto;
+export default ModalEditarProjeto;

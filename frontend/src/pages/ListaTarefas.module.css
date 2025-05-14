@@ -1,9 +1,0 @@
-.cards-tarefas {
-  max-width: 430px;
-}
-
-@media (min-width: 768px) {
-  .main form > div {
-    width: 50% !important;
-  }
-}

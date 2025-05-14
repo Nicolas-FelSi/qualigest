@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Aside from "../components/Aside";
-import ModalCriarTarefa from "../components/ModalCriarTarefa";
+import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
 import { MdSearch } from "react-icons/md";
 
 function ListaTarefas() {

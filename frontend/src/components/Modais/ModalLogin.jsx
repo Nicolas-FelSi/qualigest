@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import URL_BASE from "../urlBase";
-import { MdEmail, MdKey, MdLock } from "react-icons/md";
+import URL_BASE from "../../urlBase";
+import { MdEmail, MdKey } from "react-icons/md";
 
 function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
   const urlBase = URL_BASE;

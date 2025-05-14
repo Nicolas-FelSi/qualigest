@@ -1,5 +1,5 @@
-import ModalLogin from "../components/ModalLogin";
-import ModalCadastro from "../components/ModalCadastro";
+import ModalLogin from "../components/Modais/ModalLogin";
+import ModalCadastro from "../components/Modais/ModalCadastro";
 import { MdMenu } from "react-icons/md";
 import { useState } from "react";
 

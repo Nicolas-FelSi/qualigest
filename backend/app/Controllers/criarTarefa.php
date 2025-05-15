@@ -21,9 +21,9 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/app/classes/Tarefa.php';
-require_once __DIR__ . '/app/dao/TarefaDAO.php';
-require_once __DIR__ . '/app/dao/UsuarioTarefaDAO.php';
+require_once __DIR__ . '/../Models/classes/Tarefa.php';
+require_once __DIR__ . '/../Models/DAO/TarefaDAO.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioTarefaDAO.php';
 
 $id_usuario = $_SESSION['id_usuario'];
 

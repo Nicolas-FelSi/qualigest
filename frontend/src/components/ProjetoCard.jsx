@@ -69,7 +69,7 @@ function ProjetoCard({ project, setProjects} ) {
           </li>
         </ul>
       </div>
-      <div className="flex gap-5 border-t border-gray-300 p-2">
+      <div className="flex gap-5 border-t border-gray-300 p-2" onClick={(e) => e.stopPropagation()}>
         <button className="bg-blue-300 rounded-sm hover:bg-blue-500 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
           Editar
         </button>

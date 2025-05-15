@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
-import getProjects from "../api/projects/getProject";
+import getProjects from "../api/projects/getProjects";
 import ProjetoCard from "../components/ProjetoCard";
 import Aside from "../components/Aside";
 
@@ -29,7 +29,7 @@ function Projetos() {
     <div className="flex gap-1 lg:gap-3">
       <Aside />
       <main className="w-full">
-        <form className="px-2 py-2 bg-white flex flex-col gap-2 md:flex-row justify-between shadow-sm">
+        <form className="px-2 py-2 bg-white flex flex-col gap-2 md:flex-row justify-between shadow-md">
           <div className="flex w-full">
             <input
               type="text"
@@ -52,7 +52,7 @@ function Projetos() {
               <ProjetoCard key={project.id_projeto} project={project} setProjects={setProjects}/>
             ))
           }
-          <div className="bg-white shadow-sm flex justify-center items-center p-4">
+          <div className="bg-white shadow-md flex justify-center items-center p-4">
             <div 
               className="bg-gray-300 w-40 h-40 rounded-full flex items-center justify-center text-6xl cursor-pointer hover:scale-105 transition-all"
               onClick={openModal}

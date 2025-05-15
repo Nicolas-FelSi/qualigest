@@ -1,8 +1,11 @@
 import { useState } from "react";
 import ModalEditarProjeto from "./Modais/ModalEditarProjeto";
 import deleteProject from "../api/projects/deleteProject";
+import { useNavigate } from "react-router-dom";
 
 function ProjetoCard({ project, setProjects} ) {
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);
@@ -12,8 +15,12 @@ function ProjetoCard({ project, setProjects} ) {
     deleteProject(e, project, setProjects);
   }
 
+  const handleNavigateToTaskList = (projectId) => {
+    navigate(`/lista-tarefas/${projectId}`);
+  }
+
   return (
-    <div className="bg-white shadow-sm">
+    <div className="bg-white shadow-md rounded-md border border-gray-400" onClick={()=>handleNavigateToTaskList(project.id_projeto)}>
       <h2 className="border-b border-gray-300 p-2 text-2xl text-amber-600">
         {project.nome_projeto}
       </h2>
@@ -63,10 +70,10 @@ function ProjetoCard({ project, setProjects} ) {
         </ul>
       </div>
       <div className="flex gap-5 border-t border-gray-300 p-2">
-        <button className="bg-amber-300 rounded-sm hover:bg-amber-500 cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
+        <button className="bg-blue-300 rounded-sm hover:bg-blue-500 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
           Editar
         </button>
-        <button className="bg-red-500 rounded-sm hover:bg-red-700 cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
+        <button className="bg-gray-500 rounded-sm hover:bg-gray-700 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
           Deletar
         </button>
       </div>

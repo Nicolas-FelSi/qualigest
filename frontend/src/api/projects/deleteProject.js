@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import URL_BASE from "../../utils/urlBase";
-import getProjects from "./getProject";
+import getProjects from "./getProjects";
 
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;

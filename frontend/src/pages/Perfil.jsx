@@ -65,10 +65,10 @@ function Perfil() {
     <div className="flex gap-1 lg:gap-3">
       <Aside />
       <main className="h-screen w-full">
-        <div className="p-3 bg-white shadow-sm mb-1 lg:mb-3">
+        <div className="p-3 bg-white shadow-md mb-1 lg:mb-3">
           <h2 className="text-2xl">Perfil</h2>
         </div>
-        <section className="bg-white flex justify-center items-center shadow-sm">
+        <section className="bg-white flex justify-center items-center shadow-md">
           <div className="max-w-5xl w-full p-3 flex flex-col gap-4">
             <div className="flex flex-col lg:flex-row gap-5">
               <img

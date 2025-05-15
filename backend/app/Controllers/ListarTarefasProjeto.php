@@ -13,11 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 session_start();
 
 // Verifica se o usuário está autenticado
-if (!isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);
     echo json_encode(['erro' => 'Usuário não autenticado.']);
     exit;
 }
+
+require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../app/dao/TarefaDAO.php';
+require_once __DIR__ . '/../app/dao/UsuarioTarefaDAO.php';
+require_once __DIR__ . '/../app/dao/UsuarioDAO.php';
 
 // Verifica se o id_projeto foi enviado
 if (!isset($_GET['id_projeto'])) {
@@ -25,10 +30,6 @@ if (!isset($_GET['id_projeto'])) {
     echo json_encode(['erro' => 'ID do projeto não fornecido']);
     exit;
 }
-
-require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/app/dao/TarefaDAO.php';
-require_once __DIR__ . '/app/dao/UsuarioTarefaDAO.php';
 
 $db = new Database();
 $conn = $db->getConnection();

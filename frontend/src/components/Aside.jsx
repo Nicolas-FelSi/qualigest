@@ -1,8 +1,9 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import { MdCheckCircle, MdExitToApp, MdInfo, MdLayers, MdMenu, MdPersonPin } from "react-icons/md"
 
 function Aside() {
   const urlPath = useLocation();
+  const params = useParams();
 
   function logout() {
     localStorage.clear();
@@ -31,8 +32,8 @@ function Aside() {
               </NavLink>
               { urlPath.pathname != "/projetos" &&
                 <NavLink
-                  to="/lista-tarefas"
-                  className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname == "/lista-tarefas" && "shadow-md border-l-4 border-l-amber-600"}`}
+                  to={`/lista-tarefas/${params.idProjeto}`}
+                  className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname == `/lista-tarefas/${params.idProjeto}` && "shadow-md border-l-4 border-l-amber-600"}`}
                 >
                   <MdCheckCircle className="text-amber-600 text-xl" />
                   <span className="hidden md:block">Tarefas</span>

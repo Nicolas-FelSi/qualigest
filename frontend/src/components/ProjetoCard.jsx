@@ -13,7 +13,7 @@ function ProjetoCard({ project, setProjects} ) {
   }
 
   return (
-    <div className="bg-white shadow-sm">
+    <div className="bg-white shadow-md rounded-md border border-gray-400">
       <h2 className="border-b border-gray-300 p-2 text-2xl text-amber-600">
         {project.nome_projeto}
       </h2>

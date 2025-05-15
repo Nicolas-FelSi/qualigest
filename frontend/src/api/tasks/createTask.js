@@ -1,11 +1,11 @@
 import { toast } from "react-toastify";
 import URL_BASE from "../../utils/urlBase";
-import getProjects from "./getProjects";
+import getTasks from "./getTasks";
 
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-const createProject = async (e, formData, setFormData, closeModal, setProjects) => {
+const createTask = async (e, formData, setFormData, closeModal, setTasks) => {
   e.preventDefault();
 
   if (formData.nome_projeto == "") {
@@ -42,10 +42,10 @@ const createProject = async (e, formData, setFormData, closeModal, setProjects) 
       const notify = () => toast.error(data.mensagem);
       notify();
     }
-    getProjects(setProjects);
+    getTasks(setTasks);
   } catch (error) {
     console.error("Erro ao criar projeto:", error);
   }
 };
 
-export default createProject;
+export default createTask;

@@ -20,7 +20,7 @@ async function getProjects(setProjects) {
 
         setProjects(data.projetos);
     } catch (error) {
-        console.error("Erro ao pegar projetos:", error);
+        console.error("Erro ao listar projetos:", error);
     }
 }
 

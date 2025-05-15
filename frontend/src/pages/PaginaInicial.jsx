@@ -73,17 +73,17 @@ function PaginaInicial() {
           <img src="/images/equipe-tarefa.png" alt="" />
         </div>
         <div className="grid gap-4 justify-center md:grid-cols-3 mx-2">
-          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-sm">
+          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-md">
             <img className="w-[150px]" src="/images/tarefas.webp" alt="" />
             <h2 className="text-lg font-semibold">Priorização de tarefas</h2>
             <p>Organize suas tarefas de acordo com a prioridade e prazo</p>
           </div>
-          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-sm">
+          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-md">
             <img className="w-[100px]" src="/images/prazo.png" alt="" />
             <h2 className="text-lg font-semibold">Gerenciamento de Prazos</h2>
             <p>Acompanhe os prazos de cada projeto com facilidade</p>
           </div>
-          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-sm">
+          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-md">
             <img className="w-[150px]" src="/images/equipe.png" alt="" />
             <h2 className="text-lg font-semibold">Colaboração em Equipe</h2>
             <p>Trabalhe em conjunto atribuindo responsabilidades</p>

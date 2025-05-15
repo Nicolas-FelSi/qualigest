@@ -53,7 +53,7 @@ function ListaTarefas() {
       <div className="flex gap-1 lg:gap-3">
         <Aside />
         <main className="w-full">
-          <form className="px-2 py-2 bg-white shadow-sm flex flex-col gap-2 md:flex-row">
+          <form className="px-2 py-2 bg-white shadow-md flex flex-col gap-2 md:flex-row">
             <div className="flex w-full">
               <input
                 type="text"

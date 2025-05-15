@@ -1,8 +1,11 @@
 import { useState } from "react";
 import ModalEditarProjeto from "./Modais/ModalEditarProjeto";
 import deleteProject from "../api/projects/deleteProject";
+import { useNavigate } from "react-router-dom";
 
 function ProjetoCard({ project, setProjects} ) {
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);
@@ -12,8 +15,12 @@ function ProjetoCard({ project, setProjects} ) {
     deleteProject(e, project, setProjects);
   }
 
+  const handleNavigateToTaskList = (projectId) => {
+    navigate(`/lista-tarefas/${projectId}`);
+  }
+
   return (
-    <div className="bg-white shadow-md rounded-md border border-gray-400">
+    <div className="bg-white shadow-md rounded-md border border-gray-400" onClick={()=>handleNavigateToTaskList(project.id_projeto)}>
       <h2 className="border-b border-gray-300 p-2 text-2xl text-amber-600">
         {project.nome_projeto}
       </h2>

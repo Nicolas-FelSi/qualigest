@@ -19,10 +19,10 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../app/dao/TarefaDAO.php';
-require_once __DIR__ . '/../app/dao/UsuarioTarefaDAO.php';
-require_once __DIR__ . '/../app/dao/UsuarioDAO.php';
+require_once __DIR__ . '/../../config/Database.php';
+require_once __DIR__ . '/../Models/DAO/TarefaDAO.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioTarefaDAO.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioDAO.php';
 
 // Verifica se o id_projeto foi enviado
 if (!isset($_GET['id_projeto'])) {

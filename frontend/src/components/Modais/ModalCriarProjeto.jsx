@@ -1,5 +1,6 @@
 import { useState } from "react";
 import createProject from "../../api/projects/createProject";
+import getUsers from "../../utils/searchUsers";
 
 function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
 
   const handleSubmit = async (e) => {
     createProject(e, formData, setFormData, closeModal, setProjects);
+    getUsers()
   };
 
   if (isOpen) {

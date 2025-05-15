@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/app/dao/UsuarioProjetoDAO.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioProjetoDAO.php';
 
 session_start();
 

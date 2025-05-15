@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 session_start();
 
 // Verifica se o usuário está autenticado
-if (!isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);
     echo json_encode(['erro' => 'Usuário não autenticado.']);
     exit;
@@ -22,8 +22,8 @@ if (!isset($_SESSION['id_usuario'])) {
 
 // Inclui arquivos necessários
 require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/app/dao/TarefaDAO.php';
-require_once __DIR__ . '/app/dao/UsuarioTarefaDAO.php';
+require_once __DIR__ . '/../Models/DAO/TarefaDAO.php';
+require_once __DIR__ . '/../Models/DAO/UsuarioTarefaDAO.php';
 
 // Conecta ao banco de dados
 $db = new Database();

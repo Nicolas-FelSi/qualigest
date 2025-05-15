@@ -1,13 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
 import { MdSearch } from "react-icons/md";
+import URL_BASE from "../utils/urlBase";
+import { useNavigate } from "react-router-dom";
 
 function ListaTarefas() {
+  const urlBase = URL_BASE;
+  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
+  const navigate = useNavigate();
+
+  const [tasks, setTasks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
+
+    async function getTasks() {
+    try {
+      const response = await fetch(
+        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirTarefa.php`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data)
+      // setTasks(data.projetos);
+    } catch (error) {
+      console.error("Erro ao pegar tarefas:", error);
+    }
+  }
+
+  useEffect(() => {
+    getTasks();
+  })
+
+  useEffect(() => {
+    if (!localStorage.getItem("isLoggedIn")) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <>

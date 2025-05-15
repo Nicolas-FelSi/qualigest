@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import URL_BASE from "../../urlBase";
+import URL_BASE from "../../utils/urlBase";
 
 function ModalCriarTarefa({ isOpen, closeModal }) {
   const urlBase = URL_BASE;

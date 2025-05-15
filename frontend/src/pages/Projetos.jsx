@@ -1,45 +1,22 @@
 import { useEffect, useState } from "react";
-import Aside from "../components/Aside";
 import { MdSearch } from "react-icons/md";
-import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
 import { useNavigate } from "react-router-dom";
-import URL_BASE from "../urlBase";
+import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
+import getProjects from "../api/projects/getProject";
 import ProjetoCard from "../components/ProjetoCard";
+import Aside from "../components/Aside";
 
 function Projetos() {
   const [isOpen, setIsOpen] = useState(false);
   const [projects, setProjects] = useState([]);
 
-  const urlBase = URL_BASE;
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
   const navigate = useNavigate();
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
 
-  async function getProjects() {
-    try {
-      const response = await fetch(
-        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      setProjects(data.projetos);
-    } catch (error) {
-      console.error("Erro ao pegar projetos:", error);
-    }
-  }
-
   useEffect(() => {
-    getProjects();
+    getProjects(setProjects);
   }, []);
 
   useEffect(() => {

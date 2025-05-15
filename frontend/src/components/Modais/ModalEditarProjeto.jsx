@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import URL_BASE from "../../urlBase";
+import URL_BASE from "../../utils/urlBase";
 import { useNavigate } from "react-router-dom";
 
 function ModalEditarProjeto({ isOpen, closeModal, data }) {

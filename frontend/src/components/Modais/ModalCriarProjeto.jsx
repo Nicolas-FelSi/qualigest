@@ -1,83 +1,13 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
-import URL_BASE from "../../urlBase";
-import { useNavigate } from "react-router-dom";
+import createProject from "../../api/projects/createProject";
 
 function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
-  const urlBase = URL_BASE;
-  const navigate = useNavigate();
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
-
   const [formData, setFormData] = useState({
     nome_projeto: "",
   });
 
-    async function getProjects() {
-    try {
-      const response = await fetch(
-        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      setProjects(data.projetos);
-    } catch (error) {
-      console.error("Erro ao pegar projetos:", error);
-    }
-  }
-
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (formData.nome_projeto == "") {
-      alert("Preencha todos os campos!");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `http://localhost${
-          port != 80 ? `:${port}` : ""
-        }${urlBase}/criarProjeto.php`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.status === "sucesso") {
-        closeModal();
-        setFormData({
-          nome_projeto: "",
-        });
-
-        const notify = () => toast.success(data.mensagem);
-        notify();
-      } else {
-        const notify = () => toast.error(data.mensagem);
-        notify();
-        if (response.status === 401) {
-          localStorage.removeItem("isLoggedIn");
-          navigate("/"); 
-        }
-      }
-      getProjects();
-    } catch (error) {
-      console.error("Erro ao criar projeto:", error);
-    }
+    createProject(e, formData, setFormData, closeModal, setProjects);
   };
 
   if (isOpen) {

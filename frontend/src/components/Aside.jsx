@@ -4,6 +4,10 @@ import { MdCheckCircle, MdExitToApp, MdInfo, MdLayers, MdMenu, MdPersonPin } fro
 function Aside() {
   const urlPath = useLocation();
 
+  function logout() {
+    localStorage.clear();
+  }
+
   return (
     <>
       <aside
@@ -51,7 +55,7 @@ function Aside() {
                 <span className="hidden md:block">Perfil</span>
               </NavLink>
             </div>
-            <NavLink to="/" className="flex items-center md:gap-3 p-2 w-full border-t-gray-200 border-t">
+            <NavLink to="/" className="flex items-center md:gap-3 p-2 w-full border-t-gray-200 border-t" onClick={logout}>
               <MdExitToApp className="text-amber-600 text-xl" />
               <span className="hidden md:block">Sair</span>
             </NavLink>

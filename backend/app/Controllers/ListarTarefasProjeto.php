@@ -19,11 +19,6 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
-require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../app/dao/TarefaDAO.php';
-require_once __DIR__ . '/../app/dao/UsuarioTarefaDAO.php';
-require_once __DIR__ . '/../app/dao/UsuarioDAO.php';
-
 // Verifica se o id_projeto foi enviado
 if (!isset($_GET['id_projeto'])) {
     http_response_code(400);

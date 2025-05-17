@@ -44,23 +44,20 @@ class ProjetoDAO {
         }
     }
 
-    // Método para atualizar um projeto
-    public function atualizarProjeto($id_projeto, $nome_projeto, $pontuacao_projeto, $id_usuario_lider) {
-        $query = "UPDATE projetos 
-                  SET nome_projeto = :nome_projeto, 
-                      pontuacao_projeto = :pontuacao_projeto, 
-                      id_usuario = :id_usuario
-                  WHERE id_projeto = :id_projeto";
-    
-        $stmt = $this->conn->prepare($query);
-    
-        $stmt->bindParam(':id_projeto', $id_projeto);
-        $stmt->bindParam(':nome_projeto', $nome_projeto);
-        $stmt->bindParam(':pontuacao_projeto', $pontuacao_projeto);
-        $stmt->bindParam(':id_usuario', $id_usuario_lider);
-    
-        return $stmt->execute();
-    }
+    // Método para atualizar apenas o nome do projeto
+public function atualizarProjeto($id_projeto, $nome_projeto) {
+    $query = "UPDATE projetos 
+              SET nome_projeto = :nome_projeto,
+              WHERE id_projeto = :id_projeto";
+
+    $stmt = $this->conn->prepare($query);
+
+    $stmt->bindParam(':id_projeto', $id_projeto);
+    $stmt->bindParam(':nome_projeto', $nome_projeto);
+
+    return $stmt->execute();
+}
+
 
     // Método para excluir um projeto
     public function excluirProjeto($id_projeto) {

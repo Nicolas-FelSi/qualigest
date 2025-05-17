@@ -51,14 +51,13 @@ $usuarioProjetoDAO = new UsuarioProjetoDAO($db);
 $idProjeto = $projetoDAO->inserirProjeto($projeto->getNomeProjeto(), $projeto->getIdUsuario());
 
 if ($idProjeto !== false) {
-    // Associa o líder ao projeto também
-    $usuarioProjetoDAO->inserirAssociacao($projeto->getIdUsuario(), $idProjeto);
+    // Associa o líder ao projeto com o status de líder (true)
+    $usuarioProjetoDAO->inserirAssociacao($projeto->getIdUsuario(), $idProjeto, true);
 
-    // Associa os participantes enviados (se houver)
+    // Associa os participantes enviados (se houver) como não líderes (false)
     foreach ($participantes as $idParticipante) {
-        // Evita duplicar o líder se ele estiver incluído na lista
         if ($idParticipante != $projeto->getIdUsuario()) {
-            $usuarioProjetoDAO->inserirAssociacao($idParticipante, $idProjeto);
+            $usuarioProjetoDAO->inserirAssociacao($idParticipante, $idProjeto, false);
         }
     }
 

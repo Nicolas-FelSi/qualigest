@@ -62,14 +62,16 @@ COLLATE = utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS `qualigestdb`.`ParticipantesProjeto` (
   `id_usuario` INT NULL DEFAULT NULL,
   `id_projeto` INT NULL DEFAULT NULL,
+  `is_lider` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id_usuario`, `id_projeto`),
-  INDEX (`id_projeto` ASC) ,
+  INDEX (`id_projeto` ASC),
   CONSTRAINT `fk_participante_usuario`
     FOREIGN KEY (`id_usuario`)
     REFERENCES `qualigestdb`.`Usuarios` (`id_usuario`),
   CONSTRAINT `fk_participante_projeto`
     FOREIGN KEY (`id_projeto`)
-    REFERENCES `qualigestdb`.`Projetos` (`id_projeto`))
+    REFERENCES `qualigestdb`.`Projetos` (`id_projeto`)
+)
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
 

@@ -12,15 +12,16 @@ class UsuarioProjetoDAO {
     }
 
     // Método para inserir uma nova associação entre usuário e projeto
-    public function inserirAssociacao($id_usuario, $id_projeto) {
-        $query = "INSERT INTO participantesprojeto (id_usuario, id_projeto)
-                  VALUES (:id_usuario, :id_projeto)";
+    public function inserirAssociacao($id_usuario, $id_projeto, $is_lider = 0) {
+        $query = "INSERT INTO participantesprojeto (id_usuario, id_projeto, is_lider)
+                  VALUES (:id_usuario, :id_projeto, :is_lider)";
         
         $stmt = $this->conn->prepare($query);
 
         // Vinculando os parâmetros aos valores
         $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->bindParam(':id_projeto', $id_projeto);
+        $stmt->bindParam(':is_lider', $is_lider, PDO::PARAM_BOOL);
 
         // Executando a query
         if ($stmt->execute()) {
@@ -28,6 +29,18 @@ class UsuarioProjetoDAO {
         } else {
             return false; // Caso contrário, retorna false
         }
+    }
+
+    //Método para atualizar a lista de líderes de um projeto
+    public function atualizarLideranca($id_usuario, $id_projeto, $is_lider) {
+    $query = "UPDATE participantesprojeto
+              SET is_lider = :is_lider
+              WHERE id_usuario = :id_usuario AND id_projeto = :id_projeto";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':id_usuario', $id_usuario);
+    $stmt->bindParam(':id_projeto', $id_projeto);
+    $stmt->bindParam(':is_lider', $is_lider, PDO::PARAM_BOOL);
+    return $stmt->execute();
     }
 
     // Método para atualizar a pontuação de um projeto de um usuário
@@ -69,7 +82,7 @@ class UsuarioProjetoDAO {
     //busca os usuários que estão no mesmo projeto
     public function buscarUsuariosPorProjeto($id_projeto) {
     $query = "
-        SELECT u.id_usuario, u.nome, u.nick, u.foto
+        SELECT u.id_usuario, u.nome_completo, u.nome_usuario, u.foto_perfil
         FROM participantesprojeto pp
         JOIN usuarios u ON pp.id_usuario = u.id_usuario
         WHERE pp.id_projeto = :id_projeto

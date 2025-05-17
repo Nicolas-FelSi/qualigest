@@ -45,6 +45,7 @@ $tarefasEmAtraso = $tarefaDAO->contarTarefasEmAtraso($usuario_id);
 
 // Prepara os dados do perfil
 $perfil = [
+    'nome_completo' => $usuario['nome_completo'],
     'nome_usuario' => $usuario['nome_usuario'],
     'foto_perfil' => $usuario['foto_perfil'],
     'email' => $usuario['email'],

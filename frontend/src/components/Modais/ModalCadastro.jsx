@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import URL_BASE from "../../utils/urlBase";
 import { MdAccountCircle, MdEmail, MdKey, MdPerson } from "react-icons/md";
+import handleRegister from "../../api/handleRegister";
 
-function ModalCadastro({isOpen, closeModal, openModalLogin}) {
-  const urlBase = URL_BASE;
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
-
+function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     nome_completo: "",
     nome_usuario: "",
@@ -15,6 +13,28 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  function validate() {
+    const newErrors = {};
+
+    if(formData.nome_completo == "") newErrors.nome = "O nome completo é obrigatório";
+    else if(!/^[a-zA-ZÀ-ú\s]+$/u.test(formData.nome_completo)) newErrors.nome = "O nome completo deve conter apenas letras e espaços";
+
+    if(formData.nome_usuario == "") newErrors.usuario = "O nome de usuário é obrigatório";
+    else if(formData.nome_usuario.includes("@")) newErrors.usuario = ['O nome de usuário não pode conter "@"'];
+    else if(!/^[a-zA-Z0-9._-]+$/.test(formData.nome_usuario)) newErrors.usuario = "O nome de usuário só pode conter letras, números, ponto, hífen e underline";
+
+    if(formData.email == "") newErrors.email = "O email é obrigatório";
+    
+    if(formData.senha == "") newErrors.senha = "A senha é obrigatório";
+    else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(formData.senha)) newErrors.senha = ['A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número'];
+    
+    if(confirmPassword == "") newErrors.confirmSenha = "A confirmação de senha é obrigatório";
+    else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(confirmPassword)) newErrors.confirmSenha = ['A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número'];
+    else if(!(formData.senha == confirmPassword)) newErrors.confirmSenha = "Senhas diferentes";
+
+    return newErrors;
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -25,89 +45,75 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({})
 
-    if (
-      formData.nome_completo == "" ||
-      formData.nome_usuario == "" ||
-      formData.email == "" ||
-      formData.senha == "" ||
-      confirmPassword == ""
-    ) {
-      alert("Preencha todos os campos!");
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
-    if (!(formData.senha == confirmPassword)) {
-      alert("Senhas diferentes!");
-      return;
-    }
+    const data = await handleRegister(formData);
 
-    try {
-      const response = await fetch(
-        `http://localhost${
-          port != 80 ? `:${port}` : ""
-        }${urlBase}/cadastroUsuario.php`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+    if (data.status === "sucesso") {
+      closeModal();
+      setFormData({
+        nome_completo: "",
+        nome_usuario: "",
+        email: "",
+        senha: "",
+      });
 
-      const data = await response.json();
+      const notify = () => toast.success(data.mensagem);
+      notify();
 
-      if (data.status === "sucesso") {
-        closeModal()
-        setFormData({
-          nome_completo: "",
-          nome_usuario: "",
-          email: "",
-          senha: "",
-        });
-
-        const notify = () => toast.success(data.mensagem);
+      setConfirmPassword("");
+    } else {
+      if (data.mensagem) {
+        const notify = () => toast.error(data.mensagem);
         notify();
-
-        setConfirmPassword("");
       } else {
-        if (data.mensagem) {
-          const notify = () => toast.error(data.mensagem);
-          notify();
-        } else {
-          const notify = () => {
-            data.mensagens.forEach((mensagem) => {
-              toast.error(mensagem);
-            });
-          };
-          notify();
-        }
+        const notify = () => {
+          data.mensagens.forEach((mensagem) => {
+            toast.error(mensagem);
+          });
+        };
+        notify();
       }
-    } catch (error) {
-      console.error("Erro ao cadastrar:", error);
+      return;
     }
   };
 
   if (isOpen) {
     return (
-      <div className="inset-0 bg-black/75 fixed flex items-center justify-center" onClick={closeModal}>
+      <div
+        className="inset-0 bg-black/75 fixed flex items-center justify-center"
+        onClick={() => {
+          closeModal();
+          setFormData({
+            nome_completo: "",
+            nome_usuario: "",
+            email: "",
+            senha: "",
+          });
+          setConfirmPassword("")
+          setErrors([]);
+        }}
+      >
         <form
           className="bg-white p-5 rounded-lg w-lg mx-2"
           noValidate
           onSubmit={handleSubmit}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
-          <h2 className="text-xl text-gray-900 font-semibold">
-            Cadastro
-          </h2>
+          <h2 className="text-xl text-gray-900 font-semibold">Cadastro</h2>
           <hr className="mx-[-1.3rem] opacity-15 mt-4" />
           <div className="mt-2">
             <label
               htmlFor="inputNomeCompleto"
               className="mb-2 text-sm font-medium"
             >
-              Nome completo
+              Nome completo *
             </label>
             <div className="flex">
               <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
@@ -116,42 +122,44 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
               <input
                 type="text"
                 id="inputNomeCompleto"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.nome ? "border-red-400" : "border-gray-300"} p-2.5`}
                 placeholder="Informe seu nome completo"
                 name="nome_completo"
                 value={formData.nome_completo}
                 onChange={handleChange}
               />
             </div>
+            {errors.nome && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.nome}</p>}
           </div>
           <div className="mt-2">
             <label
               htmlFor="inputNomeUsuario"
               className="mb-2 text-sm font-medium"
             >
-              Usuário
+              Usuário *
             </label>
             <div className="flex">
               <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                  <MdAccountCircle />
+                <MdAccountCircle />
               </span>
               <input
                 type="text"
                 id="inputNomeUsuario"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.usuario ? "border-red-400" : "border-gray-300"} p-2.5`}
                 placeholder="Informe seu nome de usuário"
                 name="nome_usuario"
                 value={formData.nome_usuario}
                 onChange={handleChange}
               />
             </div>
+            {errors.usuario && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.usuario}</p>}
           </div>
           <div className="mt-2">
             <label
               htmlFor="inputEmailLogin"
               className="mb-2 text-sm font-medium"
             >
-              E-mail
+              E-mail *
             </label>
             <div className="flex">
               <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
@@ -160,20 +168,21 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
               <input
                 type="text"
                 id="inputEmailLogin"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.email ? "border-red-400" : "border-gray-300"} p-2.5`}
                 placeholder="email@exemplo.com"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
+            {errors.email && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.email}</p>}
           </div>
           <div className="mt-2">
             <label
               htmlFor="inputSenhaLogin"
               className="mb-2 text-sm font-medium"
             >
-              Senha
+              Senha *
             </label>
             <div className="flex">
               <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
@@ -182,20 +191,21 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
               <input
                 type="password"
                 id="inputSenhaLogin"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.senha ? "border-red-400" : "border-gray-300"} p-2.5`}
                 placeholder="**********"
                 name="senha"
                 value={formData.senha}
                 onChange={handleChange}
               />
             </div>
+            {errors.senha && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.senha}</p>}
           </div>
           <div className="mt-2">
             <label
               htmlFor="confirmarSenha"
               className="mb-2 text-sm font-medium"
             >
-              Confirmar senha
+              Confirmar senha *
             </label>
             <div className="flex">
               <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
@@ -204,17 +214,21 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
               <input
                 type="password"
                 id="confirmarSenha"
-                className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.confirmSenha ? "border-red-400" : "border-gray-300"} p-2.5`}
                 placeholder="**********"
                 name="confirmarSenha"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
+            {errors.confirmSenha && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.confirmSenha}</p>}
           </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15"/>
+          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
           <div>
-            <button type="submit" className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all">
+            <button
+              type="submit"
+              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
+            >
               Cadastrar
             </button>
             <p className="text-center mt-2">
@@ -222,8 +236,16 @@ function ModalCadastro({isOpen, closeModal, openModalLogin}) {
               <span
                 className="underline cursor-pointer hover:text-blue-900 text-blue-600 font-semibold"
                 onClick={() => {
-                  closeModal()
+                  closeModal();
                   openModalLogin()
+                  setFormData({
+                    nome_completo: "",
+                    nome_usuario: "",
+                    email: "",
+                    senha: "",
+                  });
+                  setConfirmPassword("")
+                  setErrors([]);
                 }}
               >
                 {" "}

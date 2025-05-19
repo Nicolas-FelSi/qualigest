@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import createProject from "../../api/projects/createProject";
-import getUsers from "../../utils/searchUsers";
+import getUsers from "../../api/searchUsers";
 
 function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
   const [formData, setFormData] = useState({
     nome_projeto: "",
+    participantes: []
   });
 
   const handleSubmit = async (e) => {
     createProject(e, formData, setFormData, closeModal, setProjects);
-    getUsers()
   };
+
+  useEffect(() => {
+    setFormData({...formData, participantes: getUsers()})
+  }, [])
 
   if (isOpen) {
     return (
@@ -43,6 +47,27 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
                 value={formData.nome_projeto}
                 onChange={(e) => setFormData({nome_projeto: e.target.value})}
               />
+            </div>
+          </div>
+          <div className="mt-2">
+            <label
+              htmlFor="participantes"
+              className="mb-2 text-sm font-medium"
+            >
+              Responsável
+            </label>
+            <div className="flex">
+              <select
+                id="participantes"
+                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                name="responsavel"
+                value={formData.senha}
+                onChange={handleChange}
+              >
+                <option className="text-body-tertiary" defaultValue={true}>
+                  Selecione um responsável
+                </option>
+              </select>
             </div>
           </div>
           <hr className="mx-[-1.3rem] mt-5 opacity-15" />

@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { MdEmail, MdKey } from "react-icons/md";
 import handleLogin from "../../api/handleLogin.js"
+import validateLogin from "../../utils/validateLogin.js";
 
 function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
   const navigate = useNavigate();
@@ -12,15 +13,6 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
     email: "",
     senha: "",
   });
-
-  function validate() {
-    const newErrors = {};
-
-    if (formData.email == "") newErrors.email = "O email é obrigatório";
-    if (formData.senha == "") newErrors.senha = "A senha é obrigatório";
-
-    return newErrors;
-  }
 
   const handleChange = (e) => {
     setFormData({
@@ -33,7 +25,7 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
     e.preventDefault();
     setErrors({});
 
-    const validationErrors = validate(formData);
+    const validationErrors = validateLogin(formData);
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);

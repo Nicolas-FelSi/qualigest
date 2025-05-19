@@ -1,4 +1,4 @@
-function validate(formData, confirmPassword) {
+function validateCadastro(formData, confirmPassword) {
     const newErrors = {};
 
     if(formData.nome_completo == "") newErrors.nome = "O nome completo é obrigatório";
@@ -20,4 +20,4 @@ function validate(formData, confirmPassword) {
     return newErrors;
 }
 
-export default validate;
+export default validateCadastro;

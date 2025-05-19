@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { MdAccountCircle, MdEmail, MdKey, MdPerson } from "react-icons/md";
 import handleRegister from "../../api/handleRegister";
-import validate from "../../utils/validateCadastro";
+import validateCadastro from "../../utils/validateCadastro";
 
 function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
   const [errors, setErrors] = useState({});
@@ -26,7 +26,7 @@ function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
     e.preventDefault();
     setErrors({})
 
-    const validationErrors = validate(formData, confirmPassword);
+    const validationErrors = validateCadastro(formData, confirmPassword);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;

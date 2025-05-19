@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { MdAccountCircle, MdEmail, MdKey, MdPerson } from "react-icons/md";
 import handleRegister from "../../api/handleRegister";
+import validate from "../../utils/validateCadastro";
 
 function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
   const [errors, setErrors] = useState({});
@@ -14,28 +15,6 @@ function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
 
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  function validate() {
-    const newErrors = {};
-
-    if(formData.nome_completo == "") newErrors.nome = "O nome completo é obrigatório";
-    else if(!/^[a-zA-ZÀ-ú\s]+$/u.test(formData.nome_completo)) newErrors.nome = "O nome completo deve conter apenas letras e espaços";
-
-    if(formData.nome_usuario == "") newErrors.usuario = "O nome de usuário é obrigatório";
-    else if(formData.nome_usuario.includes("@")) newErrors.usuario = ['O nome de usuário não pode conter "@"'];
-    else if(!/^[a-zA-Z0-9._-]+$/.test(formData.nome_usuario)) newErrors.usuario = "O nome de usuário só pode conter letras, números, ponto, hífen e underline";
-
-    if(formData.email == "") newErrors.email = "O email é obrigatório";
-    
-    if(formData.senha == "") newErrors.senha = "A senha é obrigatório";
-    else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(formData.senha)) newErrors.senha = ['A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número'];
-    
-    if(confirmPassword == "") newErrors.confirmSenha = "A confirmação de senha é obrigatório";
-    else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(confirmPassword)) newErrors.confirmSenha = ['A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número'];
-    else if(!(formData.senha == confirmPassword)) newErrors.confirmSenha = "Senhas diferentes";
-
-    return newErrors;
-  }
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -47,7 +26,7 @@ function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
     e.preventDefault();
     setErrors({})
 
-    const validationErrors = validate();
+    const validationErrors = validate(formData, confirmPassword);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -97,7 +76,7 @@ function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
             senha: "",
           });
           setConfirmPassword("")
-          setErrors([]);
+          setErrors({});
         }}
       >
         <form
@@ -245,7 +224,7 @@ function ModalCadastro({ isOpen, closeModal, openModalLogin }) {
                     senha: "",
                   });
                   setConfirmPassword("")
-                  setErrors([]);
+                  setErrors({});
                 }}
               >
                 {" "}

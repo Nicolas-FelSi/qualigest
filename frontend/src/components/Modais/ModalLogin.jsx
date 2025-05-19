@@ -1,18 +1,26 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import URL_BASE from "../../utils/urlBase";
 import { MdEmail, MdKey } from "react-icons/md";
+import handleLogin from "../../api/handleLogin.js"
 
 function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
-  const urlBase = URL_BASE;
   const navigate = useNavigate();
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     email: "",
     senha: "",
   });
+
+  function validate() {
+    const newErrors = {};
+
+    if (formData.email == "") newErrors.email = "O email é obrigatório";
+    if (formData.senha == "") newErrors.senha = "A senha é obrigatório";
+
+    return newErrors;
+  }
 
   const handleChange = (e) => {
     setFormData({
@@ -23,41 +31,28 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
-    if (formData.email == "" || formData.senha == "") {
-      alert("Preencha todos os campos!");
+    const validationErrors = validate(formData);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
-    try {
-      const response = await fetch(
-        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/login.php`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+    const data = await handleLogin(formData);
 
-      const data = await response.json();
+    if (data.status == "erro") {
+      const notify = () => toast.error(data.mensagem);
+      notify();
+    } else {
+      localStorage.setItem("isLoggedIn", "true");
+      const notify = () => toast.success(data.mensagem);
+      notify();
 
-      if (data.status == "erro") {
-        const notify = () => toast.error(data.mensagem);
-        notify();
-      } else {
-        localStorage.setItem("isLoggedIn", "true")
-        const notify = () => toast.success(data.mensagem);
-        notify();
+      closeModal();
 
-        closeModal();
-
-        navigate("/projetos");
-      }
-    } catch (error) {
-      console.error("Erro ao logar:", error);
+      navigate("/projetos");
     }
   };
 
@@ -65,7 +60,14 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
     return (
       <div
         className="inset-0 bg-black/75 fixed flex items-center justify-center"
-        onClick={closeModal}
+        onClick={() => {
+          closeModal();
+          setFormData({
+            email: "",
+            senha: ""
+          });
+          setErrors({})
+        }}
       >
         <form
           className="bg-white p-5 rounded-lg z-50 w-lg mx-2"
@@ -95,13 +97,14 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
                 <input
                   type="email"
                   id="inputEmailLogin"
-                  className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                  className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.email ? "border-red-400" : "border-gray-300"} p-2.5`}
                   placeholder="email@exemplo.com"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                 />
               </div>
+              {errors.email && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.email}</p>}
             </div>
             <div className="mt-4">
               <label
@@ -117,18 +120,22 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
                 <input
                   type="password"
                   id="inputSenhaLogin"
-                  className="rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+                  className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.email ? "border-red-400" : "border-gray-300"} p-2.5`}
                   placeholder="**************"
                   name="senha"
                   value={formData.senha}
                   onChange={handleChange}
                 />
               </div>
+              {errors.senha && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.senha}</p>}
             </div>
           </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15"/>
+          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
           <div>
-            <button type="submit" className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all">
+            <button
+              type="submit"
+              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
+            >
               Entrar
             </button>
             <p className="text-center mt-2">
@@ -136,8 +143,13 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
               <span
                 className="underline cursor-pointer hover:text-blue-900 text-blue-600 font-semibold"
                 onClick={() => {
-                  closeModal()
-                  openModalCadastro()
+                  closeModal();
+                  openModalCadastro();
+                  setFormData({
+                    email: "",
+                    senha: ""
+                  });
+                  setErrors({})
                 }}
               >
                 {" "}

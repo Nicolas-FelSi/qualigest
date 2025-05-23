@@ -1,88 +1,141 @@
 import { useEffect, useState } from "react";
+import getUsers from "../../api/getUsers";
+import getProjects from "../../api/projects/getProjects"
 import createProject from "../../api/projects/createProject";
-import getUsers from "../../api/searchUsers";
+import showToast from "../../utils/showToast";
+import GenericModal from "./GenericModal";
+import InputField from "../InputField"
 
 function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     nome_projeto: "",
-    participantes: []
+    participantes: [],
+    selectedParticipants: []
   });
 
+  function validate() {
+      const newErrors = {};
+
+      if (formData.nome_projeto == "") newErrors.nome_projeto = "O nome do projeto é obrigatório";
+
+      return newErrors;
+  }
+
+  const resetForm = async () => {
+    setFormData({
+      nome_projeto: "",
+      selectedParticipants: [],
+      participantes: await getUsers()
+    });
+    setError({});
+  };
+
+  const handleClose = () => {
+    resetForm();
+    closeModal();
+  };
+
   const handleSubmit = async (e) => {
-    createProject(e, formData, setFormData, closeModal, setProjects);
+    e.preventDefault();
+    setError({});
+
+    const validationError = validate();
+
+    if (Object.keys(validationError).length > 0) {
+      setError(validationError);
+      return;
+    }
+
+    const data = await createProject({
+      ...formData,
+      participantes: formData.selectedParticipants,
+    });
+
+    if (data.status === "sucesso") {
+      handleClose();
+
+      showToast(data.message, "success");
+    } else {
+      showToast(data.message);
+    }
+
+    const updatedProjects = await getProjects();
+    setProjects(updatedProjects.projetos);
   };
 
   useEffect(() => {
-    setFormData({...formData, participantes: getUsers()})
+    const handleUsers = async () => {
+      const users = await getUsers();
+      setFormData({
+        ...formData, 
+        participantes: Array.isArray(users) ? users : []
+      })
+    }
+    handleUsers();
   }, [])
 
-  if (isOpen) {
-    return (
-      <div
-        className="inset-0 bg-black/75 fixed flex items-center justify-center"
-        onClick={closeModal}
-      >
-        <form
-          className="bg-white p-5 rounded-lg w-lg mx-2"
-          noValidate
-          onSubmit={handleSubmit}
-          onClick={(e) => e.stopPropagation()}
+  if (!isOpen) return null;
+
+  return (
+    <GenericModal
+      title={"Criar projeto"}
+      textButton={"Criar projeto"}
+      closeModal={closeModal}
+      handleSubmit={handleSubmit}
+      isOpen={isOpen}
+      handleClose={handleClose}
+    >
+      <InputField
+        label={"Nome do projeto"}
+        name={"nome_projeto"}
+        placeholder={"Informe o nome do projeto"}
+        value={formData.nome_projeto}
+        onChange={(e) => {
+          setFormData((participantes) => ({
+            ...participantes,
+            nome_projeto: e.target.value
+          })
+        )}}
+        error={error.nome}
+      />
+      <div className="mt-2">
+        <label
+          htmlFor="participantes"
+          className="mb-2 text-sm font-medium"
         >
-          <h2 className="text-xl text-gray-900 font-semibold">Criar projeto</h2>
-          <hr className="mx-[-1.3rem] opacity-15 mt-4" />
-          <div className="mt-2">
-            <label
-              htmlFor="inputNomeProjeto"
-              className="mb-2 text-sm font-medium"
-            >
-              Nome do projeto
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                id="inputNomeProjeto"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Informe o nome do projeto"
-                name="nome_projeto"
-                value={formData.nome_projeto}
-                onChange={(e) => setFormData({nome_projeto: e.target.value})}
-              />
-            </div>
-          </div>
-          <div className="mt-2">
-            <label
-              htmlFor="participantes"
-              className="mb-2 text-sm font-medium"
-            >
-              Responsável
-            </label>
-            <div className="flex">
-              <select
-                id="participantes"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                name="responsavel"
-                value={formData.senha}
-                onChange={handleChange}
-              >
-                <option className="text-body-tertiary" defaultValue={true}>
-                  Selecione um responsável
+          Participantes
+        </label>
+        <div className="flex">
+          <select
+            id="participantes"
+            className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+            name="paticipantes"
+            value={formData.selectedParticipants}
+            multiple
+            onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              selectedParticipants: Array.from(e.target.selectedOptions, (option) => option.value)
+            }))
+          }
+          >
+            <option disabled>Selecione participantes</option>
+            {Array.isArray(formData.participantes) &&
+              formData.participantes.map((participante) => (
+                <option
+                  key={participante.id_usuario}
+                  value={participante.id_usuario}
+                >
+                  {participante.nome_completo}
                 </option>
-              </select>
-            </div>
-          </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
-          <div>
-            <button
-              type="submit"
-              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
-            >
-              Criar projeto
-            </button>
-          </div>
-        </form>
+              ))
+            }
+          </select>
+        </div>
       </div>
-    );
-  }
+    </GenericModal>
+  )        
 }
 
 export default ModalCriarProjeto;

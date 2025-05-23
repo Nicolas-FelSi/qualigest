@@ -1,11 +1,11 @@
-import { toast } from "react-toastify";
 import URL_BASE from "../../utils/urlBase";
 import getProjects from "./getProjects";
+import showToast from "../../utils/showToast.js"
 
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-const deleteProject = async (e, project, setProjects) => {
+const deleteProject = async (e, project) => {
   e.preventDefault();
 
   const escolha = confirm("Deseja deletar este projeto?");
@@ -29,13 +29,11 @@ const deleteProject = async (e, project, setProjects) => {
       const data = await response.json();
 
       if (data.status === "sucesso") {
-        const notify = () => toast.success(data.mensagem);
-        notify();
+        showToast(data.mensagem, "success");
       } else {
-        const notify = () => toast.error(data.mensagem);
-        notify();
+        showToast(data.mensagem);
       }
-      getProjects(setProjects);
+      getProjects();
     } catch (error) {
       console.error("Erro ao deletar o projeto:", error);
     }

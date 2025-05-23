@@ -3,7 +3,7 @@ import URL_BASE from "../../utils/urlBase";
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-async function getProjects(setProjects) {
+async function getProjects() {
     try {
         const response = await fetch(
         `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/exibirProjeto.php`,
@@ -18,7 +18,7 @@ async function getProjects(setProjects) {
 
         const data = await response.json();
 
-        setProjects(data.projetos);
+        return data;
     } catch (error) {
         console.error("Erro ao listar projetos:", error);
     }

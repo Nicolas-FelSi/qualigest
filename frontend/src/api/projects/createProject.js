@@ -1,18 +1,9 @@
-import { toast } from "react-toastify";
 import URL_BASE from "../../utils/urlBase";
-import getProjects from "./getProjects";
 
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-const createProject = async (e, formData, setFormData, closeModal, setProjects) => {
-  e.preventDefault();
-
-  if (formData.nome_projeto == "") {
-    alert("Preencha todos os campos!");
-    return;
-  }
-
+async function createProject (formData) {
   try {
     const response = await fetch(
       `http://localhost${
@@ -30,19 +21,7 @@ const createProject = async (e, formData, setFormData, closeModal, setProjects) 
 
     const data = await response.json();
 
-    if (data.status === "sucesso") {
-      closeModal();
-      setFormData({
-        nome_projeto: "",
-      });
-
-      const notify = () => toast.success(data.mensagem);
-      notify();
-    } else {
-      const notify = () => toast.error(data.mensagem);
-      notify();
-    }
-    getProjects(setProjects);
+    return data;
   } catch (error) {
     console.error("Erro ao criar projeto:", error);
   }

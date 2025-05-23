@@ -3,7 +3,7 @@ import { MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
 import getProjects from "../api/projects/getProjects";
-import ProjetoCard from "../components/ProjetoCard";
+import ProjetoCard from "../components/Projetos/ProjetoCard";
 import Aside from "../components/Aside";
 
 function Projetos() {
@@ -16,7 +16,11 @@ function Projetos() {
   const openModal = () => setIsOpen(true);
 
   useEffect(() => {
-    getProjects(setProjects);
+    const handleGetProjects = async () => { 
+      const data = await getProjects();
+      setProjects(data.projetos)
+    }
+    handleGetProjects();
   }, []);
 
   useEffect(() => {

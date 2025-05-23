@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { MdEmail, MdKey } from "react-icons/md";
 import handleLogin from "../../api/handleLogin.js"
 import validateLogin from "../../utils/validateLogin.js";
+import showToast from "../../utils/showToast.js";
+import handleChange from "../../utils/handleChange.js";
+import InputField from "../InputField.jsx";
 
 function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
   const navigate = useNavigate();
@@ -14,11 +16,17 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
     senha: "",
   });
 
-  const handleChange = (e) => {
+  const resetForm = () => {
     setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+      email: "",
+      senha: "",
     });
+    setErrors({});
+  };
+
+  const handleClose = () => {
+    resetForm();
+    closeModal();
   };
 
   const handleSubmit = async (e) => {
@@ -35,124 +43,91 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
     const data = await handleLogin(formData);
 
     if (data.status == "erro") {
-      const notify = () => toast.error(data.mensagem);
-      notify();
+      showToast(data.mensagem || data.mensagens);
     } else {
       localStorage.setItem("isLoggedIn", "true");
-      const notify = () => toast.success(data.mensagem);
-      notify();
 
+      showToast(data.mensagem, "success");
+      resetForm();
       closeModal();
 
       navigate("/projetos");
     }
   };
 
-  if (isOpen) {
-    return (
-      <div
-        className="inset-0 bg-black/75 fixed flex items-center justify-center"
-        onClick={() => {
-          closeModal();
-          setFormData({
-            email: "",
-            senha: ""
-          });
-          setErrors({})
-        }}
+  const handleSwitchToLogin = () => {
+    resetForm();
+    closeModal();
+    openModalCadastro();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="inset-0 bg-black/75 fixed flex items-center justify-center"
+    >
+      <form
+        className="bg-white p-5 rounded-lg z-50 w-lg mx-2"
+        noValidate
+        onSubmit={handleSubmit}
+        onClick={(e) => e.stopPropagation()}
       >
-        <form
-          className="bg-white p-5 rounded-lg z-50 w-lg mx-2"
-          noValidate
-          onSubmit={handleSubmit}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <h2
-            className="text-xl text-gray-900 font-semibold"
-            id="cadastroModalLabel"
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl text-gray-900 font-semibold">Login</h2>
+          <button
+            type="button"
+            onClick={() => handleClose()}
+            className="text-gray-500 hover:text-gray-700 text-2xl font-extrabold cursor-pointer"
+            aria-label="Fechar modal"
           >
-            Login
-          </h2>
-          <hr className="mx-[-1.3rem] opacity-15 mt-4" />
-          <div>
-            <div className="mt-4">
-              <label
-                htmlFor="inputEmailLogin"
-                className="mb-2 text-sm font-medium"
-              >
-                E-mail
-              </label>
-              <div className="flex">
-                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                  <MdEmail />
-                </span>
-                <input
-                  type="email"
-                  id="inputEmailLogin"
-                  className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.email ? "border-red-400" : "border-gray-300"} p-2.5`}
-                  placeholder="email@exemplo.com"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-              {errors.email && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.email}</p>}
-            </div>
-            <div className="mt-4">
-              <label
-                htmlFor="inputSenhaLogin"
-                className="mb-2 text-sm font-medium"
-              >
-                Senha
-              </label>
-              <div className="flex">
-                <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
-                  <MdKey />
-                </span>
-                <input
-                  type="password"
-                  id="inputSenhaLogin"
-                  className={`rounded-e-lg bg-gray-50 border text-gray-900 w-full text-sm ${errors.email ? "border-red-400" : "border-gray-300"} p-2.5`}
-                  placeholder="**************"
-                  name="senha"
-                  value={formData.senha}
-                  onChange={handleChange}
-                />
-              </div>
-              {errors.senha && <p className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">{errors.senha}</p>}
-            </div>
-          </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
-          <div>
-            <button
-              type="submit"
-              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
+            ✕
+          </button>
+        </div>
+        <hr className="mx-[-1.3rem] opacity-15 mt-4" />
+        <div>
+          <InputField
+            label="E-mail"
+            name="email"
+            value={formData.email}
+            onChange={(e) => handleChange(e, setFormData, formData)}
+            error={errors.email}
+            icon={MdEmail}
+            placeholder="email@exemplo.com"
+          />
+          <InputField
+            label="Senha"
+            name="senha"
+            type="password"
+            value={formData.senha}
+            onChange={(e) => handleChange(e, setFormData, formData)}
+            error={errors.senha}
+            icon={MdKey}
+            placeholder="**********"
+          />
+        </div>
+        <hr className="mx-[-1.3rem] mt-5 opacity-15" />
+        <div>
+          <button
+            type="submit"
+            className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
+          >
+            Entrar
+          </button>
+          <p className="text-center mt-2">
+            Não tem uma conta?
+            <span
+              className="underline cursor-pointer hover:text-blue-900 text-blue-600 font-semibold"
+              onClick={handleSwitchToLogin}
             >
-              Entrar
-            </button>
-            <p className="text-center mt-2">
-              Não tem uma conta?
-              <span
-                className="underline cursor-pointer hover:text-blue-900 text-blue-600 font-semibold"
-                onClick={() => {
-                  closeModal();
-                  openModalCadastro();
-                  setFormData({
-                    email: "",
-                    senha: ""
-                  });
-                  setErrors({})
-                }}
-              >
-                {" "}
-                Cadastre-se
-              </span>
-            </p>
-          </div>
-        </form>
-      </div>
-    );
-  }
+              {" "}
+              Cadastre-se
+            </span>
+          </p>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 export default ModalLogin;

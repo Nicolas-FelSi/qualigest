@@ -1,111 +1,102 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
-import URL_BASE from "../../utils/urlBase";
 import { useNavigate } from "react-router-dom";
+import editProject from "../../api/projects/editProject";
+import getProjects from "../../api/projects/getProjects";
+import showToast from "../../utils/showToast";
+import GenericModal from "./GenericModal";
+import InputField from "../InputField";
 
-function ModalEditarProjeto({ isOpen, closeModal, data }) {
-  const urlBase = URL_BASE;
+function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   const navigate = useNavigate();
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
-
+  const [error, setError] = useState({});
   const [formData, setFormData] = useState({
     id_projeto: data.id_projeto,
     nome_projeto: data.nome_projeto,
+    participantes: data,
+    selectedParticipants: data
   });
+
+  function validate() {
+    const newErrors = {};
+
+    if (formData.nome_projeto == "") newErrors.nome_projeto = "O nome do projeto é obrigatório";
+
+    return newErrors;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.nome_projeto == "") {
-      alert("Preencha todos os campos!");
+    if (Object.keys(validate()).length > 0) {
+      setError(validate());
       return;
     }
 
-    try {
-      const response = await fetch(
-        `http://localhost${
-          port != 80 ? `:${port}` : ""
-        }${urlBase}/editarProjeto.php`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+    const data = await editProject(formData);
+    
+    if (data.status === "sucesso") {
+      closeModal();
 
-      const data = await response.json();
+      showToast(data.messages, "success");
+    } else {
+      showToast(data.messages);
 
-      if (data.status === "sucesso") {
-        closeModal();
-        setFormData({
-          ...formData,
-          nome_projeto: "",
-        });
-
-        const notify = () => toast.success(data.mensagem);
-        notify();
-      } else {
-        const notify = () => toast.error(data.mensagem);
-        notify();
-        if (response.status === 401) {
-          localStorage.removeItem("isLoggedIn");
-          navigate("/"); 
-        }
+      if (data.status === 401) {
+        localStorage.removeItem("isLoggedIn");
+        navigate("/"); 
       }
-    } catch (error) {
-      console.error("Erro ao editar projeto:", error);
     }
+
+    const updatedProjects = await getProjects();
+    setProjects(updatedProjects);
   };
 
-  if (isOpen) {
-    return (
-      <div
-        className="inset-0 bg-black/75 fixed flex items-center justify-center"
-        onClick={closeModal}
-      >
-        <form
-          className="bg-white p-5 rounded-lg w-lg mx-2"
-          noValidate
-          onSubmit={handleSubmit}
-          onClick={(e) => e.stopPropagation()}
+  if (!isOpen) return null;
+
+  return (
+    <GenericModal
+      handleClose={closeModal}
+      handleSubmit={handleSubmit}
+      isOpen={isOpen}
+      textButton={"Editar projeto"}
+      title={"Editar projeto"}
+    >
+      <InputField
+        label={"Nome do projeto"}
+        error={error.nome_projeto}
+        name={"nome_projeto"}
+        placeholder={"Informe o nome do projeto"}
+        value={formData.nome_projeto}
+        onChange={(e) => setFormData((prev) => ({ ...prev, nome_projeto: e.target.value}))}
+      />
+      <div className="flex">
+        <select
+          id="participantes"
+          className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+          name="paticipantes"
+          value={formData.selectedParticipants}
+          multiple
+          onChange={(e) =>
+          setSelectedParticipants(
+            Array.from(e.target.selectedOptions, (option) => option.value)
+          )
+        }
         >
-          <h2 className="text-xl text-gray-900 font-semibold">Editar projeto</h2>
-          <hr className="mx-[-1.3rem] opacity-15 mt-4" />
-          <div className="mt-2">
-            <label
-              htmlFor="inputNomeProjeto"
-              className="mb-2 text-sm font-medium"
-            >
-              Nome do projeto
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                id="inputNomeProjeto"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Informe o nome do projeto"
-                name="nome_projeto"
-                value={formData.nome_projeto}
-                onChange={(e) => setFormData({nome_projeto: e.target.value})}
-              />
-            </div>
-          </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
-          <div>
-            <button
-              type="submit"
-              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
-            >
-              Editar projeto
-            </button>
-          </div>
-        </form>
+          <option disabled>Selecione participantes</option>
+          {Array.isArray(formData.participantes) &&
+            formData.participantes.map((participante) => (
+              <option
+                key={participante.id_usuario}
+                value={participante.id_usuario}
+              >
+                {participante.nome_completo}
+              </option>
+            ))
+          }
+        </select>
       </div>
-    );
-  }
+    </GenericModal>
+  );
 }
 
 export default ModalEditarProjeto;

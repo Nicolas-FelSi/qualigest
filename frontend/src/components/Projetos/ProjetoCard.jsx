@@ -1,9 +1,9 @@
 import { useState } from "react";
-import ModalEditarProjeto from "./Modais/ModalEditarProjeto";
-import deleteProject from "../api/projects/deleteProject";
+import ModalEditarProjeto from "../Modais/ModalEditarProjeto";
+import deleteProject from "../../api/projects/deleteProject";
 import { useNavigate } from "react-router-dom";
 
-function ProjetoCard({ project, setProjects} ) {
+function ProjetoCard({ project, setProjects } ) {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +12,7 @@ function ProjetoCard({ project, setProjects} ) {
   const openModal = () => setIsOpen(true);
 
   const handleDelete = (e) => {
-    deleteProject(e, project, setProjects);
+    deleteProject(e, project);
   }
 
   const handleNavigateToTaskList = (projectId) => {
@@ -78,7 +78,7 @@ function ProjetoCard({ project, setProjects} ) {
         </button>
       </div>
 
-      <ModalEditarProjeto isOpen={isOpen} closeModal={closeModal} data={project}/>
+      <ModalEditarProjeto isOpen={isOpen} closeModal={closeModal} data={project} setProjects={setProjects}/>
     </div>
   );
 }

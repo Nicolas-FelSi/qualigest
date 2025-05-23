@@ -2,6 +2,7 @@ import { useState } from "react";
 import ModalEditarProjeto from "../Modais/ModalEditarProjeto";
 import deleteProject from "../../api/projects/deleteProject";
 import { useNavigate } from "react-router-dom";
+import getProjects from "../../api/projects/getProjects";
 
 function ProjetoCard({ project, setProjects } ) {
   const navigate = useNavigate();
@@ -11,8 +12,10 @@ function ProjetoCard({ project, setProjects } ) {
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
 
-  const handleDelete = (e) => {
+  const handleDelete = async (e) => {
     deleteProject(e, project);
+    const updatedProjects = await getProjects();
+    setProjects(updatedProjects.projetos);
   }
 
   const handleNavigateToTaskList = (projectId) => {

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import editProject from "../../api/projects/editProject";
 import getProjects from "../../api/projects/getProjects";
 import showToast from "../../utils/showToast";
 import GenericModal from "./GenericModal";
 import InputField from "../InputField";
+import getUsersByProject from "../../api/getUsersByProject";
+import getUsers from "../../api/getUsers";
 
 function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   const navigate = useNavigate();
@@ -12,8 +14,8 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   const [formData, setFormData] = useState({
     id_projeto: data.id_projeto,
     nome_projeto: data.nome_projeto,
-    participantes: data,
-    selectedParticipants: data
+    participantes: [],
+    selectedParticipants: []
   });
 
   function validate() {
@@ -51,6 +53,27 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
     setProjects(updatedProjects);
   };
 
+  useEffect(() => {
+    const handleUsersByProject = async () => {
+      const users = await getUsersByProject(data.id_projeto);
+      setFormData({
+        ...formData, 
+        selectedParticipants: Array.isArray(users) ? users : []
+      })
+    }
+    
+    const handleUsers = async () => {
+      const users = await getUsers();
+        setFormData({
+          ...formData, 
+          participantes: Array.isArray(users) ? users : []
+        })
+    }
+  
+    handleUsers();
+    handleUsersByProject();
+  }, [])
+
   if (!isOpen) return null;
 
   return (
@@ -69,31 +92,39 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
         value={formData.nome_projeto}
         onChange={(e) => setFormData((prev) => ({ ...prev, nome_projeto: e.target.value}))}
       />
-      <div className="flex">
-        <select
-          id="participantes"
-          className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-          name="paticipantes"
-          value={formData.selectedParticipants}
-          multiple
-          onChange={(e) =>
-          setSelectedParticipants(
-            Array.from(e.target.selectedOptions, (option) => option.value)
-          )
-        }
+      <div className="mt-2">
+        <label
+          htmlFor="participantes"
+          className="mb-2 text-sm font-medium"
         >
-          <option disabled>Selecione participantes</option>
-          {Array.isArray(formData.participantes) &&
-            formData.participantes.map((participante) => (
-              <option
-                key={participante.id_usuario}
-                value={participante.id_usuario}
-              >
-                {participante.nome_completo}
-              </option>
-            ))
+          Participantes
+        </label>
+        <div className="flex">
+          <select
+            id="participantes"
+            className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+            name="paticipantes"
+            value={formData.selectedParticipants}
+            multiple
+            onChange={(e) =>
+            setSelectedParticipants(
+              Array.from(e.target.selectedOptions, (option) => option.value)
+            )
           }
-        </select>
+          >
+            <option disabled>Selecione participantes</option>
+            {Array.isArray(formData.participantes) &&
+              formData.participantes.map((participante) => (
+                <option
+                  key={participante.id_usuario}
+                  value={participante.id_usuario}
+                >
+                  {participante.nome_completo}
+                </option>
+              ))
+            }
+          </select>
+        </div>
       </div>
     </GenericModal>
   );

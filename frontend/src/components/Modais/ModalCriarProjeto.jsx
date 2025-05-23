@@ -54,12 +54,10 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
 
     if (data.status === "sucesso") {
       handleClose();
-
       showToast(data.message, "success");
     } else {
       showToast(data.message);
     }
-
     const updatedProjects = await getProjects();
     setProjects(updatedProjects.projetos);
   };
@@ -97,7 +95,7 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
             nome_projeto: e.target.value
           })
         )}}
-        error={error.nome}
+        error={error.nome_projeto}
       />
       <div className="mt-2">
         <label

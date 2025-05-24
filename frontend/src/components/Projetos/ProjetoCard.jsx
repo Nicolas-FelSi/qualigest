@@ -10,9 +10,15 @@ function ProjetoCard({ project, setProjects } ) {
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);
-  const openModal = () => setIsOpen(true);
+  const openModal = (e) => {
+    e.stopPropagation();
+
+    setIsOpen(true);
+  }
 
   const handleDelete = async (e) => {
+    e.stopPropagation();
+
     deleteProject(e, project);
     const updatedProjects = await getProjects();
     setProjects(updatedProjects.projetos);
@@ -72,7 +78,7 @@ function ProjetoCard({ project, setProjects } ) {
           </li>
         </ul>
       </div>
-      <div className="flex gap-5 border-t border-gray-300 p-2" onClick={(e) => e.stopPropagation()}>
+      <div className="flex gap-5 border-t border-gray-300 p-2">
         <button className="bg-blue-300 rounded-sm hover:bg-blue-500 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
           Editar
         </button>

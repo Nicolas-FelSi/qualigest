@@ -47,7 +47,7 @@ class ProjetoDAO {
     // Método para atualizar apenas o nome do projeto
 public function atualizarProjeto($id_projeto, $nome_projeto) {
     $query = "UPDATE projetos 
-              SET nome_projeto = :nome_projeto,
+              SET nome_projeto = :nome_projeto
               WHERE id_projeto = :id_projeto";
 
     $stmt = $this->conn->prepare($query);

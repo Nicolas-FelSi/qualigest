@@ -2,7 +2,6 @@ import { useState } from "react";
 import ModalEditarProjeto from "../Modais/ModalEditarProjeto";
 import deleteProject from "../../api/projects/deleteProject";
 import { useNavigate } from "react-router-dom";
-import getProjects from "../../api/projects/getProjects";
 
 function ProjetoCard({ project, setProjects } ) {
   const navigate = useNavigate();
@@ -19,9 +18,10 @@ function ProjetoCard({ project, setProjects } ) {
   const handleDelete = async (e) => {
     e.stopPropagation();
 
-    deleteProject(e, project);
-    const updatedProjects = await getProjects();
-    setProjects(updatedProjects.projetos);
+    await deleteProject(e, project);
+    setProjects(projetosAtuais =>
+      projetosAtuais.filter(p => p.id_projeto !== project.id_projeto)
+    );
   }
 
   const handleNavigateToTaskList = (projectId) => {

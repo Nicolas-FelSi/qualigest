@@ -8,36 +8,31 @@ import InputField from "../InputField";
 import getUsersByProject from "../../api/getUsersByProject";
 import getUsers from "../../api/getUsers";
 
-// Componente de Select Múltiplo (Opcional, mas melhora organização)
-// Se preferir, pode manter o <select> diretamente no modal.
 const MultiSelectUsers = ({ label, allUsers = [], selectedUserIds = [], onChange, error }) => {
   return (
     <div className="mt-2">
-      <label
-        htmlFor="participantes"
-        className="mb-2 text-sm font-medium"
-      >
+      <label htmlFor="participantes" className="mb-2 text-sm font-medium">
         {label}
       </label>
       <div className="flex">
         <select
           id="participantes"
-          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 ${error ? 'border-red-500' : 'border-gray-300'}`}
+          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 ${
+            error ? "border-red-500" : "border-gray-300"
+          }`}
           name="participantes"
-          value={selectedUserIds} // O valor deve ser um array de IDs
+          value={selectedUserIds}
           multiple
           onChange={(e) => {
-            // Extrai os valores selecionados e passa para a função onChange
             const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
             onChange(selectedOptions);
           }}
         >
-          <option disabled value="">Selecione participantes</option>
+          <option disabled value="">
+            Selecione participantes
+          </option>
           {allUsers.map((user) => (
-            <option
-              key={user.id_usuario}
-              value={user.id_usuario} // O valor da opção é o ID
-            >
+            <option key={user.id_usuario} value={String(user.id_usuario)}>
               {user.nome_completo}
             </option>
           ))}
@@ -48,125 +43,127 @@ const MultiSelectUsers = ({ label, allUsers = [], selectedUserIds = [], onChange
   );
 };
 
-
 function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   const navigate = useNavigate();
   const [error, setError] = useState({});
-  const [allUsers, setAllUsers] = useState([]); // Estado para todos os usuários
+  const [allUsers, setAllUsers] = useState([]);
   const [formData, setFormData] = useState({
-    id_projeto: '',
+    id_projeto: "",
     lideres: [],
-    nome_projeto: '',
-    participantes: [], // Armazenará os IDs dos usuários selecionados
+    nome_projeto: "",
+    participantes: [],
   });
 
-  // Inicializa o formData quando 'data' muda (modal abre/projeto muda)
+  // Inicializa o formData quando 'data' muda
   useEffect(() => {
-    if (data) {
-        setFormData({
-            id_projeto: data.id_projeto || '',
-            lideres: data.id_lider || [],
-            nome_projeto: data.nome_projeto || '',
-            participantes: [], // Inicializa vazio, será preenchido abaixo
-        });
+    if (data && isOpen) {
+      setFormData({
+        id_projeto: data.id_projeto || "",
+        lideres: data.id_lider ? [String(data.id_lider)] : [],
+        nome_projeto: data.nome_projeto || "",
+        participantes: [], // Inicialmente vazio, será populado pelo useEffect abaixo
+      });
     }
-  }, [data]); // Depende apenas de 'data'
+  }, [data, isOpen]);
 
-
-  // Busca usuários (todos e os do projeto) quando o modal abre ou o ID do projeto muda
+  // Busca usuários e participantes quando o modal abre
   useEffect(() => {
-    // Só executa se o modal estiver aberto e tiver um ID de projeto
     if (isOpen && data?.id_projeto) {
-        const fetchUsers = async () => {
-            try {
-                // Busca todos os usuários e os usuários do projeto em paralelo
-                const [allUsersResponse, projectUsersResponse] = await Promise.all([
-                    getUsers(),
-                    getUsersByProject(data.id_projeto),
-                ]);
+      const fetchUsers = async () => {
+        try {
+          const [allUsersResponse, projectUsersResponse] = await Promise.all([
+            getUsers(),
+            getUsersByProject(data.id_projeto),
+          ]);
 
-                // Define a lista de todos os usuários
-                setAllUsers(Array.isArray(allUsersResponse) ? allUsersResponse : []);
+          // Garante que allUsersResponse seja um array
+          const users = Array.isArray(allUsersResponse) ? allUsersResponse : [];
+          setAllUsers(users);
 
-                // Extrai os IDs dos usuários do projeto e atualiza o formData
-                const projectUserIds = Array.isArray(projectUsersResponse)
-                    ? projectUsersResponse.map(user => String(user.id_usuario)) // Converte IDs para string para o <select>
-                    : [];
+          // Converte IDs de participantes para strings
+          const projectUserIds = Array.isArray(projectUsersResponse)
+            ? projectUsersResponse.map((user) => String(user.id_usuario))
+            : [];
 
-                setFormData(prev => ({
-                    ...prev,
-                    participantes: projectUserIds,
-                }));
+          setFormData((prev) => ({
+            ...prev,
+            participantes: projectUserIds,
+          }));
+        } catch (err) {
+          console.error("Erro ao buscar usuários:", err);
+          showToast("Erro ao carregar dados dos usuários.", "error");
+        }
+      };
 
-            } catch (err) {
-                console.error("Erro ao buscar usuários:", err);
-                showToast("Erro ao carregar dados dos usuários.", "error");
-            }
-        };
-
-        fetchUsers();
+      fetchUsers();
     }
-  }, [isOpen, data?.id_projeto]); // Depende de isOpen e data.id_projeto
+  }, [isOpen, data?.id_projeto]);
 
-  // Função de validação
   const validate = useCallback(() => {
     const newErrors = {};
     if (!formData.nome_projeto.trim()) newErrors.nome_projeto = "O nome do projeto é obrigatório";
-    // Poderia adicionar validação para participantes se necessário
+    if (formData.participantes.length === 0)
+      newErrors.participantes = "Selecione pelo menos um participante";
     return newErrors;
-  }, [formData.nome_projeto]);
+  }, [formData.nome_projeto, formData.participantes]);
 
-
-  // Função para lidar com a submissão
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setError(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
+      showToast("Preencha todos os campos obrigatórios.", "error");
       return;
     }
-
+    console.log("Dados enviados para editProject:", {
+      ...formData,
+      participantes: formData.participantes.map((id) => parseInt(id, 10)),
+      lideres: formData.lideres.map((id) => parseInt(id, 10)),
+    });
     try {
-        // Certifique-se que 'editProject' espera um objeto com 'id_projeto', 'nome_projeto' e 'participantes' (array de IDs)
-        const result = await editProject(formData);
+      const result = await editProject({
+        ...formData,
+        participantes: formData.participantes.map((id) => parseInt(id, 10)),
+        lideres: formData.lideres.map((id) => parseInt(id, 10)),
+      });
 
-        if (result.status === "sucesso") {
-            closeModal();
-            showToast(result.messages, "success");
-            // Atualiza a lista de projetos na página principal
-            const updatedProjects = await getProjects();
-            setProjects(updatedProjects);
-        } else {
-            showToast(result.messages || "Ocorreu um erro ao editar.", "error");
-            if (result.status === 401) {
-                localStorage.removeItem("isLoggedIn");
-                navigate("/");
-            }
+      console.log("Resposta editProject:", result);
+
+      if (result.status === "sucesso") {
+        showToast(result.messages || "Projeto editado com sucesso!", "success");
+        closeModal();
+
+        // Atualiza a lista de projetos
+        const updatedProjectsResponse = await getProjects();
+        console.log("Resposta getProjects:", updatedProjectsResponse);
+        const updatedProjects = updatedProjectsResponse?.projetos || [];
+        setProjects(updatedProjects);
+      } else {
+        showToast(result.messages || "Erro ao editar o projeto.", "error");
+        if (result.status === 401) {
+          localStorage.removeItem("isLoggedIn");
+          navigate("/");
         }
+      }
     } catch (err) {
-        console.error("Erro ao submeter:", err);
-        showToast("Ocorreu um erro inesperado.", "error");
+      console.error("Erro ao submeter:", err);
+      showToast(`Erro: ${err.message || "Falha na requisição ao servidor."}`, "error");
     }
   };
 
-  // Função para atualizar o formData quando o nome muda
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Limpa o erro do campo ao digitar
-    if (error[name]) {
-        setError(prev => ({...prev, [name]: undefined}));
-    }
+    setError((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  // Função para atualizar os participantes selecionados
   const handleParticipantsChange = (selectedIds) => {
     setFormData((prev) => ({ ...prev, participantes: selectedIds }));
+    setError((prev) => ({ ...prev, participantes: undefined }));
   };
 
-  // Não renderiza nada se o modal estiver fechado
-  if (!isOpen) return null;
+  if (!isOpen || !data) return null;
 
   return (
     <GenericModal
@@ -182,17 +179,16 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
         name={"nome_projeto"}
         placeholder={"Informe o nome do projeto"}
         value={formData.nome_projeto}
-        onChange={handleInputChange} // Usa o handler geral
+        onChange={handleInputChange}
       />
 
       <MultiSelectUsers
-          label="Participantes"
-          allUsers={allUsers}
-          selectedUserIds={formData.participantes}
-          onChange={handleParticipantsChange}
-          error={error.participantes} // Se houver erro de validação para participantes
+        label="Participantes"
+        allUsers={allUsers}
+        selectedUserIds={formData.participantes}
+        onChange={handleParticipantsChange}
+        error={error.participantes}
       />
-
     </GenericModal>
   );
 }

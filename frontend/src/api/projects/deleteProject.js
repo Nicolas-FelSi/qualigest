@@ -1,5 +1,4 @@
 import URL_BASE from "../../utils/urlBase";
-import getProjects from "./getProjects";
 import showToast from "../../utils/showToast.js"
 
 const urlBase = URL_BASE;
@@ -33,7 +32,6 @@ const deleteProject = async (e, project) => {
       } else {
         showToast(data.mensagem);
       }
-      getProjects();
     } catch (error) {
       console.error("Erro ao deletar o projeto:", error);
     }

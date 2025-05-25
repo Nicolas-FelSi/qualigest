@@ -54,9 +54,9 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
 
     if (data.status === "sucesso") {
       handleClose();
-      showToast(data.message, "success");
+      showToast(data.mensagem, "success");
     } else {
-      showToast(data.message);
+      showToast(data.mensagem);
     }
     const updatedProjects = await getProjects();
     setProjects(updatedProjects.projetos);

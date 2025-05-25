@@ -16,6 +16,7 @@ function ProjetoCard({ project, setProjects } ) {
   }
 
   const handleDelete = async (e) => {
+    e.preventDefault();
     e.stopPropagation();
 
     await deleteProject(e, project);

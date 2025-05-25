@@ -4,9 +4,7 @@ import showToast from "../../utils/showToast.js"
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-const deleteProject = async (e, project) => {
-  e.preventDefault();
-
+const deleteProject = async (project) => {
   const escolha = confirm("Deseja deletar este projeto?");
 
   if (escolha) {

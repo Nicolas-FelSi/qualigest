@@ -159,7 +159,10 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   };
 
   const handleParticipantsChange = (selectedIds) => {
-    setFormData((prev) => ({ ...prev, participantes: selectedIds }));
+    const leadersIds = formData.lideres;
+
+    const allIds = [...leadersIds, ...selectedIds];
+    setFormData((prev) => ({ ...prev, participantes: allIds }));
     setError((prev) => ({ ...prev, participantes: undefined }));
   };
 

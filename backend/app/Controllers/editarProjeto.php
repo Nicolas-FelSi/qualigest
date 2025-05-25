@@ -33,7 +33,7 @@ if (empty($data['id_projeto']) || empty($data['nome_projeto']) || !isset($data['
 $id_projeto = $data['id_projeto'];
 $nome_projeto = trim($data['nome_projeto']);
 $participantesNovos = $data['participantes']; // Array de IDs
-$lideresNovos = $data['lideres']; // Array de IDs
+$lideresNovos = is_array($data['lideres']) ? $data['lideres'] : [$data['lideres']];
 
 $usuarioLogado = $_SESSION['usuario_id'];
 

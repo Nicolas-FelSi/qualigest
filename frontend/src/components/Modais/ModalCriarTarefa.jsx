@@ -1,25 +1,63 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import URL_BASE from "../../utils/urlBase";
 
 function ModalCriarTarefa({ isOpen, closeModal }) {
-  const urlBase = URL_BASE;
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
-
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    nome_completo: "",
-    nome_usuario: "",
-    email: "",
-    senha: "",
+    titulo: "",
+    descricao: "",
+    data_inicio: "",
+    data_limite: "",
+    prioridade: "",
+    id_projeto: "",
   });
 
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const handleChange = (e) => {
+  const resetForm = () => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      titulo: "",
+      descricao: "",
+      data_limite: "",
+      prioridade: "",
     });
+    setErrors({});
+  };
+
+  const handleClose = () => {
+    resetForm();
+    closeModal();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+
+    const validationErrors = validate(formData, formData.confirmPassword);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    const data = await handleRegister({
+      nome_completo: formData.nome_completo,
+      nome_usuario: formData.nome_usuario,
+      email: formData.email,
+      senha: formData.senha,
+    });
+
+    if (data.status === "sucesso") {
+      showToast(data.mensagem, "success");
+      resetForm();
+      closeModal();
+    } else {
+      showToast(data.mensagem || data.mensagens);
+    }
+  };
+
+  const handleSwitchToLogin = () => {
+    resetForm();
+    closeModal();
+    openModalLogin();
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +96,7 @@ function ModalCriarTarefa({ isOpen, closeModal }) {
       const data = await response.json();
 
       if (data.status === "sucesso") {
-        closeModal()
+        closeModal();
         setFormData({
           nome_completo: "",
           nome_usuario: "",
@@ -90,16 +128,17 @@ function ModalCriarTarefa({ isOpen, closeModal }) {
 
   if (isOpen) {
     return (
-      <div className="inset-0 bg-black/75 fixed flex items-center justify-center" onClick={closeModal}>
+      <div
+        className="inset-0 bg-black/75 fixed flex items-center justify-center"
+        onClick={closeModal}
+      >
         <form
           className="bg-white p-5 rounded-lg w-lg mx-2"
           noValidate
           onSubmit={handleSubmit}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
-          <h2 className="text-xl text-gray-900 font-semibold">
-            Criar tarefa
-          </h2>
+          <h2 className="text-xl text-gray-900 font-semibold">Criar tarefa</h2>
           <hr className="mx-[-1.3rem] opacity-15 mt-4" />
           <div className="mt-2">
             <label
@@ -140,10 +179,7 @@ function ModalCriarTarefa({ isOpen, closeModal }) {
             </div>
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="dataEntregaId"
-              className="mb-2 text-sm font-medium"
-            >
+            <label htmlFor="dataEntregaId" className="mb-2 text-sm font-medium">
               Data de entrega
             </label>
             <div className="flex">
@@ -203,9 +239,12 @@ function ModalCriarTarefa({ isOpen, closeModal }) {
               </select>
             </div>
           </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15"/>
+          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
           <div>
-            <button type="submit" className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all">
+            <button
+              type="submit"
+              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
+            >
               Criar tarefa
             </button>
           </div>

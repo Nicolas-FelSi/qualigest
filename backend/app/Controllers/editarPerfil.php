@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $foto = $dados['foto'] ?? null;
 
     // Atualiza campos
-    $query = "UPDATE usuarios SET nome = :nome, email = :email, nick = :nick";
+    $query = "UPDATE usuarios SET nome_completo = :nome, email = :email, nome_usuario = :nick";
 
     if (!empty($senha)) {
         $query .= ", senha = :senha";

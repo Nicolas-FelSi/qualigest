@@ -101,7 +101,7 @@ class UsuarioTarefaDAO {
     // Método para buscar os responsáveis de uma tarefa
     public function buscarResponsaveisPorTarefa($id_tarefa) {
     $query = "
-        SELECT u.id_usuario, u.nome, u.nick, u.foto 
+        SELECT u.id_usuario, u.nome_completo AS nome, u.nome_usuario AS nick, u.foto_perfil AS foto
         FROM responsaveistarefa rt
         JOIN usuarios u ON rt.id_usuario = u.id_usuario
         WHERE rt.id_tarefa = :id_tarefa

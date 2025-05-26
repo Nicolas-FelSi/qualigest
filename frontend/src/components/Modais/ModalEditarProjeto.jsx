@@ -116,11 +116,7 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
       showToast("Preencha todos os campos obrigatórios.", "error");
       return;
     }
-    console.log("Dados enviados para editProject:", {
-      ...formData,
-      participantes: formData.participantes.map((id) => parseInt(id, 10)),
-      lideres: formData.lideres.map((id) => parseInt(id, 10)),
-    });
+
     try {
       const result = await editProject({
         ...formData,
@@ -128,15 +124,12 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
         lideres: formData.lideres.map((id) => parseInt(id, 10)),
       });
 
-      console.log("Resposta editProject:", result);
-
       if (result.status === "sucesso") {
         showToast(result.messages || "Projeto editado com sucesso!", "success");
         closeModal();
 
         // Atualiza a lista de projetos
         const updatedProjectsResponse = await getProjects();
-        console.log("Resposta getProjects:", updatedProjectsResponse);
         const updatedProjects = updatedProjectsResponse?.projetos || [];
         setProjects(updatedProjects);
       } else {

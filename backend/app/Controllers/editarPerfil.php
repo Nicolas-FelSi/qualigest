@@ -45,13 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         exit;
     }
 
-    $nome = $dados['nome_completo'] ?? null;
-    $nome = $dados['nome_usuario'] ?? null;
+    $nomeCompleto = $dados['nome_completo'] ?? null;
+    $nick = $dados['nome_usuario'] ?? null;
     $email = $dados['email'] ?? null;
     $senha = $dados['senha'] ?? null;
     $foto = $dados['foto'] ?? null;
 
-    // Atualiza campos
     $query = "UPDATE usuarios SET nome_completo = :nome, email = :email, nome_usuario = :nick";
 
     if (!empty($senha)) {
@@ -67,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
 
     $stmt = $pdo->prepare($query);
 
-    $stmt->bindParam(':nome', $nome);
+    $stmt->bindParam(':nome', $nomeCompleto);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':nick', $nick);
     $stmt->bindParam(':id', $id_usuario);

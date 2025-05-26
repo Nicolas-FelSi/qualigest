@@ -1,34 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import createTask from "../../api/tasks/createTask";
 import handleChange from "../../utils/handleChange"
 import InputField from "../InputField";
 import GenericModal from "./GenericModal";
 import { useParams } from "react-router-dom";
 import showToast from "../../utils/showToast"
+import getUsersByProject from "../../api/getUsersByProject";
 
 function ModalCriarTarefa({ isOpen, closeModal  }) {
-  const params = useParams();
+  const { idProjeto } = useParams();
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
+  const [projectUsers, setProjectUsers] = useState([]); // Estado para usuários do projeto
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false); // Estado para loading dos usuários
+  const initialFormData = {
     titulo: "",
     descricao: "",
-    data_inicio: "",
     data_limite: "",
     prioridade: "",
+    ids_responsaveis: [], 
     id_projeto: "",
-  });
-
-  const resetForm = () => {
-    setFormData({
-      ...formData,
-      titulo: "",
-      descricao: "",
-      data_inicio: "",
-      data_limite: "",
-      prioridade: "",
-    });
-    setErrors({});
   };
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleClose = () => {
     resetForm();
@@ -44,6 +36,22 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
     return newErrors;
   }
 
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setErrors({});
+  };
+
+  const handleMultiSelectChange = (e) => {
+    const selectedIds = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setFormData(prev => ({ ...prev, ids_responsaveis: selectedIds }));
+    if (errors.responsavel) {
+        setErrors(prev => ({...prev, responsavel: undefined}));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -56,8 +64,9 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
     
     const dadosParaApi = {
       ...formData, 
-      id_projeto: parseInt(params.idProjeto), 
+      id_projeto: parseInt(idProjeto), 
       data_inicio: new Date().toISOString(),
+      ids_responsaveis: formData.ids_responsaveis.map(id => parseInt(id)), 
     };
 
     const result = await createTask(dadosParaApi); 
@@ -70,6 +79,28 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
       showToast(result.erro);
     }
   };
+
+
+  // Busca usuários e participantes quando o modal abre
+  useEffect(() => {
+    if (isOpen && idProjeto) {
+      const fetchProjectUsers = async () => {
+        setIsLoadingUsers(true);
+        setErrors(prev => ({...prev, responsavel: undefined}));
+        try {
+          const users = await getUsersByProject(idProjeto);
+          setProjectUsers(Array.isArray(users) ? users : []);
+        } catch (error) {
+          console.error("Erro ao buscar usuários do projeto:", error);
+          showToast("Erro ao carregar responsáveis.", "error");
+          setProjectUsers([]);
+        } finally {
+          setIsLoadingUsers(false);
+        }
+      };
+      fetchProjectUsers();
+    }
+  }, [isOpen, idProjeto]);
 
   if (!isOpen) return null;
 

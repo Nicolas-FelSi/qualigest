@@ -6,7 +6,7 @@ const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 async function getTasks(projectId) {
     try {
         const response = await fetch(
-            `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/listarTarefasProjeto.php?id_projeto=${projectId.idProjeto}`,
+            `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/listarTarefasProjeto.php?id_projeto=${projectId}`,
             {
                 method: "GET",
                 credentials: "include",

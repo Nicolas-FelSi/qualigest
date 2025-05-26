@@ -13,26 +13,41 @@ class TarefaDAO
         $this->conn = $db;
     }
 
-    // Método para inserir uma nova tarefa
-    public function inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status, $id_projeto)
+    public function inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoBase, $status, $id_projeto)
     {
+        // Multiplicadores por prioridade
+        $multiplicadores = [
+            'Baixa'     => 0.75,
+            'Moderada'  => 1.0,
+            'Alta'      => 1.25,
+            'Imediato'  => 1.5
+        ];
+
+        $pontuacaoBase = 20;
+
+        // Aplica o multiplicador correspondente à prioridade
+        $multiplicador = $multiplicadores[$prioridade] ?? 1.0;
+        $pontuacaoTarefa = intval($pontuacaoBase * $multiplicador); // Arredonda para inteiro
+
+        // Query para inserção
         $query = "INSERT INTO tarefas (titulo, descricao, data_inicio, data_limite, prioridade, pontuacao_Tarefa, status, id_projeto) 
-                  VALUES (:titulo, :descricao, :dataInicio, :dataLimite, :prioridade, :pontuacaoTarefa, :status, :id_projeto)";
+              VALUES (:titulo, :descricao, :dataInicio, :dataLimite, :prioridade, :pontuacaoTarefa, :status, :id_projeto)";
 
         $stmt = $this->conn->prepare($query);
 
-        // Vinculando os parâmetros aos valores
+        // Bind dos parâmetros
         $stmt->bindParam(':titulo', $titulo);
         $stmt->bindParam(':descricao', $descricao);
         $stmt->bindParam(':dataInicio', $dataInicio);
         $stmt->bindParam(':dataLimite', $dataLimite);
         $stmt->bindParam(':prioridade', $prioridade);
-        $stmt->bindParam(':pontuacaoTarefa', $pontuacaoTarefa);
+        $stmt->bindValue(':pontuacaoTarefa', $pontuacaoTarefa);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':id_projeto', $id_projeto);
 
         return $stmt->execute();
     }
+
 
     // Método para buscar uma tarefa pelo ID
     public function buscarTarefaPorId($id_tarefa)

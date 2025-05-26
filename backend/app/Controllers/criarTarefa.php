@@ -27,6 +27,8 @@ require_once __DIR__ . '/../Models/DAO/UsuarioTarefaDAO.php';
 
 $id_usuario = $_SESSION['usuario_id'];
 
+$pontuacao = 20;
+
 // Recebe os dados do POST
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -35,8 +37,8 @@ $descricao = $data['descricao'] ?? '';
 $dataInicio = $data['data_inicio'] ?? '';
 $dataLimite = $data['data_limite'] ?? '';
 $prioridade = $data['prioridade'] ?? '';
-$pontuacaoTarefa = $data['pontuacao_tarefa'] ?? 0;
-$status = $data['status'] ?? 'pendente';
+$pontuacaoTarefa = $data['pontuacao_tarefa'] ?? $pontuacao;
+$status = $data['status'] ?? 'em andamento';
 $id_projeto = $data['id_projeto'] ?? null;
 
 if (!$titulo || !$dataLimite || !$id_projeto) {

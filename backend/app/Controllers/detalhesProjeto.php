@@ -21,8 +21,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 require_once '../../config/database.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
-$id_projeto = $data['id_projeto'] ?? null;
+$id_projeto = $_GET['id_projeto'] ?? null;
 
 if (!$id_projeto) {
     http_response_code(400);

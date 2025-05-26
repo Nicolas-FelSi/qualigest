@@ -3,7 +3,7 @@ import URL_BASE from "../../utils/urlBase";
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-async function getTasks(setTasks, projectId) {
+async function getTasks(projectId) {
     try {
         const response = await fetch(
             `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/listarTarefasProjeto.php?id_projeto=${projectId.idProjeto}`,
@@ -18,8 +18,7 @@ async function getTasks(setTasks, projectId) {
 
         const data = await response.json();
 
-        console.log(data)
-        // setTasks(data);
+        return data;
     } catch (error) {
         console.error("Erro ao listar tarefas:", error);
     }

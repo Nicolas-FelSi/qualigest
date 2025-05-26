@@ -5,8 +5,15 @@ function Aside() {
   const urlPath = useLocation();
   const params = useParams();
 
+  // 1. Busque o último ID do sessionStorage
+  const lastProjectId = sessionStorage.getItem('lastProjectId');
+
+  // 2. Determine o ID a ser usado: priorize o da URL, senão use o do storage
+  const currentProjectId = params.projectId || lastProjectId;
+
   function logout() {
     localStorage.clear();
+    sessionStorage.clear(); 
   }
 
   return (
@@ -30,24 +37,24 @@ function Aside() {
                 <MdLayers className="text-amber-600 text-2xl" />
                 <span className="hidden md:block">Projetos</span>
               </NavLink>
-              { urlPath.pathname != "/projetos" &&
-                <NavLink
-                  to={`/lista-tarefas/${params.idProjeto}`}
-                  className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname == `/lista-tarefas/${params.idProjeto}` && "shadow-md border-l-4 border-l-amber-600"}`}
-                >
-                  <MdCheckCircle className="text-amber-600 text-xl" />
-                  <span className="hidden md:block">Tarefas</span>
-                </NavLink>
-              }
-              { urlPath.pathname != "/projetos" &&
-                <NavLink
-                  to="/detalhes-projeto"
-                  className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname == "/detalhes-projeto" && "shadow-md border-l-4 border-l-amber-600"}`}
-                >
-                  <MdInfo className="text-amber-600 text-xl" />
-                  <span className="hidden md:block">Detalhes do projeto</span>
-                </NavLink>
-              }
+              { currentProjectId && ( // Só mostra se tivermos algum ID
+                <>
+                  <NavLink
+                    to={`/lista-tarefas/${currentProjectId}`} 
+                    className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname === `/lista-tarefas/${currentProjectId}` && "shadow-md border-l-4 border-l-amber-600"}`}
+                  >
+                    <MdCheckCircle className="text-amber-600 text-xl" />
+                    <span className="hidden md:block">Tarefas</span>
+                  </NavLink>
+                  <NavLink
+                    to={`/detalhes-projeto/${currentProjectId}`} 
+                    className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname === `/detalhes-projeto/${currentProjectId}` && "shadow-md border-l-4 border-l-amber-600"}`}
+                  >
+                    <MdInfo className="text-amber-600 text-xl" />
+                    <span className="hidden md:block">Detalhes do projeto</span>
+                  </NavLink>
+                </>
+              )}
               <NavLink
                 to="/perfil"
                 className={`flex items-center md:gap-3 p-3 w-full border-b-gray-200 border-b ${urlPath.pathname == "/perfil" && "shadow-md border-l-4 border-l-amber-600"}`}

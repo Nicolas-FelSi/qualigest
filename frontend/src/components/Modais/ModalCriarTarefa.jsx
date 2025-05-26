@@ -1,7 +1,13 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import createTask from "../../api/tasks/createTask";
+import handleChange from "../../utils/handleChange"
+import InputField from "../InputField";
+import GenericModal from "./GenericModal";
+import { useParams } from "react-router-dom";
+import showToast from "../../utils/showToast"
 
-function ModalCriarTarefa({ isOpen, closeModal }) {
+function ModalCriarTarefa({ isOpen, closeModal  }) {
+  const params = useParams();
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     titulo: "",
@@ -17,6 +23,7 @@ function ModalCriarTarefa({ isOpen, closeModal }) {
       ...formData,
       titulo: "",
       descricao: "",
+      data_inicio: "",
       data_limite: "",
       prioridade: "",
     });
@@ -28,230 +35,132 @@ function ModalCriarTarefa({ isOpen, closeModal }) {
     closeModal();
   };
 
+  function validate() {
+    const newErrors = {};
+
+    if (formData.titulo.trim() == "") newErrors.titulo = "O título da tarefa é obrigatório";
+    if (formData.data_limite == "") newErrors.data_limite = "A data de entrega é obrigatória";
+
+    return newErrors;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
 
-    const validationErrors = validate(formData, formData.confirmPassword);
+    const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+    
+    const dadosParaApi = {
+      ...formData, 
+      id_projeto: parseInt(params.idProjeto), 
+      data_inicio: new Date().toISOString(),
+    };
 
-    const data = await handleRegister({
-      nome_completo: formData.nome_completo,
-      nome_usuario: formData.nome_usuario,
-      email: formData.email,
-      senha: formData.senha,
-    });
+    const result = await createTask(dadosParaApi); 
 
-    if (data.status === "sucesso") {
-      showToast(data.mensagem, "success");
+    if (result.sucesso) {
+      showToast("Tarefa criada com sucesso", "success");
       resetForm();
       closeModal();
     } else {
-      showToast(data.mensagem || data.mensagens);
+      showToast(result.erro);
     }
   };
 
-  const handleSwitchToLogin = () => {
-    resetForm();
-    closeModal();
-    openModalLogin();
-  };
+  if (!isOpen) return null;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (
-      formData.nome_completo == "" ||
-      formData.nome_usuario == "" ||
-      formData.email == "" ||
-      formData.senha == "" ||
-      confirmPassword == ""
-    ) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-
-    if (!(formData.senha == confirmPassword)) {
-      alert("Senhas diferentes!");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `http://localhost${
-          port != 80 ? `:${port}` : ""
-        }${urlBase}/cadastroUsuario.php`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.status === "sucesso") {
-        closeModal();
-        setFormData({
-          nome_completo: "",
-          nome_usuario: "",
-          email: "",
-          senha: "",
-        });
-
-        const notify = () => toast.success(data.mensagem);
-        notify();
-
-        setConfirmPassword("");
-      } else {
-        if (data.mensagem) {
-          const notify = () => toast.error(data.mensagem);
-          notify();
-        } else {
-          const notify = () => {
-            data.mensagens.forEach((mensagem) => {
-              toast.error(mensagem);
-            });
-          };
-          notify();
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao cadastrar:", error);
-    }
-  };
-
-  if (isOpen) {
-    return (
-      <div
-        className="inset-0 bg-black/75 fixed flex items-center justify-center"
-        onClick={closeModal}
+  return (
+      <GenericModal
+        title={"Criar tarefa"}
+        textButton={"Criar"}
+        closeModal={closeModal}
+        handleSubmit={handleSubmit}
+        isOpen={isOpen}
+        handleClose={handleClose}
       >
-        <form
-          className="bg-white p-5 rounded-lg w-lg mx-2"
-          noValidate
-          onSubmit={handleSubmit}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <h2 className="text-xl text-gray-900 font-semibold">Criar tarefa</h2>
-          <hr className="mx-[-1.3rem] opacity-15 mt-4" />
-          <div className="mt-2">
-            <label
-              htmlFor="tituloTarefaId"
-              className="mb-2 text-sm font-medium"
+        <InputField
+          error={errors.titulo}
+          label={"Título da tarefa"}
+          name={"titulo"}
+          onChange={(e) => handleChange(e, setFormData, formData)}
+          placeholder={"Informe um título para a tarefa"}
+          value={formData.titulo}
+        />
+        <div className="mt-2">
+          <label htmlFor="descricao" className="mb-2 text-sm font-medium">
+            Descrição da tarefa
+          </label>
+          <div className="flex">
+            <textarea
+              id="descricao"
+              className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 border-gray-300"
+              placeholder="Informe uma descrição para a tarefa"
+              name="descricao"
+              value={formData.descricao}
+              onChange={(e) => handleChange(e, setFormData, formData)}
+            />
+          </div>
+        </div>
+        <InputField
+          error={errors.data_limite}
+          label={"Data limite"}
+          name={"data_limite"}
+          onChange={(e) => handleChange(e, setFormData, formData)}
+          value={formData.data_limite}
+          type="datetime-local"
+        />
+        <div className="mt-2">
+          <label
+            htmlFor="prioridadeTarefaId"
+            className="mb-2 text-sm font-medium"
+          >
+            Prioridade
+          </label>
+          <div className="flex">
+            <select
+              id="prioridadeTarefaId"
+              className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+              name="prioridade"
+              value={formData.prioridade}
+              onChange={(e) => handleChange(e, setFormData, formData)}
             >
-              Título da tarefa
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                id="tituloTarefaId"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Informe um título para a tarefa"
-                name="titulo"
-                value={formData.nome_completo}
-                onChange={handleChange}
-              />
-            </div>
+              <option className="text-body-tertiary" defaultValue={true}>
+                Selecione uma prioridade
+              </option>
+              <option value="Baixa">Baixa</option>
+              <option value="Moderada">Moderada</option>
+              <option value="Alta">Alta</option>
+              <option value="Urgente">Urgente</option>
+            </select>
           </div>
-          <div className="mt-2">
-            <label
-              htmlFor="descricaoTarefaId1"
-              className="mb-2 text-sm font-medium"
+        </div>
+        {/* <div className="mt-2">
+          <label
+            htmlFor="responsavelTarefaId"
+            className="mb-2 text-sm font-medium"
+          >
+            Responsável
+          </label>
+          <div className="flex">
+            <select
+              id="responsavelTarefaId"
+              className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
+              name="responsavel"
+              value={formData.}
+              onChange={(e) => handleChange(e, setFormData, formData)}
             >
-              Descrição da tarefa
-            </label>
-            <div className="flex">
-              <textarea
-                type="text"
-                id="descricaoTarefaId1"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Informe uma descrição para a tarefa"
-                name="descricao"
-                value={formData.nome_usuario}
-                onChange={handleChange}
-              />
-            </div>
+              <option className="text-body-tertiary" defaultValue={true}>
+                Selecione um responsável
+              </option>
+            </select>
           </div>
-          <div className="mt-2">
-            <label htmlFor="dataEntregaId" className="mb-2 text-sm font-medium">
-              Data de entrega
-            </label>
-            <div className="flex">
-              <input
-                type="date"
-                id="dataEntregaId"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                name="data_entrega"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className="mt-2">
-            <label
-              htmlFor="prioridadeTarefaId"
-              className="mb-2 text-sm font-medium"
-            >
-              Prioridade
-            </label>
-            <div className="flex">
-              <select
-                id="prioridadeTarefaId"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                name="prioridade"
-                value={formData.senha}
-                onChange={handleChange}
-              >
-                <option className="text-body-tertiary" defaultValue={true}>
-                  Selecione uma prioridade
-                </option>
-                <option value="Baixa">Baixa</option>
-                <option value="Moderada">Moderada</option>
-                <option value="Alta">Alta</option>
-                <option value="Urgente">Urgente</option>
-              </select>
-            </div>
-          </div>
-          <div className="mt-2">
-            <label
-              htmlFor="responsavelTarefaId"
-              className="mb-2 text-sm font-medium"
-            >
-              Responsável
-            </label>
-            <div className="flex">
-              <select
-                id="responsavelTarefaId"
-                className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                name="responsavel"
-                value={formData.senha}
-                onChange={handleChange}
-              >
-                <option className="text-body-tertiary" defaultValue={true}>
-                  Selecione um responsável
-                </option>
-              </select>
-            </div>
-          </div>
-          <hr className="mx-[-1.3rem] mt-5 opacity-15" />
-          <div>
-            <button
-              type="submit"
-              className="bg-black w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-black/85 transition-all"
-            >
-              Criar tarefa
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
+        </div> */}
+      </GenericModal>
+  );
 }
 
 export default ModalCriarTarefa;

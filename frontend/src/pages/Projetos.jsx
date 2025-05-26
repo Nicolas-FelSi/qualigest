@@ -16,18 +16,18 @@ function Projetos() {
   const openModal = () => setIsOpen(true);
 
   useEffect(() => {
+    if (!localStorage.getItem("isLoggedIn")) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     const handleGetProjects = async () => { 
       const data = await getProjects();
       setProjects(data.projetos)
     }
     handleGetProjects();
   }, []);
-
-  useEffect(() => {
-    if (!localStorage.getItem("isLoggedIn")) {
-      navigate("/");
-    }
-  }, [navigate]);
 
   return (
     <div className="flex gap-1 lg:gap-3">

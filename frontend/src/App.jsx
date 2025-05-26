@@ -13,7 +13,7 @@ function App() {
         <Route path='/' element={ <PaginaInicial/> }/>
         <Route path='/perfil' element={ <Perfil/> }/>
         <Route path='/lista-tarefas/:idProjeto' element={ <ListaTarefas/> }/>
-        <Route path='/detalhes-projeto' element={ <DetalhesProjeto/> }/>
+        <Route path='/detalhes-projeto/:idProjeto' element={ <DetalhesProjeto/> }/>
         <Route path='/projetos' element={ <Projetos/> }/>
       </Routes>
       <ToastContainer/>

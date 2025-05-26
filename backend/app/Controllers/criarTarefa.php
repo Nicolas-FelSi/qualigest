@@ -14,18 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 session_start();
 
 // Verifica se o usuário está logado
-if (!isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);
     echo json_encode(['erro' => 'Usuário não autenticado.']);
     exit;
 }
 
-require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Models/classes/Tarefa.php';
 require_once __DIR__ . '/../Models/DAO/TarefaDAO.php';
 require_once __DIR__ . '/../Models/DAO/UsuarioTarefaDAO.php';
 
-$id_usuario = $_SESSION['id_usuario'];
+$id_usuario = $_SESSION['usuario_id'];
 
 // Recebe os dados do POST
 $data = json_decode(file_get_contents('php://input'), true);

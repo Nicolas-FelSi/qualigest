@@ -4,11 +4,14 @@ import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
 import { MdSearch } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
+import TarefaCard from "../components/ListaTarefas/TarefaCard";
 
 function ListaTarefas() {
   const navigate = useNavigate();
-  const params = useParams();
+  const { idProjeto } = useParams();
 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState({}); 
   const [tasks, setTasks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -16,14 +19,50 @@ function ListaTarefas() {
   const openModal = () => setIsOpen(true);
 
   useEffect(() => {
-    getTasks(setTasks, params);
+    getTasks(idProjeto);
   }, [])
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
     }
-  }, [navigate]);
+
+    let idToUse = idProjeto; // Pega da URL atual
+
+    // 2. Lógica de sessionStorage e ID
+    if (!idToUse || idToUse === 'undefined') {
+      const lastId = sessionStorage.getItem('lastProjectId');
+      if (lastId) {
+        navigate(`/lista-tarefas/${lastId}`, { replace: true });
+        return; 
+      } else {
+        setError("Nenhum projeto selecionado. Escolha um projeto primeiro.");
+        setLoading(false);
+        return; 
+      }
+    }
+
+    // 3. Salvar o ID válido no sessionStorage
+    sessionStorage.setItem('lastProjectId', idToUse);
+
+    // 4. Buscar Tarefas (Função Async)
+    const fetchTasks = async () => {
+      setLoading(true);
+      setError(null);
+      const response = await getTasks(idToUse); 
+
+      if (response && response.status === 'sucesso') {
+        setTasks(response.tarefas || []); // <-- ATUALIZE O ESTADO!
+      } else {
+        // Use a mensagem da API ou uma padrão
+        throw new Error(response?.messages || response?.mensagem || 'Erro ao buscar tarefas.');
+      }
+
+      setLoading(false);
+    };
+
+    fetchTasks();
+  }, [idProjeto, navigate]);
 
   return (
     <>
@@ -56,50 +95,16 @@ function ListaTarefas() {
             </button>
           </form>
           <section className="mt-1 md:mt-3 gap-3 grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2">
-            <div className="w-full bg-white border-gray-400 border p-3 rounded-md shadow-md hover:scale-105 transition-all cursor-pointer">
-              <div className="flex justify-between">
-                <h3 className="text-lg mr-1 font-medium mb-2">
-                  Fazer tela criação de projetos
-                </h3>
-                <p>Pontos: 20</p>
-              </div>
-              <p className="text-sm md:text-lg">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                Perferendis illum suscipit consequuntur vel distinctio quis
-                aliquid dolor laudantium, nihil ipsum aperiam, ipsa possimus,
-                sapiente modi natus corporis itaque! Eveniet, temporibus.
-              </p>
-              <p className="bg-gray-500 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium">
-                Em andamento
-              </p>
-              <p className="bg-red-700 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium ml-2">
-                Urgente
-              </p>
-              <p>Criada em: 13/05/2024</p>
-              <p>Entrega em: 24/05/2024</p>
-              <div className="flex mt-2">
-                <img
-                  className="w-7 h-7 object-cover rounded-full border border-gray-600"
-                  src="/images/pessoa1.jpg"
-                  alt=""
-                />
-                <img
-                  className="w-7 h-7 object-cover rounded-full border border-gray-600"
-                  src="/images/pessoa2.jpg"
-                  alt=""
-                />
-                <img
-                  className="w-7 h-7 object-cover rounded-full border border-gray-600"
-                  src="/images/pessoa3.jpg"
-                  alt=""
-                />
-              </div>
-            </div>
+            {
+              tasks.map(task => (
+                <TarefaCard key={task.id_tarefa} task={task} setTasks={setTasks}/>
+              ))
+            }
           </section>
         </main>
       </div>
 
-      <ModalCriarTarefa isOpen={isOpen} closeModal={closeModal}/>
+      <ModalCriarTarefa isOpen={isOpen} closeModal={closeModal} setTasks={setTasks}/>
     </>
   );
 }

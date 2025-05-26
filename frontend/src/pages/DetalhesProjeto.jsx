@@ -1,6 +1,25 @@
+import { useEffect } from "react";
 import Aside from "../components/Aside";
+import { useNavigate, useParams } from "react-router-dom";
+import getDataProject from "../api/getDataProject"
 
 function DetalhesProjeto() {
+  const { idProjeto } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!localStorage.getItem("isLoggedIn")) {
+      navigate("/");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleGetDataProject = async () => { 
+      const data = await getDataProject(idProjeto);
+      console.log(data)
+    }
+    handleGetDataProject();
+  }, [idProjeto]);
   return (
     <div className="flex gap-1 sm:gap-3 h-screen">
       <Aside />

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
-import ModalPerfil from "../components/Modais/ModalPerfil";
-import URL_BASE from "../utils/urlBase";
 import { useNavigate } from "react-router-dom";
+import getProfile from "../api/profile/getProfile"
+import InputField from "../components/InputField";
+import handleChange from "../utils/handleChange";
+import showToast from "../utils/showToast";
+import editProfile from "../api/profile/editProfile"
 
 function Perfil() {
-  const urlBase = URL_BASE;
-  const port = import.meta.env.VITE_PORT_BACKEND || 8080;
   const navigate = useNavigate();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     nome_completo: "",
     nome_usuario: "",
@@ -21,15 +22,48 @@ function Perfil() {
     tarefas_em_atraso: 0
   });
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  function validate() {
+    const newErrors = {};
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+    if(formData.nome_completo == "") newErrors.nome = "O nome completo é obrigatório";
+    else if(!/^[a-zA-ZÀ-ú\s]+$/u.test(formData.nome_completo)) newErrors.nome = "O nome completo deve conter apenas letras e espaços";
+
+    if(formData.nome_usuario == "") newErrors.usuario = "O nome de usuário é obrigatório";
+    else if(formData.nome_usuario.includes("@")) newErrors.usuario = ['O nome de usuário não pode conter "@"'];
+    else if(!/^[a-zA-Z0-9._-]+$/.test(formData.nome_usuario)) newErrors.usuario = "O nome de usuário só pode conter letras, números, ponto, hífen e underline";
+
+    if(formData.email == "") newErrors.email = "O email é obrigatório";
+
+    // if(formData.senha == "") newErrors.senha = "A senha é obrigatório";
+    // else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(formData.senha)) newErrors.senha = ['A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número'];
+
+    return newErrors;
+  }
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setErrors({});
+
+      const validationErrors = validate();
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
+
+      const data = await editProfile({
+        nome_completo:  formData.nome_completo,
+        nome_usuario: formData.nome_usuario,
+        email:  formData.email,
+        foto: formData.foto,
+        senha: formData.senha
+      });
+
+      if (data.mensagem) {
+        showToast(data.mensagem, "success");
+      } else {
+        showToast(data.erro);
+      }
+    };
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
@@ -38,27 +72,11 @@ function Perfil() {
   }, [navigate]);
 
   useEffect(() => {
-    async function getProfile() {
-      try {
-        const response = await fetch(
-          `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/perfil.php`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        setFormData(data);
-      } catch (error) {
-        console.error("Erro ao pegar projetos:", error);
-      }
+    const handleGetProfile = async () => {
+      const data = await getProfile();
+      setFormData(data);
     }
-    getProfile()
+    handleGetProfile();
   }, [])
 
   return (
@@ -69,83 +87,49 @@ function Perfil() {
           <h2 className="text-2xl">Perfil</h2>
         </div>
         <section className="bg-white flex justify-center items-center shadow-md">
-          <div className="max-w-5xl w-full p-3 flex flex-col gap-4">
+          <form className="max-w-5xl w-full p-3 flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row gap-5">
               <img
                 className="w-52 h-52 object-cover rounded-full m-auto border border-gray-500"
                 src="/images/pessoa1.jpg"
                 alt=""
               />
-              <form className="w-full">
-                <div className="mt-2">
-                  <label
-                    htmlFor="inputNomeCompleto"
-                    className="mb-2 text-sm font-medium"
-                  >
-                    Nome completo
-                  </label>
-                  <input
-                    type="text"
-                    id="inputNomeCompleto"
-                    className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                    placeholder="Informe seu nome completo"
-                    name="nome_completo"
-                    value={formData.nome_completo}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mt-2">
-                  <label
-                    htmlFor="inputNomeUsuario"
-                    className="mb-2 text-sm font-medium"
-                  >
-                    Usuário
-                  </label>
-                  <input
-                    type="text"
-                    id="inputNomeUsuario"
-                    className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                    placeholder="Informe seu nome de usuário"
-                    name="nome_usuario"
-                    value={formData.nome_usuario}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mt-2">
-                  <label
-                    htmlFor="inputEmail"
-                    className="mb-2 text-sm font-medium"
-                  >
-                    E-mail
-                  </label>
-                  <input
-                    type="email"
-                    id="inputEmail"
-                    className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                    placeholder="email@exemplo.com"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="mt-2">
-                  <label
-                    htmlFor="inputSenha"
-                    className="mb-2 text-sm font-medium"
-                  >
-                    Senha
-                  </label>
-                  <input
-                    type="password"
-                    id="inputSenha"
-                    className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                    placeholder="***********"
-                    name="senha"
-                    value={formData.senha}
-                    onChange={handleChange}
-                  />
-                </div>
-              </form>
+              <div className="w-full">
+                <InputField
+                  error={errors.nome_completo}
+                  label={"Nome completo"}
+                  name={"nome_completo"}
+                  onChange={(e) => handleChange(e, setFormData, formData)}
+                  placeholder={"Informe seu nome completo"}
+                  value={formData.nome_completo}
+                />
+                <InputField
+                  error={errors.nome_usuario}
+                  label={"Usuário"}
+                  name={"nome_usuario"}
+                  onChange={(e) => handleChange(e, setFormData, formData)}
+                  placeholder={"Informe seu nome de usuário"}
+                  value={formData.nome_usuario}
+                />
+                <InputField
+                  error={errors.email}
+                  label={"E-mail"}
+                  name={"email"}
+                  onChange={(e) => handleChange(e, setFormData, formData)}
+                  placeholder={"Informe seu e-mail"}
+                  value={formData.email}
+                  type="email"
+                />
+                <InputField
+                  error={errors.senha}
+                  label={"Senha"}
+                  name={"senha"}
+                  onChange={(e) => handleChange(e, setFormData, formData)}
+                  placeholder={"********"}
+                  value={formData.senha}
+                  type="password"
+                />
+              </div>
             </div>
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
@@ -163,17 +147,15 @@ function Perfil() {
             </div>
             <div>
               <button
-                type="button"
-                onClick={openModal}
+                type="submit"
                 className="bg-black text-white rounded-md cursor-pointer hover:bg-black/80 transition-all w-full p-2"
               >
                 Editar perfil
               </button>
             </div>
-          </div>
+          </form>
         </section>
       </main>
-      <ModalPerfil isOpen={isOpen} closeModal={closeModal} />
     </div>
   );
 }

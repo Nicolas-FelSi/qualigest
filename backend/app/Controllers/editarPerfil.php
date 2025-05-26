@@ -1,6 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Methods: PUT, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
@@ -14,17 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 session_start();
 
 // Verifica se o usuário está logado
-if (!isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['usuario_id'])) {
     http_response_code(401);
     echo json_encode(['erro' => 'Usuário não autenticado.']);
     exit;
 }
 
-require_once '../config/database.php';
+require_once '../../config/database.php';
 
 $db = new Database();
 $pdo = $db->getConnection();
-$id_usuario = $_SESSION['id_usuario'];
+$id_usuario = $_SESSION['usuario_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt = $pdo->prepare("SELECT id_usuario, nome_completo, email, nome_usuario, foto_perfil FROM usuarios WHERE id_usuario = :id");
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $dados = json_decode(file_get_contents("php://input"), true);
 
     if (!$dados) {

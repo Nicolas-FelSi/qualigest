@@ -52,7 +52,7 @@ foreach ($tarefas as $tarefa) {
         'data_inicio'      => $tarefa['data_inicio'],
         'data_limite'      => $tarefa['data_limite'],
         'prioridade'       => $tarefa['prioridade'],
-        'pontuacao_Tarefa' => $tarefa['pontuacao_Tarefa'],
+        'pontuacao_Tarefa' => $tarefa['pontuacao_tarefa'],
         'status'           => $tarefa['status'],
         'id_projeto'       => $tarefa['id_projeto'],
         'responsaveis'     => $responsaveis

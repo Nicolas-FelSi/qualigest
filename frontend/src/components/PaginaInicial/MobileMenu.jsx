@@ -3,7 +3,7 @@ import { MdMenu } from "react-icons/md";
 function MobileMenu({ isOpen, onToggle, onOpenLogin, onOpenCadastro }) {
   return (
     <button
-      className="sm:hidden"
+      className="sm:hidden relative"
       onClick={onToggle}
       aria-label="Abrir menu de navegação"
     >

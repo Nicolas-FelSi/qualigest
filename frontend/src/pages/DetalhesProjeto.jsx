@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import { useNavigate, useParams } from "react-router-dom";
 import getDataProject from "../api/getDataProject"
@@ -6,6 +6,14 @@ import getDataProject from "../api/getDataProject"
 function DetalhesProjeto() {
   const { idProjeto } = useParams();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nome_projeto: "",
+    pontuacao_total: 0,
+    tarefas_concluidas: 0,
+    tarefas_atrasadas: 0,
+    tarefas_em_andamento: 0,
+    participantes: []
+  })
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
@@ -16,35 +24,44 @@ function DetalhesProjeto() {
   useEffect(() => {
     const handleGetDataProject = async () => { 
       const data = await getDataProject(idProjeto);
-      console.log(data)
+      setFormData(data)
     }
     handleGetDataProject();
   }, [idProjeto]);
   return (
-    <div className="flex gap-1 sm:gap-3 h-screen">
+    <div className="flex gap-2 sm:gap-4 h-screen">
       <Aside />
-      <main className="w-full">
-        <section className="flex flex-col gap-1 sm:gap-3">
-          <div className="p-3 bg-white shadow-sm">
-            <h2 className="text-xl">Nome do projeto</h2>
+      <main className="w-full mr-2 lg:mr-4">
+        <section className="flex flex-col gap-2 sm:gap-4">
+          <div className="p-3 bg-white shadow-sm rounded-lg">
+            <h2 className="text-2xl uppercase font-medium">{ formData.nome_projeto }</h2>
           </div>
-          <div className="p-3 bg-white shadow-sm">
-            <h2 className="text-lg">
-              Pontuação total: <span>500pts</span>
+          <div className="p-3 bg-white shadow-sm rounded-lg">
+            <h2 className="text-xl">
+              Pontuação total: <span className="font-medium text-xl">{formData.pontuacao_total}</span> pontos
             </h2>
           </div>
-          <div className="flex flex-col lg:flex-row gap-1 sm:gap-3 mb-3">
-            <div className="p-3 bg-white w-full shadow-sm">
-              <h2 className="text-lg">Tarefas Pendentes</h2>
-              <p>Quantidade</p>
+          <div className="flex flex-col lg:flex-row gap-1 sm:gap-3 mb-3 text-gray-800">
+            <div className="p-3 bg-red-100 border border-red-200 w-full shadow-sm rounded-lg font-medium flex gap-10 items-center">
+              <span className="text-2xl ml-2">⚠️</span>
+              <div>
+                <h2 className="text-lg">Tarefas Atrasadas</h2>
+                <p className="text-2xl">{ formData.tarefas_atrasadas }</p>
+              </div>
             </div>
-            <div className="p-3 bg-white w-full shadow-sm">
-              <h2 className="text-lg">Tarefas em Andamento</h2>
-              <p>Quantidade</p>
+            <div className="p-3 bg-amber-100 border border-amber-200 w-full shadow-sm rounded-lg font-medium flex gap-10 items-center">
+              <span className="text-2xl ml-2">⏳</span>
+              <div>
+                <h2 className="text-lg">Tarefas em Andamento</h2>
+                <p className="text-2xl">{ formData.tarefas_em_andamento }</p>
+              </div>
             </div>
-            <div className="p-3 bg-white w-full shadow-sm">
-              <h2 className="text-lg">Tarefas Concluídas</h2>
-              <p>Quantidade</p>
+            <div className="p-3 bg-green-100 border border-green-200 w-full shadow-sm rounded-lg font-medium flex gap-10 items-center">
+              <span className="text-2xl ml-2">✅</span>
+              <div>
+                <h2 className="text-lg">Tarefas Concluídas</h2>
+                <p className="text-2xl">{ formData.tarefas_concluidas }</p>
+              </div>
             </div>
           </div>
         </section>
@@ -52,7 +69,7 @@ function DetalhesProjeto() {
           <h2 className="text-2xl font-semibold">Ranking do Grupo</h2>
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm text-center rounded-2xl shadow-sm mt-2 text-gray-500">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <thead className="text-xs text-gray-700 uppercase bg-blue-50">
                 <tr>
                   <th scope="col" className="px-6 py-3">
                     Rank
@@ -67,108 +84,39 @@ function DetalhesProjeto() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-white border-b border-gray-200">
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    4
-                  </th>
-                  <td className="px-3 py-2 hidden sm:block">
-                    <img
-                      className="w-12 h-12 object-cover rounded-full"
-                      src="/images/pessoa1.jpg"
-                      alt=""
-                    />
-                  </td>
-                  <td className="px-3 py-2">Jessica Felicio</td>
-                  <td className="px-3 py-2">79</td>
-                </tr>
-                <tr className="bg-white border-b border-gray-200">
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    5
-                  </th>
-                  <td className="px-3 py-2 hidden sm:block">
-                    <img
-                      className="w-12 h-12 object-cover rounded-full"
-                      src="/images/pessoa2.jpg"
-                      alt=""
-                    />
-                  </td>
-                  <td className="px-3 py-2">Charles Etorome</td>
-                  <td className="px-3 py-2">67</td>
-                </tr>
-                <tr className="bg-white border-b border-gray-200">
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    6
-                  </th>
-                  <td className="px-3 py-2 hidden sm:block">
-                    <img
-                      className="w-12 h-12 object-cover rounded-full"
-                      src="/images/pessoa3.jpg"
-                      alt=""
-                    />
-                  </td>
-                  <td className="px-3 py-2">Nathan Anderson</td>
-                  <td className="px-3 py-2">54</td>
-                </tr>
-                <tr className="bg-white border-b border-gray-200">
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    7
-                  </th>
-                  <td className="px-3 py-2 hidden sm:block">
-                    <img
-                      className="w-12 h-12 object-cover rounded-full"
-                      src="/images/pessoa4.jpg"
-                      alt=""
-                    />
-                  </td>
-                  <td className="px-3 py-2">Matthew Hamilton</td>
-                  <td className="px-3 py-2">52</td>
-                </tr>
-                <tr className="bg-white border-b border-gray-200">
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    8
-                  </th>
-                  <td className="px-3 py-2 hidden sm:block">
-                    <img
-                      className="w-12 h-12 object-cover rounded-full"
-                      src="/images/pessoa5.jpg"
-                      alt=""
-                    />
-                  </td>
-                  <td className="px-3 py-2">Brooke Cagle</td>
-                  <td className="px-3 py-2">49</td>
-                </tr>
-                <tr className="bg-white border-b border-gray-200">
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                  >
-                    9
-                  </th>
-                  <td className="px-3 py-2 hidden sm:block">
-                    <img
-                      className="w-12 h-12 object-cover rounded-full"
-                      src="/images/pessoa6.jpg"
-                      alt=""
-                    />
-                  </td>
-                  <td className="px-3 py-2">Ivana Cajina</td>
-                  <td className="px-3 py-2">7</td>
-                </tr>
+                {
+                  formData.participantes.map((participante, index) => (
+                  <tr key={participante.id_usuario} className={`${index == 0 ? "bg-yellow-100" : index == 1 ? "bg-gray-100" : index == 2 ? "bg-orange-100" : "bg-white"} border-b border-gray-200 text-gray-900 font-medium`}>
+                      <th
+                        scope="row"
+                        className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
+                      >
+                        { index == 0 && (
+                            <span className="ml-[-50px] mr-7">🥇</span>
+                          )
+                        }
+                        { index == 1 && (
+                            <span className="ml-[-50px] mr-7">🥈</span>
+                          )
+                        }
+                        { index == 2 && (
+                            <span className="ml-[-50px] mr-7">🥉</span>
+                          )
+                        }
+                        <span>{index+1}</span>
+                      </th>
+                      <td className="px-3 py-2 hidden sm:block">
+                        <img
+                          className="w-12 h-12 object-cover rounded-full"
+                          src="/images/pessoa1.jpg"
+                          alt=""
+                        />
+                      </td>
+                      <td className="px-3 py-2">{ participante.nome_completo }</td>
+                      <td className="px-3 py-2">{ participante.pontuacao }</td>
+                    </tr>
+                  ))
+                }
               </tbody>
             </table>
           </div>

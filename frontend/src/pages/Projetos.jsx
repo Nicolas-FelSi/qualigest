@@ -30,10 +30,10 @@ function Projetos() {
   }, []);
 
   return (
-    <div className="flex gap-1 lg:gap-3">
+    <div className="flex gap-2 lg:gap-4">
       <Aside />
-      <main className="w-full">
-        <form className="px-2 py-2 bg-white flex flex-col gap-2 md:flex-row justify-between shadow-md">
+      <main className="w-full mr-2 lg:mr-4">
+        <form className="px-2 py-2 bg-white flex flex-col gap-2 md:flex-row justify-between shadow-md rounded-lg">
           <div className="flex w-full">
             <input
               type="text"
@@ -44,13 +44,13 @@ function Projetos() {
             />
             <button
               type="submit"
-              className="inline-flex items-center px-6 text-white text-2xl bg-gray-950 border border-gray-950 rounded-e-md"
+              className="inline-flex items-center px-6 text-white text-2xl bg-amber-600 border border-amber-600 rounded-e-md"
             >
               <MdSearch />
             </button>
           </div>
         </form>
-        <section className="mt-1 lg:mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <section className="mt-2 lg:mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           { 
             projects.map(project => (
               <ProjetoCard key={project.id_projeto} project={project} setProjects={setProjects}/>

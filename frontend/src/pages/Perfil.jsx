@@ -80,20 +80,30 @@ function Perfil() {
   }, [])
 
   return (
-    <div className="flex gap-1 lg:gap-3">
+    <div className="flex gap-2 lg:gap-4">
       <Aside />
-      <main className="h-screen w-full">
-        <div className="p-3 bg-white shadow-md mb-1 lg:mb-3">
-          <h2 className="text-2xl">Perfil</h2>
+      <main className="h-screen w-full lg:mr-4 mr-2">
+        <div className="p-3 bg-white shadow-sm rounded-lg mb-2 lg:mb-4">
+          <h2 className="text-2xl font-medium uppercase">Perfil</h2>
         </div>
-        <section className="bg-white flex justify-center items-center shadow-md">
+        <section className="bg-white flex justify-center rounded-lg items-center shadow-md">
           <form className="max-w-5xl w-full p-3 flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row gap-5">
-              <img
-                className="w-52 h-52 object-cover rounded-full m-auto border border-gray-500"
-                src="/images/pessoa1.jpg"
-                alt=""
-              />
+              <div className="relative group w-52 h-52 rounded-full m-auto">
+                <img
+                  className="w-full h-full object-cover rounded-full" src="/images/pessoa1.jpg"
+                  alt="Foto de perfil do usuário"
+                />
+                <div
+                  className="absolute inset-0 w-full h-full rounded-full bg-gray-800 bg-opacity-60
+                        flex items-center justify-center
+                        opacity-0 group-hover:opacity-100
+                        transition-opacity duration-300
+                        cursor-pointer"
+                >
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                </div>
+              </div>
               <div className="w-full">
                 <InputField
                   error={errors.nome_completo}
@@ -132,25 +142,28 @@ function Perfil() {
               </div>
             </div>
             <div className="flex flex-col lg:flex-row gap-4">
-              <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
+              <div className="bg-blue-200 shadow-md border border-blue-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
+                ⭐️
                 <p className="text-md">Pontuação total</p>
-                <span className="text-lg font-normal">{ formData.pontuacao }</span>
+                <span className="text-2xl font-medium">{ formData.pontuacao }</span>
               </div>
-              <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
+              <div className="bg-green-200 shadow-md border border-green-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
+                ✅
                 <p className="text-md">Tarefas concluídas</p>
-                <span className="text-lg font-normal">{ formData.tarefas_concluidas }</span>
+                <span className="text-2xl font-medium">{ formData.tarefas_concluidas }</span>
               </div>
-              <div className="bg-blue-200 border border-blue-300 p-4 rounded-2xl font-semibold flex items-center flex-col w-full">
+              <div className="bg-red-200 shadow-md border border-red-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
+                ⚠️
                 <p className="text-md">Tarefas atrasadas</p>
-                <span className="text-lg font-normal">{ formData.tarefas_em_atraso}</span>
+                <span className="text-2xl font-medium">{ formData.tarefas_em_atraso}</span>
               </div>
             </div>
             <div>
               <button
                 type="submit"
-                className="bg-black text-white rounded-md cursor-pointer hover:bg-black/80 transition-all w-full p-2"
+                className="bg-orange-400 text-gray-900 rounded-md cursor-pointer hover:bg-amber-600 font-medium transition-all py-2 px-4"
               >
-                Editar perfil
+                Salvar alterações
               </button>
             </div>
           </form>

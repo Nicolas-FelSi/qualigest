@@ -1,6 +1,5 @@
 import ModalLogin from "../components/Modais/ModalLogin";
 import ModalCadastro from "../components/Modais/ModalCadastro";
-import Card from "../components/PaginaInicial/Card"
 import Button from "../components/PaginaInicial/Button"
 import MobileMenu from "../components/PaginaInicial/MobileMenu"
 import { useState } from "react";
@@ -44,27 +43,21 @@ function PaginaInicial() {
           <img src="/images/equipe-tarefa.png" alt="" />
         </div>
         <div className="grid gap-4 justify-center md:grid-cols-3 mx-2">
-          <Card 
-            description={"Organize suas tarefas de acordo com a prioridade e prazo"} 
-            imageAlt={"Ícone de priorização de tarefas"} 
-            imageSrc={"/images/tarefas.webp"} 
-            title={"Priorização de tarefas"} 
-            widthImage={"150px"}
-          />
-          <Card 
-            description={"Acompanhe os prazos de cada projeto com facilidade"} 
-            imageAlt={"Ícone de priorização de tarefas"} 
-            imageSrc={"/images/prazo.png"} 
-            title={"Gerenciamento de Prazos"} 
-            widthImage={"100px"}
-          />
-          <Card 
-            description={"Trabalhe em conjunto atribuindo responsabilidades"} 
-            imageAlt={"Ícone de priorização de tarefas"} 
-            imageSrc={"/images/equipe.png"} 
-            title={"Colaboração em Equipe"} 
-            widthImage={"150px"}
-          />
+          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-md">
+            <img className="w-[150px]" src="/images/tarefas.webp" alt="" />
+            <h2 className="text-lg font-semibold">Priorização de tarefas</h2>
+            <p>Organize suas tarefas de acordo com a prioridade e prazo</p>
+          </div>
+          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-md">
+            <img className="w-[100px]" src="/images/prazo.png" alt="" />
+            <h2 className="text-lg font-semibold">Gerenciamento de Prazos</h2>
+            <p>Acompanhe os prazos de cada projeto com facilidade</p>
+          </div>
+          <div className="bg-white p-6 rounded-sm flex flex-col gap-2 shadow-md">
+            <img className="w-[150px]" src="/images/equipe.png" alt="Imagem que representa priorização de tarefa" />
+            <h2 className="text-lg font-semibold">Colaboração em Equipe</h2>
+            <p>Trabalhe em conjunto atribuindo responsabilidades</p>
+          </div>
         </div>
       </main>
 

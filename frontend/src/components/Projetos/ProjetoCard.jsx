@@ -80,10 +80,10 @@ function ProjetoCard({ project, setProjects } ) {
         </ul>
       </div>
       <div className="flex gap-5 border-t border-gray-300 p-2">
-        <button className="bg-blue-300 rounded-sm hover:bg-blue-500 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
+        <button className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
           Editar
         </button>
-        <button className="bg-gray-500 rounded-sm hover:bg-gray-700 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
+        <button className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
           Deletar
         </button>
       </div>

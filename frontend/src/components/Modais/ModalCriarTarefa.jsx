@@ -165,7 +165,7 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
               <option value="Baixa">Baixa</option>
               <option value="Moderada">Moderada</option>
               <option value="Alta">Alta</option>
-              <option value="Urgente">Urgente</option>
+              <option value="Imediata">Imediata</option>
             </select>
           </div>
         </div>

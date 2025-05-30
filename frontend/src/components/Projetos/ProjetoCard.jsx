@@ -2,6 +2,7 @@ import { useState } from "react";
 import ModalEditarProjeto from "../Modais/ModalEditarProjeto";
 import deleteProject from "../../api/projects/deleteProject";
 import { useNavigate } from "react-router-dom";
+import showToast from "../../utils/showToast";
 
 function ProjetoCard({ project, setProjects } ) {
   const navigate = useNavigate();
@@ -19,13 +20,29 @@ function ProjetoCard({ project, setProjects } ) {
     e.preventDefault();
     e.stopPropagation();
 
-    await deleteProject(e, project);
-    setProjects(projetosAtuais =>
-      projetosAtuais.filter(p => p.id_projeto !== project.id_projeto)
-    );
+    const escolha = confirm("Deseja deletar este projeto?");
+    if (escolha) {
+      const data = await deleteProject(project.id_projeto);
+
+      if (data.status === "sucesso") {
+        showToast(data.mensagem, "success");
+      } else {
+        showToast(data.mensagem);
+      }
+
+      setProjects(projetosAtuais =>
+        projetosAtuais.filter(p => p.id_projeto !== project.id_projeto)
+      );
+    }
+
   }
 
   const handleNavigateToTaskList = (projectId) => {
+    sessionStorage.setItem("selectedProject", JSON.stringify({
+      id_projeto: projectId,
+      id_lider: project.id_lider,
+      nome_projeto: project.nome_projeto
+    }));
     navigate(`/lista-tarefas/${projectId}`);
   }
 

@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import createTask from "../../api/tasks/createTask";
-import handleChange from "../../utils/handleChange"
+import handleChangeUtil from "../../utils/handleChange";
 import InputField from "../InputField";
 import GenericModal from "./GenericModal";
-import { useParams } from "react-router-dom";
-import showToast from "../../utils/showToast"
+import showToast from "../../utils/showToast";
 import getUsersByProject from "../../api/getUsersByProject";
+import MultiSelectUsers from "../MultiSelectUsers";
 
-function ModalCriarTarefa({ isOpen, closeModal  }) {
+function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
   const { idProjeto } = useParams();
   const [errors, setErrors] = useState({});
-  const [projectUsers, setProjectUsers] = useState([]); // Estado para usuários do projeto
-  const [isLoadingUsers, setIsLoadingUsers] = useState(false); // Estado para loading dos usuários
+  const [projectUsers, setProjectUsers] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [minSelectableDateTime, setMinSelectableDateTime] = useState("");
+
   const initialFormData = {
     titulo: "",
     descricao: "",
+    data_inicio: "",
     data_limite: "",
     prioridade: "",
-    ids_responsaveis: [], 
+    ids_responsaveis: [],
     id_projeto: "",
   };
   const [formData, setFormData] = useState(initialFormData);
@@ -29,9 +33,31 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
 
   function validate() {
     const newErrors = {};
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Início do dia atual
 
-    if (formData.titulo.trim() == "") newErrors.titulo = "O título da tarefa é obrigatório";
-    if (formData.data_limite == "") newErrors.data_limite = "A data de entrega é obrigatória";
+    if (!formData.titulo.trim()) newErrors.titulo = "O título da tarefa é obrigatório";
+    if (!formData.data_inicio) newErrors.data_inicio = "A data de início é obrigatória";
+    if (!formData.data_limite) newErrors.data_limite = "A data limite é obrigatória";
+    if (formData.ids_responsaveis.length === 0) newErrors.ids_responsaveis = "Selecione pelo menos um responsável";
+    if (!formData.prioridade) newErrors.prioridade = "A prioridade é obrigatória";
+
+    // Validação de datas no JavaScript
+    if (formData.data_inicio) {
+      const dataInicio = new Date(formData.data_inicio);
+      if (dataInicio < now) {
+        newErrors.data_inicio = "A data de início não pode ser anterior ao dia atual.";
+      }
+    }
+    if (formData.data_limite) {
+      const dataLimite = new Date(formData.data_limite);
+      if (dataLimite < now) {
+        newErrors.data_limite = "A data limite não pode ser anterior ao dia atual.";
+      }
+      if (formData.data_inicio && dataLimite < new Date(formData.data_inicio)) {
+        newErrors.data_limite = "A data limite não pode ser anterior à data de início.";
+      }
+    }
 
     return newErrors;
   }
@@ -41,52 +67,54 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
     setErrors({});
   };
 
-  const handleMultiSelectChange = (e) => {
-    const selectedIds = Array.from(
-      e.target.selectedOptions,
-      (option) => option.value
-    );
-    setFormData(prev => ({ ...prev, ids_responsaveis: selectedIds }));
-    if (errors.responsavel) {
-        setErrors(prev => ({...prev, responsavel: undefined}));
+  const handleResponsaveisChange = (selectedIds) => {
+    setFormData((prev) => ({ ...prev, ids_responsaveis: selectedIds }));
+    if (errors.ids_responsaveis) {
+      setErrors((prev) => ({ ...prev, ids_responsaveis: undefined }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
 
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      showToast("Por favor, corrija os erros indicados.", "error");
       return;
     }
-    
+    setErrors({});
+
+    // Formatar datas para o formato esperado pela API (ex.: YYYY-MM-DD)
     const dadosParaApi = {
-      ...formData, 
-      id_projeto: parseInt(idProjeto), 
-      data_inicio: new Date().toISOString(),
-      ids_responsaveis: formData.ids_responsaveis.map(id => parseInt(id)), 
+      ...formData,
+      id_projeto: parseInt(idProjeto, 10),
+      ids_responsaveis: formData.ids_responsaveis.map((id) => parseInt(id, 10)),
+      data_inicio: formData.data_inicio ? formData.data_inicio.split("T")[0] : "",
+      data_limite: formData.data_limite ? formData.data_limite.split("T")[0] : "",
     };
 
-    const result = await createTask(dadosParaApi); 
-
-    if (result.sucesso) {
-      showToast("Tarefa criada com sucesso", "success");
-      resetForm();
-      closeModal();
-    } else {
-      showToast(result.erro);
+    try {
+      const result = await createTask(dadosParaApi);
+      if (result.sucesso) {
+        showToast(result.message, "success");
+        resetForm();
+        closeModal();
+        if (onTaskCreated) onTaskCreated(); // Chama a função para atualizar a lista de tarefas
+      } else {
+        showToast(result.erro || "Erro ao criar tarefa.", "error");
+      }
+    } catch (error) {
+      console.error("Erro ao criar tarefa:", error);
+      showToast("Ocorreu um erro inesperado ao criar a tarefa.", "error");
     }
   };
 
-
-  // Busca usuários e participantes quando o modal abre
   useEffect(() => {
     if (isOpen && idProjeto) {
       const fetchProjectUsers = async () => {
         setIsLoadingUsers(true);
-        setErrors(prev => ({...prev, responsavel: undefined}));
+        setErrors((prev) => ({ ...prev, ids_responsaveis: undefined }));
         try {
           const users = await getUsersByProject(idProjeto);
           setProjectUsers(Array.isArray(users) ? users : []);
@@ -102,95 +130,102 @@ function ModalCriarTarefa({ isOpen, closeModal  }) {
     }
   }, [isOpen, idProjeto]);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = (now.getMonth() + 1).toString().padStart(2, "0");
+      const day = now.getDate().toString().padStart(2, "0");
+      // Define o mínimo como o início do dia atual
+      const minDateTimeString = `${year}-${month}-${day}T00:00`;
+      setMinSelectableDateTime(minDateTimeString);
+    }
+  }, [isOpen]);
+
+  const handleSimpleChange = (e) => {
+    handleChangeUtil(e, setFormData, formData);
+  };
 
   return (
-      <GenericModal
-        title={"Criar tarefa"}
-        textButton={"Criar"}
-        closeModal={closeModal}
-        handleSubmit={handleSubmit}
-        isOpen={isOpen}
-        handleClose={handleClose}
-      >
-        <InputField
-          error={errors.titulo}
-          label={"Título da tarefa"}
-          name={"titulo"}
-          onChange={(e) => handleChange(e, setFormData, formData)}
-          placeholder={"Informe um título para a tarefa"}
-          value={formData.titulo}
+    <GenericModal
+      title="Criar tarefa"
+      textButton="Criar"
+      closeModal={closeModal}
+      handleSubmit={handleSubmit}
+      isOpen={isOpen}
+      handleClose={handleClose}
+    >
+      <InputField
+        error={errors.titulo}
+        label="Título da tarefa"
+        name="titulo"
+        onChange={handleSimpleChange}
+        placeholder="Informe um título para a tarefa"
+        value={formData.titulo}
+      />
+      <div className="mt-2">
+        <label htmlFor="descricao" className="block mb-2 text-sm font-medium">
+          Descrição da tarefa
+        </label>
+        <textarea
+          id="descricao"
+          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 ${errors.descricao ? "border-red-500" : "border-gray-300"}`}
+          placeholder="Informe uma descrição para a tarefa (opcional)"
+          name="descricao"
+          value={formData.descricao}
+          onChange={handleSimpleChange}
+          rows="3"
         />
-        <div className="mt-2">
-          <label htmlFor="descricao" className="mb-2 text-sm font-medium">
-            Descrição da tarefa
-          </label>
-          <div className="flex">
-            <textarea
-              id="descricao"
-              className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 border-gray-300"
-              placeholder="Informe uma descrição para a tarefa"
-              name="descricao"
-              value={formData.descricao}
-              onChange={(e) => handleChange(e, setFormData, formData)}
-            />
-          </div>
-        </div>
-        <InputField
-          error={errors.data_limite}
-          label={"Data limite"}
-          name={"data_limite"}
-          onChange={(e) => handleChange(e, setFormData, formData)}
-          value={formData.data_limite}
-          type="datetime-local"
-        />
-        <div className="mt-2">
-          <label
-            htmlFor="prioridadeTarefaId"
-            className="mb-2 text-sm font-medium"
-          >
-            Prioridade
-          </label>
-          <div className="flex">
-            <select
-              id="prioridadeTarefaId"
-              className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-              name="prioridade"
-              value={formData.prioridade}
-              onChange={(e) => handleChange(e, setFormData, formData)}
-            >
-              <option className="text-body-tertiary" defaultValue={true}>
-                Selecione uma prioridade
-              </option>
-              <option value="Baixa">Baixa</option>
-              <option value="Moderada">Moderada</option>
-              <option value="Alta">Alta</option>
-              <option value="Imediata">Imediata</option>
-            </select>
-          </div>
-        </div>
-        {/* <div className="mt-2">
-          <label
-            htmlFor="responsavelTarefaId"
-            className="mb-2 text-sm font-medium"
-          >
-            Responsável
-          </label>
-          <div className="flex">
-            <select
-              id="responsavelTarefaId"
-              className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-              name="responsavel"
-              value={formData.}
-              onChange={(e) => handleChange(e, setFormData, formData)}
-            >
-              <option className="text-body-tertiary" defaultValue={true}>
-                Selecione um responsável
-              </option>
-            </select>
-          </div>
-        </div> */}
-      </GenericModal>
+        {errors.descricao && <p className="text-red-500 text-xs mt-1">{errors.descricao}</p>}
+      </div>
+      <InputField
+        error={errors.data_inicio}
+        label="Data de início"
+        name="data_inicio"
+        onChange={handleSimpleChange}
+        value={formData.data_inicio}
+        type="datetime-local"
+        min={minSelectableDateTime}
+      />
+      <InputField
+        error={errors.data_limite}
+        label="Data limite"
+        name="data_limite"
+        onChange={handleSimpleChange}
+        value={formData.data_limite}
+        type="datetime-local"
+        min={formData.data_inicio || minSelectableDateTime}
+      />
+      <div className="mt-2">
+        <label htmlFor="prioridadeTarefaId" className="block mb-2 text-sm font-medium">
+          Prioridade
+        </label>
+        <select
+          id="prioridadeTarefaId"
+          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 ${errors.prioridade ? "border-red-500" : "border-gray-300"}`}
+          name="prioridade"
+          value={formData.prioridade}
+          onChange={handleSimpleChange}
+        >
+          <option value="">Selecione uma prioridade</option>
+          <option value="Baixa">Baixa</option>
+          <option value="Moderada">Moderada</option>
+          <option value="Alta">Alta</option>
+          <option value="Imediata">Imediata</option>
+        </select>
+        {errors.prioridade && <p className="text-red-500 text-xs mt-1">{errors.prioridade}</p>}
+      </div>
+      <MultiSelectUsers
+        label="Responsáveis"
+        allUsers={projectUsers}
+        selectedUserIds={formData.ids_responsaveis}
+        onChange={handleResponsaveisChange}
+        error={errors.ids_responsaveis}
+        placeholder="Selecione o(s) responsável(eis)"
+        isLoading={isLoadingUsers}
+        inputId="responsaveis-tarefa-select"
+      />
+    </GenericModal>
   );
 }
 

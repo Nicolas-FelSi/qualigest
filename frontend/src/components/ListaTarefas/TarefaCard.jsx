@@ -1,11 +1,13 @@
+import { format, parseISO } from "date-fns";
+
 function TarefaCard({ task }) {
   return (
-    <div className="w-full bg-white border-gray-400 border p-3 rounded-md shadow-md hover:scale-105 transition-all cursor-pointer">
+    <div className="w-full bg-white border-gray-400 border p-4 rounded-md shadow-md hover:scale-105 transition-all cursor-pointer">
       <div className="flex justify-between">
         <h3 className="text-lg mr-1 font-medium mb-2">
           { task.titulo }
         </h3>
-        <p>Pontos: { task.pontuacao_tarefa }</p>
+        <p>Pontos: { task.pontuacao_Tarefa }</p>
       </div>
       <p className="text-sm md:text-lg">
        { task.descricao }
@@ -16,8 +18,8 @@ function TarefaCard({ task }) {
       <p className="bg-red-700 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium ml-2">
         { task.prioridade }
       </p>
-      <p>Criada em: { task.data_inicio }</p>
-      <p>Entrega em: { task.data_limite }</p>
+      <p>Criada em: { format(parseISO(task.data_inicio), 'dd/MM/yyyy') }</p>
+      <p>Entrega em: { format(parseISO(task.data_limite), 'dd/MM/yyyy') }</p>
       <div className="flex mt-2">
         <img
           className="w-7 h-7 object-cover rounded-full border border-gray-600"

@@ -7,41 +7,7 @@ import GenericModal from "./GenericModal";
 import InputField from "../InputField";
 import getUsersByProject from "../../api/getUsersByProject";
 import getUsers from "../../api/getUsers";
-
-const MultiSelectUsers = ({ label, allUsers = [], selectedUserIds = [], onChange, error }) => {
-  return (
-    <div className="mt-2">
-      <label htmlFor="participantes" className="mb-2 text-sm font-medium">
-        {label}
-      </label>
-      <div className="flex">
-        <select
-          id="participantes"
-          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 ${
-            error ? "border-red-500" : "border-gray-300"
-          }`}
-          name="participantes"
-          value={selectedUserIds}
-          multiple
-          onChange={(e) => {
-            const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-            onChange(selectedOptions);
-          }}
-        >
-          <option disabled value="">
-            Selecione participantes
-          </option>
-          {allUsers.map((user) => (
-            <option key={user.id_usuario} value={String(user.id_usuario)}>
-              {user.nome_completo}
-            </option>
-          ))}
-        </select>
-      </div>
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-    </div>
-  );
-};
+import MultiSelectUsers from "../MultiSelectUsers"
 
 function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   const navigate = useNavigate();
@@ -70,29 +36,24 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
   useEffect(() => {
     if (isOpen && data?.id_projeto) {
       const fetchUsers = async () => {
-        try {
-          const [allUsersResponse, projectUsersResponse] = await Promise.all([
-            getUsers(),
-            getUsersByProject(data.id_projeto),
-          ]);
+        const [allUsersResponse, projectUsersResponse] = await Promise.all([
+          getUsers(),
+          getUsersByProject(data.id_projeto),
+        ]);
 
-          // Garante que allUsersResponse seja um array
-          const users = Array.isArray(allUsersResponse) ? allUsersResponse : [];
-          setAllUsers(users);
+        // Garante que allUsersResponse seja um array
+        const users = Array.isArray(allUsersResponse) ? allUsersResponse : [];
+        setAllUsers(users);
 
-          // Converte IDs de participantes para strings
-          const projectUserIds = Array.isArray(projectUsersResponse)
-            ? projectUsersResponse.map((user) => String(user.id_usuario))
-            : [];
+        // Converte IDs de participantes para strings
+        const projectUserIds = Array.isArray(projectUsersResponse)
+          ? projectUsersResponse.map((user) => String(user.id_usuario))
+          : [];
 
-          setFormData((prev) => ({
-            ...prev,
-            participantes: projectUserIds,
-          }));
-        } catch (err) {
-          console.error("Erro ao buscar usuários:", err);
-          showToast("Erro ao carregar dados dos usuários.", "error");
-        }
+        setFormData((prev) => ({
+          ...prev,
+          participantes: projectUserIds,
+        }));
       };
 
       fetchUsers();
@@ -101,11 +62,10 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
 
   const validate = useCallback(() => {
     const newErrors = {};
-    if (!formData.nome_projeto.trim()) newErrors.nome_projeto = "O nome do projeto é obrigatório";
-    if (formData.participantes.length === 0)
-      newErrors.participantes = "Selecione pelo menos um participante";
+    if (!formData.nome_projeto.trim())
+      newErrors.nome_projeto = "O nome do projeto é obrigatório";
     return newErrors;
-  }, [formData.nome_projeto, formData.participantes]);
+  }, [formData.nome_projeto]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -141,7 +101,10 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
       }
     } catch (err) {
       console.error("Erro ao submeter:", err);
-      showToast(`Erro: ${err.message || "Falha na requisição ao servidor."}`, "error");
+      showToast(
+        `Erro: ${err.message || "Falha na requisição ao servidor."}`,
+        "error"
+      );
     }
   };
 

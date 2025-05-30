@@ -6,6 +6,7 @@ import InputField from "../components/InputField";
 import handleChange from "../utils/handleChange";
 import showToast from "../utils/showToast";
 import editProfile from "../api/profile/editProfile"
+import { MdStar, MdCheckBox, MdWarning } from "react-icons/md"
 
 function Perfil() {
   const navigate = useNavigate();
@@ -143,17 +144,17 @@ function Perfil() {
             </div>
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="bg-blue-200 shadow-md border border-blue-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
-                ⭐️
+                <MdStar size={20}/>
                 <p className="text-md">Pontuação total</p>
                 <span className="text-2xl font-medium">{ formData.pontuacao }</span>
               </div>
               <div className="bg-green-200 shadow-md border border-green-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
-                ✅
+                <MdCheckBox size={20}/>
                 <p className="text-md">Tarefas concluídas</p>
                 <span className="text-2xl font-medium">{ formData.tarefas_concluidas }</span>
               </div>
               <div className="bg-red-200 shadow-md border border-red-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
-                ⚠️
+                <MdWarning size={20}/>
                 <p className="text-md">Tarefas atrasadas</p>
                 <span className="text-2xl font-medium">{ formData.tarefas_em_atraso}</span>
               </div>

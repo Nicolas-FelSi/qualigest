@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import { useNavigate, useParams } from "react-router-dom";
 import getDataProject from "../api/getDataProject"
+import { MdCheckBox, MdWarning, MdHourglassBottom } from "react-icons/md"
 
 function DetalhesProjeto() {
   const { idProjeto } = useParams();
@@ -42,22 +43,22 @@ function DetalhesProjeto() {
             </h2>
           </div>
           <div className="flex flex-col lg:flex-row gap-1 sm:gap-3 mb-3 text-gray-800">
-            <div className="p-3 bg-red-100 border border-red-200 w-full shadow-sm rounded-lg font-medium flex gap-10 items-center">
-              <span className="text-2xl ml-2">⚠️</span>
+            <div className="p-3 bg-red-100 border border-red-200 w-full shadow-sm rounded-lg font-medium flex gap-5 items-center">
+              <MdWarning size={20}/>
               <div>
                 <h2 className="text-lg">Tarefas Atrasadas</h2>
                 <p className="text-2xl">{ formData.tarefas_atrasadas }</p>
               </div>
             </div>
-            <div className="p-3 bg-amber-100 border border-amber-200 w-full shadow-sm rounded-lg font-medium flex gap-10 items-center">
-              <span className="text-2xl ml-2">⏳</span>
+            <div className="p-3 bg-amber-100 border border-amber-200 w-full shadow-sm rounded-lg font-medium flex gap-5 items-center">
+              <MdHourglassBottom size={20} />
               <div>
                 <h2 className="text-lg">Tarefas em Andamento</h2>
                 <p className="text-2xl">{ formData.tarefas_em_andamento }</p>
               </div>
             </div>
-            <div className="p-3 bg-green-100 border border-green-200 w-full shadow-sm rounded-lg font-medium flex gap-10 items-center">
-              <span className="text-2xl ml-2">✅</span>
+            <div className="p-3 bg-green-100 border border-green-200 w-full shadow-sm rounded-lg font-medium flex gap-5 items-center">
+              <MdCheckBox size={20}/>
               <div>
                 <h2 className="text-lg">Tarefas Concluídas</h2>
                 <p className="text-2xl">{ formData.tarefas_concluidas }</p>
@@ -86,7 +87,7 @@ function DetalhesProjeto() {
               <tbody>
                 {
                   formData.participantes.map((participante, index) => (
-                  <tr key={participante.id_usuario} className={`${index == 0 ? "bg-yellow-100" : index == 1 ? "bg-gray-100" : index == 2 ? "bg-orange-100" : "bg-white"} border-b border-gray-200 text-gray-900 font-medium`}>
+                  <tr key={participante.id_usuario} className="bg-white border-b border-gray-200 text-gray-900 font-medium">
                       <th
                         scope="row"
                         className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"

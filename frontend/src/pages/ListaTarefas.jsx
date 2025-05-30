@@ -1,142 +1,222 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Aside from "../components/Aside";
 import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
 import { MdSearch } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
 import TarefaCard from "../components/ListaTarefas/TarefaCard";
+import { parseISO, isToday, isTomorrow, format, compareAsc } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 function ListaTarefas() {
   const navigate = useNavigate();
   const { idProjeto } = useParams();
 
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState({}); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
 
-  useEffect(() => {
-    getTasks(idProjeto);
-  }, [])
+  // --- Lógica de Agrupamento ---
+  const agruparTarefasPorData = (tarefas) => {
+    if (!tarefas || tarefas.length === 0) return [];
+
+    const grupos = {};
+
+    tarefas.forEach((tarefa) => {
+      if (!tarefa.data_limite) return;
+
+      const data = parseISO(tarefa.data_limite + "T00:00:00");
+      let grupoKey;
+      let grupoNome;
+      let dataISO = tarefa.data_limite;
+
+      if (isToday(data)) {
+        grupoKey = "hoje";
+        grupoNome = "Hoje";
+      } else if (isTomorrow(data)) {
+        grupoKey = "amanha";
+        grupoNome = "Amanhã";
+      } else {
+        grupoKey = tarefa.data_limite;
+        grupoNome = format(data, "EEEE, dd 'de' MMMM", { locale: ptBR });
+        grupoNome = grupoNome.charAt(0).toUpperCase() + grupoNome.slice(1);
+      }
+
+      if (!grupos[grupoKey]) {
+        grupos[grupoKey] = { nome: grupoNome, dataISO: dataISO, tarefas: [] };
+      }
+      grupos[grupoKey].tarefas.push(tarefa);
+    });
+
+    const gruposOrdenados = Object.values(grupos).sort((a, b) => {
+      if (a.nome === "Hoje") return -1;
+      if (b.nome === "Hoje") return 1;
+      if (a.nome === "Amanhã" && b.nome !== "Hoje") return -1;
+      if (b.nome === "Amanhã" && a.nome !== "Hoje") return 1;
+      return compareAsc(parseISO(a.dataISO), parseISO(b.dataISO));
+    });
+
+    return gruposOrdenados;
+  };
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
+      return;
     }
 
-    let idToUse = idProjeto; // Pega da URL atual
+    let idToUse = idProjeto;
 
-    // 2. Lógica de sessionStorage e ID
-    if (!idToUse || idToUse === 'undefined') {
-      const lastId = sessionStorage.getItem('lastProjectId');
+    if (!idToUse || idToUse === "undefined") {
+      const lastId = sessionStorage.getItem("lastProjectId");
       if (lastId) {
         navigate(`/lista-tarefas/${lastId}`, { replace: true });
-        return; 
+        return;
       } else {
         setError("Nenhum projeto selecionado. Escolha um projeto primeiro.");
         setLoading(false);
-        return; 
+        return;
       }
     }
 
-    // 3. Salvar o ID válido no sessionStorage
-    sessionStorage.setItem('lastProjectId', idToUse);
+    sessionStorage.setItem("lastProjectId", idToUse);
 
-    // 4. Buscar Tarefas (Função Async)
     const fetchTasks = async () => {
       setLoading(true);
       setError(null);
-      const response = await getTasks(idToUse); 
-
-      if (response && response.status === 'sucesso') {
-        setTasks(response.tarefas || []); // <-- ATUALIZE O ESTADO!
-      } else {
-        // Use a mensagem da API ou uma padrão
-        throw new Error(response?.messages || response?.mensagem || 'Erro ao buscar tarefas.');
+      try {
+        const response = await getTasks(idToUse);
+        setTasks(Array.isArray(response) ? response : []);
+        if (!Array.isArray(response)) {
+          console.warn("API getTasks não retornou um array:", response);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar tarefas:", err);
+        setError(err.message || "Falha ao buscar tarefas.");
+        setTasks([]);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchTasks();
   }, [idProjeto, navigate]);
 
+  const gruposDeTarefas = useMemo(() => agruparTarefasPorData(tasks), [tasks]);
+
+  const handleTaskCreated = async () => {
+    if (idProjeto && idProjeto !== "undefined") {
+      setLoading(true);
+      try {
+        const response = await getTasks(idProjeto);
+        setTasks(Array.isArray(response) ? response : []);
+        if (!Array.isArray(response)) {
+          console.warn("API getTasks não retornou um array após criação de tarefa:", response);
+        }
+      } catch (err) {
+        console.error("Erro ao recarregar tarefas:", err);
+        setError(err.message || "Falha ao recarregar tarefas.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <>
-      <div className="flex gap-2 lg:gap-4">
-        <Aside />
-        <main className="w-full mr-2 lg:mr-4">
-          <form className="px-2 py-2 bg-white shadow-md flex flex-col gap-2 md:flex-row rounded-lg">
-            <p>Projeto</p>
+      <div className="flex gap-2 lg:gap-4 min-h-screen">
+        <Aside className="lg:sticky lg:top-0 lg:h-screen lg:z-30" />
+        <main className="w-full pr-2 lg:pr-4 flex flex-col">
+          <form className="px-2 py-2 bg-white shadow-md flex flex-col gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
+            <p className="flex items-center font-medium text-gray-700">
+              Projeto Tarefas
+            </p>
             <div className="flex w-full">
               <input
                 type="text"
                 id="pesquisa_tarefa"
-                className="rounded-s-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-                placeholder="Pesquisar tarefa"
+                className="rounded-s-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5 focus:ring-amber-500 focus:border-amber-500"
+                placeholder="Pesquisar tarefa (funcionalidade pendente)"
                 name="pesquisa_tarefa"
               />
               <button
-                type="submit"
-                className="inline-block my-3-flex items-center px-6 text-white text-2xl bg-amber-600 border border-amber-600 rounded-e-md"
+                type="button"
+                className="inline-flex items-center px-6 text-white text-2xl bg-amber-600 border border-amber-600 rounded-e-md hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none"
               >
                 <MdSearch />
               </button>
             </div>
-            {/* BOTÃO VISÍVEL APENAS PARA COORDENADOR DO PROJETO */}
             <button
-              className="bg-amber-600 rounded-md text-gray-950 font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all hover:text-black"
+              className="bg-amber-600 rounded-md text-white font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none"
               type="button"
               onClick={openModal}
             >
               Criar tarefa
             </button>
           </form>
-          <section className="mt-2 md:mt-4 grid grid-cols-3 gap-4">
-            <div>
-              <p className="p-2 rounded-lg bg-white w-full text-center mb-2">Hoje</p>
-              <div className="w-full bg-white border-gray-400 border p-3 rounded-md shadow-md cursor-pointer">
-                <div className="flex justify-between">
-                  <h3 className="text-lg mr-1 font-medium mb-2">
-                    Titulo
-                  </h3>
-                  <p>Pontos: 20</p>
-                </div>
-                <p className="bg-gray-500 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium">
-                  Em andamento
+
+          <div className="flex-grow flex flex-col py-4">
+            {loading && (
+              <div className="flex-grow flex items-center justify-center">
+                <p className="text-center text-lg text-gray-600">
+                  Carregando tarefas...
                 </p>
-                <p className="bg-red-700 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium ml-2">
-                  Imediata
-                </p>
-                <p>Criada em: 21/04/2042</p>
-                <p>Entrega em: 21/04/2042</p>
-                <div className="flex mt-2">
-                  <img
-                    className="w-7 h-7 object-cover rounded-full border border-gray-600"
-                    src="/images/pessoa1.jpg"
-                    alt=""
-                  />
-                  <img
-                    className="w-7 h-7 object-cover rounded-full border border-gray-600"
-                    src="/images/pessoa2.jpg"
-                    alt=""
-                  />
-                  <img
-                    className="w-7 h-7 object-cover rounded-full border border-gray-600"
-                    src="/images/pessoa3.jpg"
-                    alt=""
-                  />
-                </div>
               </div>
-            </div>
-          </section>
+            )}
+            {error && (
+              <div className="flex-grow flex items-center justify-center">
+                <p className="text-center text-lg text-red-600">
+                  Erro: {error}
+                </p>
+              </div>
+            )}
+
+            {!loading && !error && (
+              <>
+                {gruposDeTarefas.length > 0 ? (
+                  <section className="flex flex-wrap gap-2 lg:gap-4 lg:flex-nowrap lg:overflow-x-auto max-h-[calc(100vh-100px)] overflow-y-auto lg:scroll-pr-6">
+                    {gruposDeTarefas.map((grupo) => (
+                      <div
+                        key={grupo.dataISO + "-" + grupo.nome}
+                        className="bg-gray-100 p-4 rounded-lg min-h-[200px] mt-2 sm:mt-0 w-full lg:w-96 lg:flex-shrink-0 shadow"
+                      >
+                        <h2 className="p-2 rounded-lg bg-blue-500 text-white w-full text-center mb-4 font-semibold text-lg shadow-sm sticky top-0 z-10">
+                          {grupo.nome}
+                        </h2>
+                        <div className="space-y-3">
+                          {grupo.tarefas.map((tarefa) => (
+                            <TarefaCard
+                              key={tarefa.id_tarefa}
+                              task={tarefa}
+                              onTaskUpdate={handleTaskCreated}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </section>
+                ) : (
+                  <div className="flex-grow flex items-center justify-center">
+                    <p className="text-center text-lg text-gray-500">
+                      Nenhuma tarefa encontrada para este projeto.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </main>
       </div>
 
-      <ModalCriarTarefa isOpen={isOpen} closeModal={closeModal} setTasks={setTasks}/>
+      <ModalCriarTarefa
+        isOpen={isOpen}
+        closeModal={closeModal}
+        onTaskCreated={handleTaskCreated}
+      />
     </>
   );
 }

@@ -5,9 +5,11 @@ import createProject from "../../api/projects/createProject";
 import showToast from "../../utils/showToast";
 import GenericModal from "./GenericModal";
 import InputField from "../InputField"
+import Select from "react-select"
 
 function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
   const [error, setError] = useState("");
+  const [participantesOptions, setParticipantesOptions] = useState([]); // Opções para o react-select
   const [formData, setFormData] = useState({
     nome_projeto: "",
     participantes: [],
@@ -26,7 +28,6 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
     setFormData({
       nome_projeto: "",
       selectedParticipants: [],
-      participantes: await getUsers()
     });
     setError({});
   };
@@ -47,9 +48,11 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
       return;
     }
 
+    const participantIds = formData.selectedParticipants.map(p => p.value);
+
     const data = await createProject({
-      ...formData,
-      participantes: formData.selectedParticipants,
+      nome_projeto: formData.nome_projeto,
+      participantes: participantIds, // Envia apenas os IDs
     });
 
     if (data.status === "sucesso") {
@@ -62,16 +65,33 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
     setProjects(updatedProjects.projetos);
   };
 
+  // Função para lidar com a mudança no Select
+  const handleSelectChange = (selectedOptions) => {
+    setFormData((prev) => ({
+        ...prev,
+        selectedParticipants: selectedOptions || [] // Garante que seja sempre um array
+    }));
+  }
+
+   // Carrega os usuários e formata para o react-select
   useEffect(() => {
     const handleUsers = async () => {
       const users = await getUsers();
-      setFormData({
-        ...formData, 
-        participantes: Array.isArray(users) ? users : []
-      })
+      if (Array.isArray(users)) {
+        // Formata os usuários para o padrão { value: 'id', label: 'nome' }
+        const options = users.map(user => ({
+          value: user.id_usuario,
+          label: user.nome_completo,
+        }));
+        setParticipantesOptions(options);
+      } else {
+        setParticipantesOptions([]);
+      }
+    };
+    if (isOpen) { // Carrega apenas quando o modal for aberto (ou na primeira vez)
+        handleUsers();
     }
-    handleUsers();
-  }, [])
+  }, [isOpen]); // Recarrega se o modal abrir (opcional)
 
   if (!isOpen) return null;
 
@@ -104,33 +124,27 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
         >
           Participantes
         </label>
-        <div className="flex">
-          <select
-            id="participantes"
-            className="rounded-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5"
-            name="paticipantes"
-            value={formData.selectedParticipants}
-            multiple
-            onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              selectedParticipants: Array.from(e.target.selectedOptions, (option) => option.value)
-            }))
-          }
-          >
-            <option disabled>Selecione participantes</option>
-            {Array.isArray(formData.participantes) &&
-              formData.participantes.map((participante) => (
-                <option
-                  key={participante.id_usuario}
-                  value={participante.id_usuario}
-                >
-                  {participante.nome_completo}
-                </option>
-              ))
-            }
-          </select>
-        </div>
+        <Select
+          id="participantes"
+          name="participantes"
+          options={participantesOptions} // Passa as opções formatadas
+          isMulti // Habilita a seleção múltipla
+          className="basic-multi-select"
+          classNamePrefix="select"
+          placeholder="Selecione participantes..."
+          value={formData.selectedParticipants} // Valor controlado
+          onChange={handleSelectChange} // Função para atualizar o estado
+          noOptionsMessage={() => "Nenhum participante encontrado"}
+          styles={{ // Exemplo básico de estilização (opcional)
+            control: (base) => ({
+              ...base,
+              borderColor: '#d1d5db', // Cor da borda similar ao seu select antigo
+              '&:hover': {
+                borderColor: '#9ca3af',
+              },
+            }),
+          }}
+        />
       </div>
     </GenericModal>
   )        

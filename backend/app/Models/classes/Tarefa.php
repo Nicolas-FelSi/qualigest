@@ -6,6 +6,7 @@ class Tarefa {
     private $dataLimite;
     private $prioridade;
     private $pontuacaoTarefa;
+    private $multiplicador;
     private $status;
     private $id_tarefa;	
     private $id_projeto;
@@ -64,6 +65,14 @@ class Tarefa {
 
     public function get_pontuacaoTarefa() {
         return $this->pontuacaoTarefa;
+    }
+
+    public function set_multiplicador($multiplicador) {
+        $this->multiplicador = $multiplicador;
+    }
+
+    public function get_multiplicador() {
+        return $this->multiplicador;
     }
 
     public function set_status($status) {

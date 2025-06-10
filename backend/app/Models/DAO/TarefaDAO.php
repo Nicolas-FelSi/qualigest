@@ -13,25 +13,25 @@ class TarefaDAO
         $this->conn = $db;
     }
 
-    public function inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoBase, $status, $id_projeto)
+    public function inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoBase, $multiplicador, $status, $id_projeto)
     {
         // Multiplicadores por prioridade
-        $multiplicadores = [
+        $multiplicadoresPrioridade = [
             'Baixa'     => 0.75,
             'Moderada'  => 1.0,
             'Alta'      => 1.25,
-            'Imediato'  => 1.5
+            'Imediata'  => 1.5
         ];
 
         $pontuacaoBase = 20;
 
         // Aplica o multiplicador correspondente à prioridade
-        $multiplicador = $multiplicadores[$prioridade] ?? 1.0;
-        $pontuacaoTarefa = intval($pontuacaoBase * $multiplicador); // Arredonda para inteiro
+        $valorPrioridade = $multiplicadoresPrioridade[$prioridade] ?? 1.0;
+        $pontuacaoTarefa = intval($pontuacaoBase * $valorPrioridade); // Arredonda para inteiro
 
         // Query para inserção
-        $query = "INSERT INTO tarefas (titulo, descricao, data_inicio, data_limite, prioridade, pontuacao_Tarefa, status, id_projeto) 
-              VALUES (:titulo, :descricao, :dataInicio, :dataLimite, :prioridade, :pontuacaoTarefa, :status, :id_projeto)";
+        $query = "INSERT INTO tarefas (titulo, descricao, data_inicio, data_limite, prioridade, pontuacao_Tarefa, multiplicador, status, id_projeto) 
+              VALUES (:titulo, :descricao, :dataInicio, :dataLimite, :prioridade, :pontuacaoTarefa, :multiplicador, :status, :id_projeto)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -42,6 +42,7 @@ class TarefaDAO
         $stmt->bindParam(':dataLimite', $dataLimite);
         $stmt->bindParam(':prioridade', $prioridade);
         $stmt->bindValue(':pontuacaoTarefa', $pontuacaoTarefa);
+        $stmt->bindValue(':multiplicador', $multiplicador);
         $stmt->bindParam(':status', $status);
         $stmt->bindParam(':id_projeto', $id_projeto);
 
@@ -63,12 +64,12 @@ class TarefaDAO
     }
 
     // Método para atualizar uma tarefa
-    public function atualizarTarefa($id_tarefa, $titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status)
+    public function atualizarTarefa($id_tarefa, $titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $multiplicador, $status)
     {
         $query = "UPDATE tarefas 
                   SET titulo = :titulo, descricao = :descricao, data_inicio = :dataInicio, 
                       data_limite = :dataimite, prioridade = :prioridade, 
-                      pontuacaoTarefa = :pontuacaoTarefa, status = :status
+                      pontuacaoTarefa = :pontuacaoTarefa, multiplicador = :multiplicador, status = :status
                   WHERE id_tarefa = :id_tarefa";
 
         $stmt = $this->conn->prepare($query);
@@ -81,6 +82,7 @@ class TarefaDAO
         $stmt->bindParam(':dataLimite', $dataLimite);
         $stmt->bindParam(':prioridade', $prioridade);
         $stmt->bindParam(':pontuacaoTarefa', $pontuacaoTarefa);
+        $stmt->bindValue(':multiplicador', $multiplicador);
         $stmt->bindParam(':status', $status);
 
         return $stmt->execute();

@@ -2,24 +2,30 @@ import { format, parseISO } from "date-fns";
 
 function TarefaCard({ task }) {
   return (
-    <div className="w-full bg-white border-gray-400 border p-4 rounded-md shadow-md hover:scale-105 transition-all cursor-pointer">
+    <div className="w-full bg-white border-gray-400 border p-4 rounded-md shadow-md hover:scale-[1.02] transition-all cursor-pointer">
       <div className="flex justify-between">
-        <h3 className="text-lg mr-1 font-medium mb-2">
-          { task.titulo }
-        </h3>
-        <p>Pontos: { task.pontuacao_Tarefa }</p>
+        <h3 className="text-lg mr-1 font-medium mb-2">{task.titulo}</h3>
+        <p>Pontos: {task.pontuacao_Tarefa}</p>
       </div>
-      <p className="text-sm md:text-lg">
-       { task.descricao }
-      </p>
+      <p className="text-sm md:text-lg">{task.descricao}</p>
       <p className="bg-gray-500 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium">
-        { task.status }
+        {task.status}
       </p>
-      <p className="bg-red-700 text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium ml-2">
-        { task.prioridade }
+      <p
+        className={`${
+          task.prioridade == "baixa"
+            ? "bg-slate-400"
+            : task.prioridade == "moderada"
+            ? "bg-yellow-400"
+            : task.prioridade == "alta"
+            ? "bg-red-400"
+            : "bg-red-700"
+        } text-white rounded-md py-0 px-3 inline-block my-3 text-sm font-medium ml-2`}
+      >
+        {task.prioridade}
       </p>
-      <p>Criada em: { format(parseISO(task.data_inicio), 'dd/MM/yyyy') }</p>
-      <p>Entrega em: { format(parseISO(task.data_limite), 'dd/MM/yyyy') }</p>
+      <p>Criada em: {format(parseISO(task.data_inicio), "dd/MM/yyyy")}</p>
+      <p>Entrega em: {format(parseISO(task.data_limite), "dd/MM/yyyy")}</p>
       <div className="flex mt-2">
         <img
           className="w-7 h-7 object-cover rounded-full border border-gray-600"

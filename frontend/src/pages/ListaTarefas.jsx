@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Aside from "../components/Aside";
 import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
-import { MdSearch } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
 import TarefaCard from "../components/ListaTarefas/TarefaCard";
@@ -131,25 +130,8 @@ function ListaTarefas() {
       <div className="flex gap-2 lg:gap-4 min-h-screen">
         <Aside className="lg:sticky lg:top-0 lg:h-screen lg:z-30" />
         <main className="w-full pr-2 lg:pr-4 flex flex-col">
-          <form className="px-2 py-2 bg-white shadow-md flex flex-col gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
-            <p className="flex items-center font-medium text-gray-700">
-              Projeto Tarefas
-            </p>
-            <div className="flex w-full">
-              <input
-                type="text"
-                id="pesquisa_tarefa"
-                className="rounded-s-lg bg-gray-50 border text-gray-900 w-full text-sm border-gray-300 p-2.5 focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Pesquisar tarefa (funcionalidade pendente)"
-                name="pesquisa_tarefa"
-              />
-              <button
-                type="button"
-                className="inline-flex items-center px-6 text-white text-2xl bg-amber-600 border border-amber-600 rounded-e-md hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none"
-              >
-                <MdSearch />
-              </button>
-            </div>
+          <div className="px-2 py-2 bg-white shadow-md flex flex-col gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
+            <h2 className="text-2xl font-medium uppercase"></h2>
             <button
               className="bg-amber-600 rounded-md text-white font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none"
               type="button"
@@ -157,9 +139,9 @@ function ListaTarefas() {
             >
               Criar tarefa
             </button>
-          </form>
+          </div>
 
-          <div className="flex-grow flex flex-col py-4">
+          <div className="flex-grow flex flex-col pt-2 lg:pt-4">
             {loading && (
               <div className="flex-grow flex items-center justify-center">
                 <p className="text-center text-lg text-gray-600">
@@ -178,7 +160,7 @@ function ListaTarefas() {
             {!loading && !error && (
               <>
                 {gruposDeTarefas.length > 0 ? (
-                  <section className="flex flex-wrap gap-2 lg:gap-4 lg:flex-nowrap lg:overflow-x-auto max-h-[calc(100vh-100px)] overflow-y-auto lg:scroll-pr-6">
+                  <section className="flex flex-wrap gap-2 lg:gap-4 lg:flex-nowrap lg:overflow-x-auto max-h-[calc(100vh-100px)] overflow-y-auto lg:scroll-pr-6 md:pb-4">
                     {gruposDeTarefas.map((grupo) => (
                       <div
                         key={grupo.dataISO + "-" + grupo.nome}

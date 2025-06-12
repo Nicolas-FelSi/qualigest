@@ -17,10 +17,10 @@ class TarefaDAO
     {
         // Multiplicadores por prioridade
         $multiplicadoresPrioridade = [
-            'Baixa'     => 0.75,
+            'Baixa'     => 0.5,
             'Moderada'  => 1.0,
-            'Alta'      => 1.25,
-            'Imediata'  => 1.5
+            'Alta'      => 1.5,
+            'Imediata'  => 2.0
         ];
 
         $pontuacaoBase = 20;

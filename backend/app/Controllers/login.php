@@ -52,10 +52,17 @@ if (password_verify($senha, $usuario['senha'])) {
     $_SESSION['usuario_id'] = $usuario['id_usuario'];
     $_SESSION['usuario_nome'] = $usuario['nome_completo'];
     
-    echo json_encode(['status' => 'sucesso', 'mensagem' => 'Login realizado com sucesso.']);
+    echo json_encode([
+        'status' => 'sucesso',
+        'mensagem' => 'Login realizado com sucesso.',
+        'id_usuario' => $usuario['id_usuario']
+    ]);
 
 } else {
-    echo json_encode(['status' => 'erro', 'mensagem' => 'Senha incorreta.']);
+    echo json_encode([
+        'status' => 'erro',
+        'mensagem' => 'Senha incorreta.'
+    ]);
 }
 
 ?>

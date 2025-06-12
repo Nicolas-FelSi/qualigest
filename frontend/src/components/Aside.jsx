@@ -25,7 +25,7 @@ function Aside() {
 
   return (
     <>
-      <aside className="w-12 md:w-60 bg-gray-700 h-full shadow-md">
+      <aside className="w-12 md:w-64 bg-gray-700 h-full shadow-md">
         <nav>
           <ul className="flex flex-col justify-between p-0 h-screen">
             <div>

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { MdSearch } from "react-icons/md";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
 import getProjects from "../api/projects/getProjects";
@@ -11,7 +10,6 @@ function Projetos() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true); // Estado de carregamento
   const [error, setError] = useState(null); // Estado de erro
-  const [searchTerm, setSearchTerm] = useState(""); // Estado para o termo de busca
 
   const navigate = useNavigate();
 
@@ -50,18 +48,16 @@ function Projetos() {
     fetchProjects();
   }, []);
 
-  // Filtra os projetos com base no searchTerm
-  const filteredProjects = projects.filter((project) =>
-    project.nome_projeto.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <>
       <div className="flex gap-2 lg:gap-4 min-h-screen">
         <Aside />
         <main className="w-full mr-2 lg:mr-4 flex flex-col">
+          <div className="p-3 bg-white shadow-sm rounded-lg mb-2 lg:mb-4">
+            <h2 className="text-2xl font-medium uppercase">Projetos</h2>
+          </div>
           {/* Container para o conteúdo dinâmico (loading, error, projects list) */}
-          <div className="flex-grow flex flex-col py-4">
+          <div className="flex-grow flex flex-col">
             {loading && (
               <div className="flex-grow flex items-center justify-center">
                 <p className="text-center text-lg text-gray-600">
@@ -79,17 +75,10 @@ function Projetos() {
 
             {!loading && !error && (
               <>
-                {filteredProjects.length === 0 && searchTerm && (
-                  <div className="flex-grow flex items-center justify-center">
-                    <p className="text-center text-lg text-gray-500">
-                      Nenhum projeto encontrado com o termo "{searchTerm}".
-                    </p>
-                  </div>
-                )}
                 {/* O grid só é renderizado se não estiver carregando e não houver erro */}
                 {/* A mensagem de "nenhum projeto" (sem busca) é tratada pelo fato de o grid ficar vazio + card de adicionar */}
                 <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {filteredProjects.map((project) => (
+                  {projects.map((project) => (
                     <ProjetoCard
                       key={project.id_projeto}
                       project={project}
@@ -112,7 +101,7 @@ function Projetos() {
                     </p>
                   </div>
                 </section>
-                {projects.length === 0 && !searchTerm && !loading && !error && (
+                {projects.length === 0 && !loading && !error && (
                   <div className="flex-grow flex items-center justify-center">
                     <p className="text-center text-lg text-gray-500 mt-4">
                       Você ainda não tem projetos.

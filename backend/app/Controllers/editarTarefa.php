@@ -77,6 +77,7 @@ $tarefaAtualizada = $tarefaDAO->atualizarTarefa(
     $data['data_limite'],
     $data['prioridade'],
     $data['pontuacao_tarefa'],
+    $data['multiplicador'],
     $data['status']
 );
 

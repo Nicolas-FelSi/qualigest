@@ -54,7 +54,7 @@ $tarefaDAO = new TarefaDAO($db);
 $usuarioTarefaDAO = new UsuarioTarefaDAO($db);
 
 // Inserir tarefa
-$sucesso = $tarefaDAO->inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $status, $id_projeto);
+$sucesso = $tarefaDAO->inserirTarefa($titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $multiplicador, $status, $id_projeto);
 
 if ($sucesso) {
     // Recuperar ID da última tarefa inserida

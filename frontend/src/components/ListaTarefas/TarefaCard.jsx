@@ -43,6 +43,7 @@ function TarefaCard({ task }) {
           alt=""
         />
       </div>
+
     </div>
   );
 }

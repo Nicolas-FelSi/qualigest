@@ -48,12 +48,17 @@ function ProjetoCard({ project, setProjects } ) {
 
   return (
     <div className="bg-white shadow-md rounded-md border border-gray-400" onClick={()=>handleNavigateToTaskList(project.id_projeto)}>
-      <div className="flex justify-between">
-        <h2 className="border-b border-gray-300 p-2 text-2xl text-amber-600">
+      <div className="border-b border-gray-300 flex justify-between items-center p-2">
+        <h2 className="text-2xl text-amber-600">
           {project.nome_projeto}
         </h2>
-        <img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa1.jpg" alt="" />
+        <img
+          className="w-8 h-8 rounded-lg object-cover border border-gray-400"
+          src="/images/pessoa1.jpg"
+          alt=""
+        />
       </div>
+      <p className="font-semibold uppercase text-gray-800 text-3xl pt-5 text-center">{project.pontuacao_projeto == null ? "0" : project.pontuacao_projeto} pts</p>
       <div className="py-2 px-5 text-center flex flex-col">
         <ul className="flex justify-end mt-4">
           <li>

@@ -54,8 +54,8 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
       if (dataLimite < now) {
         newErrors.data_limite = "A data limite não pode ser anterior ao dia atual.";
       }
-      if (formData.data_inicio && dataLimite < new Date(formData.data_inicio)) {
-        newErrors.data_limite = "A data limite não pode ser anterior à data de início.";
+      if (formData.data_inicio && dataLimite <= new Date(formData.data_inicio)) {
+        newErrors.data_limite = "A data limite não pode ser anterior ou igual à data de início.";
       }
     }
 
@@ -90,8 +90,8 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
       ...formData,
       id_projeto: parseInt(idProjeto, 10),
       ids_responsaveis: formData.ids_responsaveis.map((id) => parseInt(id, 10)),
-      data_inicio: formData.data_inicio ? formData.data_inicio.split("T")[0] : "",
-      data_limite: formData.data_limite ? formData.data_limite.split("T")[0] : "",
+      data_inicio: formData.data_inicio ? formData.data_inicio.replace("T", " ") : "",
+      data_limite: formData.data_limite ? formData.data_limite.replace("T", " ") : "",
     };
 
     try {

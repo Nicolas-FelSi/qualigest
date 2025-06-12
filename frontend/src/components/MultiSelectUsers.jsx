@@ -52,7 +52,7 @@ const MultiSelectUsers = ({
         onChange={handleReactSelectChange}
         placeholder={placeholder}
         isLoading={isLoading} // Passa o estado de loading para o react-select
-        noOptionsMessage={() => isLoading ? "Carregando responsáveis..." : "Nenhum responsável encontrado"}
+        noOptionsMessage={() => isLoading ? "Carregando participantes..." : "Nenhum participante encontrado"}
         className="react-select-container"
         classNamePrefix="react-select"
         // Exemplo de estilização básica para se assemelhar ao Tailwind (opcional)

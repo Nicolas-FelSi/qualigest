@@ -15,6 +15,7 @@ function ListaTarefas() {
   const [error, setError] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [projectName, setProjectName] = useState("");
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
@@ -83,6 +84,7 @@ function ListaTarefas() {
     }
 
     sessionStorage.setItem("lastProjectId", idToUse);
+    setProjectName(JSON.parse(sessionStorage.getItem("selectedProject")).nome_projeto);
 
     const fetchTasks = async () => {
       setLoading(true);
@@ -130,8 +132,8 @@ function ListaTarefas() {
       <div className="flex gap-2 lg:gap-4 min-h-screen">
         <Aside className="lg:sticky lg:top-0 lg:h-screen lg:z-30" />
         <main className="w-full pr-2 lg:pr-4 flex flex-col">
-          <div className="px-2 py-2 bg-white shadow-md flex flex-col gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
-            <h2 className="text-2xl font-medium uppercase"></h2>
+          <div className="px-2 py-2 bg-white shadow-md flex flex-col justify-between items-center gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
+            <h2 className="text-2xl font-medium uppercase">{projectName}</h2>
             <button
               className="bg-amber-600 rounded-md text-white font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none"
               type="button"

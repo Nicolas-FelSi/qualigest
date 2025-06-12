@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `qualigestdb`.`Tarefas` (
   `prioridade` ENUM('baixa', 'moderada', 'alta', 'imediata') NOT NULL DEFAULT 'moderada',
   `pontuacao_tarefa` INT NULL,
   `multiplicador` DOUBLE NOT NULL DEFAULT 1,
-  `status` ENUM('agendado', 'em andamento', 'concluído', 'atrasado', 'cancelado') NULL DEFAULT 'agendado',
+  `status` ENUM('agendada', 'em andamento', 'concluída', 'atrasada', 'cancelada') NULL DEFAULT 'agendada',
   PRIMARY KEY (`id_tarefa`),
   INDEX (`id_projeto` ASC) ,
   CONSTRAINT `fk_tarefa_projeto`
@@ -115,6 +115,41 @@ CREATE TABLE IF NOT EXISTS `qualigestdb`.`ResponsaveisTarefa` (
     REFERENCES `qualigestdb`.`Usuarios` (`id_usuario`))
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci;
+
+-- (...) aqui ficam todas as suas tabelas anteriores, inclusive a tabela `Tarefas`
+
+-- -----------------------------------------------------
+-- EVENTO: Atualizar status das tarefas
+-- -----------------------------------------------------
+
+DELIMITER $$
+
+CREATE EVENT IF NOT EXISTS atualizar_status_tarefas
+ON SCHEDULE EVERY 1 MINUTE
+DO
+BEGIN
+    -- 1. Marcar como "em andamento" tarefas que já começaram e ainda não terminaram
+    UPDATE Tarefas
+    SET status = 'em andamento'
+    WHERE status = 'agendada'
+      AND NOW() >= data_inicio
+      AND NOW() <= data_limite;
+
+    -- 2. Marcar como "atrasada" tarefas que já passaram do prazo e ainda não foram concluídas
+    UPDATE Tarefas
+    SET status = 'atrasada'
+    WHERE status IN ('agendada', 'em andamento')
+      AND NOW() > data_limite;
+
+    -- 3. Opcional: voltar para "agendada" se a data de início ainda não chegou
+    UPDATE Tarefas
+    SET status = 'agendada'
+    WHERE status IN ('em andamento', 'atrasada')
+      AND NOW() < data_inicio;
+
+END$$
+
+DELIMITER ;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

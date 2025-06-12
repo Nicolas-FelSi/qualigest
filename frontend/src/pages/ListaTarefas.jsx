@@ -29,7 +29,7 @@ function ListaTarefas() {
     tarefas.forEach((tarefa) => {
       if (!tarefa.data_limite) return;
 
-      const data = parseISO(tarefa.data_limite + "T00:00:00");
+      const data = parseISO(tarefa.data_limite.replace(" ", "T"));
       let grupoKey;
       let grupoNome;
       let dataISO = tarefa.data_limite;

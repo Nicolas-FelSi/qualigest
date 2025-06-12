@@ -24,8 +24,8 @@ function TarefaCard({ task }) {
       >
         {task.prioridade}
       </p>
-      <p>Criada em: {format(parseISO(task.data_inicio), "dd/MM/yyyy")}</p>
-      <p>Entrega em: {format(parseISO(task.data_limite), "dd/MM/yyyy")}</p>
+      <p>Criada em: {format(parseISO(task.data_inicio.replace(" ", "T")), "dd/MM/yyyy HH:mm")}</p>
+      <p>Entrega em: {format(parseISO(task.data_limite.replace(" ", "T")), "dd/MM/yyyy HH:mm")}</p>
       <div className="flex mt-2">
         <img
           className="w-7 h-7 object-cover rounded-full border border-gray-600"

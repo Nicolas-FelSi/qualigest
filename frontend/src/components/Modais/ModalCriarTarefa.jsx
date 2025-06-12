@@ -21,6 +21,7 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
     data_inicio: "",
     data_limite: "",
     prioridade: "",
+    multiplicador: "",
     ids_responsaveis: [],
     id_projeto: "",
   };
@@ -169,7 +170,7 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
         </label>
         <textarea
           id="descricao"
-          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 ${errors.descricao ? "border-red-500" : "border-gray-300"}`}
+          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 border-gray-300`}
           placeholder="Informe uma descrição para a tarefa (opcional)"
           name="descricao"
           value={formData.descricao}
@@ -198,7 +199,7 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
       />
       <div className="mt-2">
         <label htmlFor="prioridadeTarefaId" className="block mb-2 text-sm font-medium">
-          Prioridade
+          Prioridade *
         </label>
         <select
           id="prioridadeTarefaId"
@@ -214,6 +215,24 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
           <option value="Imediata">Imediata</option>
         </select>
         {errors.prioridade && <p className="text-red-500 text-xs mt-1">{errors.prioridade}</p>}
+      </div>
+      <div className="mt-2">
+        <label htmlFor="multiplicador" className="block mb-2 text-sm font-medium">
+          Multiplicador da tarefa (1 a 10)
+        </label>
+        <input
+          type="number"
+          max={10}
+          min={1}
+          step={0.1}
+          id="multiplicador"
+          className={`rounded-lg bg-gray-50 border text-gray-900 w-full text-sm p-2.5 border-gray-300`}
+          placeholder="Informe uma multiplicador para a tarefa (opicional)"
+          name="multiplicador"
+          value={formData.multiplicador}
+          onChange={handleSimpleChange}
+        />
+        {errors.descricao && <p className="text-red-500 text-xs mt-1">{errors.descricao}</p>}
       </div>
       <MultiSelectUsers
         label="Responsáveis"

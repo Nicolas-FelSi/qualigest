@@ -119,7 +119,7 @@ class TarefaDAO
             SELECT COUNT(*) 
             FROM responsaveistarefa ut
             JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
-            WHERE ut.id_usuario = :id_usuario AND t.status = 'concluido'
+            WHERE ut.id_usuario = :id_usuario AND t.status = 'concluida'
         ";
 
         $stmt = $this->conn->prepare($query);
@@ -137,7 +137,7 @@ class TarefaDAO
         FROM responsaveistarefa ut
         JOIN tarefas t ON ut.id_tarefa = t.id_tarefa
         WHERE ut.id_usuario = :id_usuario 
-        AND t.status != 'concluido' 
+        AND t.status != 'concluida' 
         AND t.data_limite < NOW()
     ";
 

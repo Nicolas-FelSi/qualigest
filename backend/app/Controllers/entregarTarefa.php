@@ -76,7 +76,7 @@ try {
     }
 
     // Atualiza status da tarefa
-    $stmt = $conn->prepare("UPDATE Tarefas SET status = 'concluído' WHERE id_tarefa = :id");
+    $stmt = $conn->prepare("UPDATE Tarefas SET status = 'concluída' WHERE id_tarefa = :id");
     $stmt->execute([':id' => $id_tarefa]);
 
     echo json_encode(['mensagem' => 'Tarefa concluída com sucesso.', 'pontuacao_aplicada' => $pontuacaoFinal]);

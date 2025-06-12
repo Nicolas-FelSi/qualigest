@@ -55,8 +55,8 @@ try {
     $tarefasStatus = $stmtTarefas->fetchAll(PDO::FETCH_ASSOC);
 
     $statusCounts = [
-        'concluído' => 0,
-        'atrasado' => 0,
+        'concluída' => 0,
+        'atrasada' => 0,
         'em andamento' => 0
     ];
     foreach ($tarefasStatus as $row) {
@@ -79,8 +79,8 @@ try {
     echo json_encode([
         'nome_projeto' => $projeto['nome_projeto'],
         'pontuacao_total' => (int)$projeto['pontuacao_projeto'],
-        'tarefas_concluidas' => $statusCounts['concluído'],
-        'tarefas_atrasadas' => $statusCounts['atrasado'],
+        'tarefas_concluidas' => $statusCounts['concluída'],
+        'tarefas_atrasadas' => $statusCounts['atrasada'],
         'tarefas_em_andamento' => $statusCounts['em andamento'],
         'participantes' => $participantes
     ]);

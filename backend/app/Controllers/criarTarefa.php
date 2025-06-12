@@ -38,6 +38,7 @@ $dataInicio = $data['data_inicio'] ?? '';
 $dataLimite = $data['data_limite'] ?? '';
 $prioridade = $data['prioridade'] ?? '';
 $pontuacaoTarefa = $data['pontuacao_tarefa'] ?? $pontuacao;
+$multiplicador = $data['multiplicador'] ?? 1;
 $status = $data['status'] ?? 'em andamento';
 $id_projeto = $data['id_projeto'] ?? null;
 

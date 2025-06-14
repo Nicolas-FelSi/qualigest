@@ -46,6 +46,9 @@ function ProjetoCard({ project, setProjects } ) {
     navigate(`/lista-tarefas/${projectId}`);
   }
 
+  const loggedInUserId = localStorage.getItem("idUsuario");
+  const isUserProjectLeader = Number(loggedInUserId) === project.id_lider;
+
   return (
     <div className="bg-white shadow-md rounded-md border border-gray-400" onClick={()=>handleNavigateToTaskList(project.id_projeto)}>
       <div className="border-b border-gray-300 flex justify-between items-center p-2">
@@ -98,13 +101,24 @@ function ProjetoCard({ project, setProjects } ) {
           </li>
         </ul>
       </div>
-      <div className="flex gap-5 border-t border-gray-300 p-2">
-        <button className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
-          Editar
-        </button>
-        <button className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
-          Deletar
-        </button>
+
+      <div>
+        {isUserProjectLeader && (
+          <div className="flex gap-5 border-t border-gray-300 p-2">
+            <button
+              className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full"
+              onClick={openModal}
+            >
+              Editar
+            </button>
+            <button
+              className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full"
+              onClick={handleDelete}
+            >
+              Deletar
+            </button>
+          </div>
+        )}
       </div>
 
       <ModalEditarProjeto isOpen={isOpen} closeModal={closeModal} data={project} setProjects={setProjects}/>

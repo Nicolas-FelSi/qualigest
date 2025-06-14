@@ -46,6 +46,7 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
       showToast(data.mensagem || data.mensagens);
     } else {
       localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("idUsuario", data.id_usuario);
 
       showToast(data.mensagem, "success");
       resetForm();

@@ -77,12 +77,12 @@ if (!$linha || !$linha['is_lider']) {
 }
 
 // Validação de datas
-$dataInicio = DateTime::createFromFormat('Y-m-d H:i', $data['data_inicio']);
-$dataLimite = DateTime::createFromFormat('Y-m-d H:i', $data['data_limite']);
+$dataInicio = DateTime::createFromFormat('Y-m-d H:i:s', $data['data_inicio']);
+$dataLimite = DateTime::createFromFormat('Y-m-d H:i:s', $data['data_limite']);
 
 if (!$dataInicio || !$dataLimite) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Formato de data inválido. Use Y-m-d H:i.']);
+    echo json_encode(['erro' => 'Formato de data inválido. Use Y-m-d H:i:s.']);
     exit;
 }
 

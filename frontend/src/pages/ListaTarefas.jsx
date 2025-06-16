@@ -19,8 +19,7 @@ function ListaTarefas() {
   const [projectName, setProjectName] = useState("");
   const [isUserProjectLeader, setIsUserProjectLeader] = useState(false);
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [editingTaskId, setEditingTaskId] = useState(null);
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
@@ -145,8 +144,7 @@ function ListaTarefas() {
   };
 
   const handleOpenEditModal = (task) => {
-    setSelectedTask(task);
-    setIsEditModalOpen(true);
+    setEditingTaskId(task.id_tarefa); // Salva apenas o ID
   };
 
   return (
@@ -225,13 +223,9 @@ function ListaTarefas() {
       />
 
       <ModalEditarTarefa
-        isOpen={isEditModalOpen}
-        closeModal={() => setIsEditModalOpen(false)}
-        taskToEdit={selectedTask}
-        onTaskUpdated={() => {
-          // Lógica para recarregar as tarefas da API
-          // Ex: fetchTasks(); 
-        }}
+        isOpen={!!editingTaskId}
+        closeModal={() => setEditingTaskId(null)}
+        taskId={editingTaskId}
       />
     </>
   );

@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $foto = $dados['foto'] ?? null;
     $fotoPath = null;
 
-    if (!empty($fotoBase64)) {
+    if (!empty($foto)) {
         $diretorio = __DIR__ . '/../../uploads/fotos_perfil/';
         if (!is_dir($diretorio)) {
             mkdir($diretorio, 0755, true);
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $caminhoCompleto = $diretorio . $nomeArquivo;
 
         // Remove cabeçalho base64
-        $fotoLimpa = preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64);
+        $fotoLimpa = preg_replace('#^data:image/\w+;base64,#i', '', $foto);
         $fotoDecodificada = base64_decode($fotoLimpa);
 
         if ($fotoDecodificada !== false) {

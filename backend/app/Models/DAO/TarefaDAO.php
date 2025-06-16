@@ -29,6 +29,17 @@ class TarefaDAO
         $valorPrioridade = $multiplicadoresPrioridade[$prioridade] ?? 1.0;
         $pontuacaoTarefa = intval($pontuacaoBase * $valorPrioridade); // Arredonda para inteiro
 
+        date_default_timezone_set('America/Sao_Paulo');
+
+        $agora = new DateTime();
+        $inicio = DateTime::createFromFormat('Y-m-d H:i', $dataInicio);
+
+        if ($inicio && $inicio->getTimestamp() > $agora->getTimestamp()) {
+            $status = 'agendada';
+        } else {
+            $status = 'em andamento';
+        }
+
         // Query para inserção
         $query = "INSERT INTO tarefas (titulo, descricao, data_inicio, data_limite, prioridade, pontuacao_Tarefa, multiplicador, status, id_projeto) 
               VALUES (:titulo, :descricao, :dataInicio, :dataLimite, :prioridade, :pontuacaoTarefa, :multiplicador, :status, :id_projeto)";

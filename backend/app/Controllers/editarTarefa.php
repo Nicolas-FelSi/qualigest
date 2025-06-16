@@ -36,7 +36,7 @@ $usuarioTarefaDAO = new UsuarioTarefaDAO($conn);
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Validação básica dos campos obrigatórios
-$camposObrigatorios = ['id_tarefa', 'titulo', 'descricao', 'data_inicio', 'data_limite', 'prioridade', 'multiplicador', 'status', 'ids_responsaveis'];
+$camposObrigatorios = ['id_tarefa', 'titulo', 'descricao', 'data_inicio', 'data_limite', 'prioridade', 'multiplicador', 'ids_responsaveis'];
 foreach ($camposObrigatorios as $campo) {
     if (!isset($data[$campo])) {
         http_response_code(400);
@@ -77,12 +77,12 @@ if (!$linha || !$linha['is_lider']) {
 }
 
 // Validação de datas
-$dataInicio = DateTime::createFromFormat('Y-m-d H:i:s', $data['data_inicio']);
-$dataLimite = DateTime::createFromFormat('Y-m-d H:i:s', $data['data_limite']);
+$dataInicio = DateTime::createFromFormat('Y-m-d H:i', $data['data_inicio']);
+$dataLimite = DateTime::createFromFormat('Y-m-d H:i', $data['data_limite']);
 
 if (!$dataInicio || !$dataLimite) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Formato de data inválido. Use Y-m-d H:i:s.']);
+    echo json_encode(['erro' => 'Formato de data inválido. Use Y-m-d H:i.']);
     exit;
 }
 

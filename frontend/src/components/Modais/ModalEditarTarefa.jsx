@@ -30,7 +30,6 @@ function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
   const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
-    console.log(taskId, isOpen)
     if (isOpen && taskId) {
       const fetchTask = async () => {
         setTaskData(null); // Limpa dados antigos

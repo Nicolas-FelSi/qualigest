@@ -3,7 +3,7 @@ import URL_BASE from "../../utils/urlBase";
 const urlBase = URL_BASE;
 const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
-const createTask = async (formData) => {
+const editTask = async (taskId, dataTask) => {
   try {
     const response = await fetch(
       `http://localhost${
@@ -15,7 +15,17 @@ const createTask = async (formData) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          id_tarefa: taskId,
+          data_inicio: dataTask.data_inicio,
+          data_limite: dataTask.data_limite,
+          descricao: dataTask.descricao,
+          id_projeto: dataTask.id_projeto,
+          ids_responsaveis: dataTask.ids_responsaveis,
+          multiplicador: dataTask.multiplicador,
+          prioridade: dataTask.prioridade,
+          titulo: dataTask.titulo,
+        }),
       }
     );
 
@@ -27,4 +37,4 @@ const createTask = async (formData) => {
   }
 };
 
-export default createTask;
+export default editTask;

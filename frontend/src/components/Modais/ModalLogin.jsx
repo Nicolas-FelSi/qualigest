@@ -88,13 +88,13 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
         <hr className="mx-[-1.3rem] opacity-15 mt-4" />
         <div>
           <InputField
-            label="E-mail"
+            label="Login (E-mail ou Usuário)"
             name="email"
             value={formData.email}
             onChange={(e) => handleChange(e, setFormData, formData)}
             error={errors.email}
             icon={MdEmail}
-            placeholder="email@exemplo.com"
+            placeholder="email@exemplo.com ou usuario"
           />
           <InputField
             label="Senha"

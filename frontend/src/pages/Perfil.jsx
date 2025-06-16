@@ -1,16 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Aside from "../components/Aside";
 import { useNavigate } from "react-router-dom";
-import getProfile from "../api/profile/getProfile"
+import getProfile from "../api/profile/getProfile";
+import editProfile from "../api/profile/editProfile";
 import InputField from "../components/InputField";
 import handleChange from "../utils/handleChange";
 import showToast from "../utils/showToast";
-import editProfile from "../api/profile/editProfile"
-import { MdStar, MdCheckBox, MdWarning } from "react-icons/md"
+import { MdStar, MdCheckBox, MdWarning, MdEdit } from "react-icons/md";
+
+// Função auxiliar para converter um arquivo para Base64 usando Promises
+const toBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 function Perfil() {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
+  const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     nome_completo: "",
@@ -20,65 +31,108 @@ function Perfil() {
     foto: "",
     pontuacao: 0,
     tarefas_concluidas: 0,
-    tarefas_em_atraso: 0
+    tarefas_em_atraso: 0,
   });
 
-  function validate() {
-    const newErrors = {};
-
-    if(formData.nome_completo == "") newErrors.nome = "O nome completo é obrigatório";
-    else if(!/^[a-zA-ZÀ-ú\s]+$/u.test(formData.nome_completo)) newErrors.nome = "O nome completo deve conter apenas letras e espaços";
-
-    if(formData.nome_usuario == "") newErrors.usuario = "O nome de usuário é obrigatório";
-    else if(formData.nome_usuario.includes("@")) newErrors.usuario = ['O nome de usuário não pode conter "@"'];
-    else if(!/^[a-zA-Z0-9._-]+$/.test(formData.nome_usuario)) newErrors.usuario = "O nome de usuário só pode conter letras, números, ponto, hífen e underline";
-
-    if(formData.email == "") newErrors.email = "O email é obrigatório";
-
-    // if(formData.senha == "") newErrors.senha = "A senha é obrigatório";
-    // else if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(formData.senha)) newErrors.senha = ['A senha deve ter pelo menos 6 caracteres, incluindo uma letra maiúscula, uma minúscula e um número'];
-
-    return newErrors;
-  }
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setErrors({});
-
-      const validationErrors = validate();
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return;
-      }
-
-      const data = await editProfile({
-        nome_completo:  formData.nome_completo,
-        nome_usuario: formData.nome_usuario,
-        email:  formData.email,
-        foto: formData.foto,
-        senha: formData.senha
-      });
-
-      if (data.mensagem) {
-        showToast(data.mensagem, "success");
-      } else {
-        showToast(data.erro);
-      }
-    };
-
+  // Efeito para buscar os dados do perfil ao carregar a página
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
+      return;
     }
-  }, [navigate]);
 
-  useEffect(() => {
     const handleGetProfile = async () => {
       const data = await getProfile();
-      setFormData(data);
-    }
+      if (data) {
+        setFormData({
+          nome_completo: data.nome_completo || "",
+          nome_usuario: data.nome_usuario || "",
+          email: data.email || "",
+          senha: "", // Sempre iniciar senha como vazia no formulário
+          // Ponto Chave 1: Mapeando a resposta da API para o estado
+          foto: data.foto_perfil || "", 
+          // O resto dos seus dados...
+          pontuacao: data.pontuacao || 0,
+          tarefas_concluidas: data.tarefas_concluidas || 0,
+          tarefas_em_atraso: data.tarefas_em_atraso || 0,
+        });
+      }
+    };
     handleGetProfile();
-  }, [])
+  }, [navigate]);
+
+  // Função para validar o formulário
+  function validate() {
+    // ... sua lógica de validação aqui ...
+    const newErrors = {};
+    if (!formData.nome_completo) newErrors.nome_completo = "O nome completo é obrigatório";
+    if (!formData.nome_usuario) newErrors.nome_usuario = "O nome de usuário é obrigatório";
+    if (!formData.email) newErrors.email = "O email é obrigatório";
+    return newErrors;
+  }
+
+  // Função para lidar com o envio do formulário
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+
+    // Ponto Chave 2: Preparando os dados para enviar como JSON
+    const dadosParaApi = {
+      nome_completo: formData.nome_completo,
+      nome_usuario: formData.nome_usuario,
+      email: formData.email,
+    };
+
+    if (formData.senha) {
+      dadosParaApi.senha = formData.senha;
+    }
+
+    if (formData.foto instanceof File) {
+      try {
+        dadosParaApi.foto = await toBase64(formData.foto);
+      } catch (error) {
+        showToast("Erro ao processar a imagem.", "error");
+        console.warn(error)
+        return;
+      }
+    }
+
+    const result = await editProfile(dadosParaApi);
+
+    if (result.mensagem) {
+      showToast(result.mensagem, "success");
+    } else {
+      showToast(result.erro);
+    }
+  };
+
+  // Funções para o upload da imagem
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, foto: file }));
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  // Limpeza de memória para o preview
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
 
   return (
     <div className="flex gap-2 lg:gap-4">
@@ -92,19 +146,26 @@ function Perfil() {
             <div className="flex flex-col lg:flex-row gap-5">
               <div className="relative group w-52 h-52 rounded-full m-auto">
                 <img
-                  className="w-full h-full object-cover rounded-full" src="/images/pessoa1.jpg"
+                  className="w-full h-full object-cover rounded-full"
+                  // Ponto Chave 3: Priorizando o preview da nova imagem
+                  src={imagePreview || formData.foto || "/images/usuario.png"}
                   alt="Foto de perfil do usuário"
                 />
                 <div
-                  className="absolute inset-0 w-full h-full rounded-full bg-gray-800 bg-opacity-60
-                        flex items-center justify-center
-                        opacity-0 group-hover:opacity-100
-                        transition-opacity duration-300
-                        cursor-pointer"
+                  className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition-colors"
+                  onClick={handleImageClick}
                 >
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  <MdEdit size={24} className="text-gray-700" />
                 </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept="image/png, image/jpeg, image/gif"
+                />
               </div>
+
               <div className="w-full">
                 <InputField
                   error={errors.nome_completo}
@@ -112,7 +173,7 @@ function Perfil() {
                   name={"nome_completo"}
                   onChange={(e) => handleChange(e, setFormData, formData)}
                   placeholder={"Informe seu nome completo"}
-                  value={formData.nome_completo}
+                  value={formData.nome_completo || ""}
                 />
                 <InputField
                   error={errors.nome_usuario}
@@ -120,7 +181,7 @@ function Perfil() {
                   name={"nome_usuario"}
                   onChange={(e) => handleChange(e, setFormData, formData)}
                   placeholder={"Informe seu nome de usuário"}
-                  value={formData.nome_usuario}
+                  value={formData.nome_usuario || ""}
                 />
                 <InputField
                   error={errors.email}
@@ -128,32 +189,33 @@ function Perfil() {
                   name={"email"}
                   onChange={(e) => handleChange(e, setFormData, formData)}
                   placeholder={"Informe seu e-mail"}
-                  value={formData.email}
+                  value={formData.email || ""}
                   type="email"
                 />
                 <InputField
                   error={errors.senha}
-                  label={"Senha"}
+                  label={"Nova Senha (opcional)"}
                   name={"senha"}
                   onChange={(e) => handleChange(e, setFormData, formData)}
-                  placeholder={"********"}
-                  value={formData.senha}
+                  placeholder={"Deixe em branco para não alterar"}
+                  value={formData.senha || ""}
                   type="password"
                 />
               </div>
             </div>
+            {/* Seus cards de pontuação ... */}
             <div className="flex flex-col lg:flex-row gap-4">
-              <div className="bg-blue-200 shadow-md border border-blue-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
+              <div className="bg-blue-200 shadow-md border border-blue-300 p-4 rounded-lg font-semibold flex items-center flex-col w-full">
                 <MdStar size={20}/>
                 <p className="text-md">Pontuação total</p>
                 <span className="text-2xl font-medium">{ formData.pontuacao }</span>
               </div>
-              <div className="bg-green-200 shadow-md border border-green-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
+              <div className="bg-green-200 shadow-md border border-green-300 p-4 rounded-lg font-semibold flex items-center flex-col w-full">
                 <MdCheckBox size={20}/>
                 <p className="text-md">Tarefas concluídas</p>
                 <span className="text-2xl font-medium">{ formData.tarefas_concluidas }</span>
               </div>
-              <div className="bg-red-200 shadow-md border border-red-300 p-4 rounded-4xl font-semibold flex items-center flex-col w-full">
+              <div className="bg-red-200 shadow-md border border-red-300 p-4 rounded-lg font-semibold flex items-center flex-col w-full">
                 <MdWarning size={20}/>
                 <p className="text-md">Tarefas atrasadas</p>
                 <span className="text-2xl font-medium">{ formData.tarefas_em_atraso}</span>
@@ -162,7 +224,7 @@ function Perfil() {
             <div>
               <button
                 type="submit"
-                className="bg-orange-400 text-gray-900 rounded-md cursor-pointer hover:bg-amber-600 font-medium transition-all py-2 px-4"
+                className="bg-amber-500 text-white rounded-md cursor-pointer hover:bg-amber-600 font-medium transition-all py-2 px-6"
               >
                 Salvar alterações
               </button>

@@ -43,7 +43,7 @@ $pontuacaoTarefa = $data['pontuacao_tarefa'] ?? 20;
 $multiplicador = $data['multiplicador'] ?? 1;
 $status = $data['status'] ?? 'em andamento';
 $id_projeto = $data['id_projeto'] ?? null;
-$responsaveis = $data['responsaveis'] ?? []; // array de usuários responsáveis
+$responsaveis = $data['ids_responsaveis'] ?? []; // array de usuários responsáveis
 
 // Verificação de campos obrigatórios
 if (!$titulo || !$dataLimite || !$id_projeto || empty($responsaveis)) {

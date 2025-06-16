@@ -41,7 +41,7 @@ $dataLimite = $data['data_limite'] ?? '';
 $prioridade = $data['prioridade'] ?? '';
 $pontuacaoTarefa = $data['pontuacao_tarefa'] ?? 20;
 $multiplicador = $data['multiplicador'] ?? 1;
-$status = $data['status'] ?? 'em andamento';
+$status = $data['status'] ?? null;
 $id_projeto = $data['id_projeto'] ?? null;
 $responsaveis = $data['ids_responsaveis'] ?? []; // array de usuários responsáveis
 

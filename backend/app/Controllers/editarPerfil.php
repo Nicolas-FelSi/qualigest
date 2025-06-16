@@ -50,6 +50,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $email = $dados['email'] ?? null;
     $senha = $dados['senha'] ?? null;
     $foto = $dados['foto'] ?? null;
+    $fotoPath = null;
+
+    if (!empty($fotoBase64)) {
+        $diretorio = __DIR__ . '/../../uploads/fotos_perfil/';
+        if (!is_dir($diretorio)) {
+            mkdir($diretorio, 0755, true);
+        }
+
+        $nomeArquivo = 'foto_' . $id_usuario . '_' . time() . '.png';
+        $caminhoCompleto = $diretorio . $nomeArquivo;
+
+        // Remove cabeçalho base64
+        $fotoLimpa = preg_replace('#^data:image/\w+;base64,#i', '', $fotoBase64);
+        $fotoDecodificada = base64_decode($fotoLimpa);
+
+        if ($fotoDecodificada !== false) {
+            file_put_contents($caminhoCompleto, $fotoDecodificada);
+            $fotoPath = 'uploads/fotos_perfil/' . $nomeArquivo;
+        }
+    }
 
     $query = "UPDATE usuarios SET nome_completo = :nome, email = :email, nome_usuario = :nick";
 
@@ -58,14 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
     }
 
-    if (!empty($foto)) {
-        $query .= ", foto = :foto";
+    if (!empty($fotoPath)) {
+        $query .= ", foto_perfil = :foto";
     }
-
     $query .= " WHERE id_usuario = :id";
 
     $stmt = $pdo->prepare($query);
-
     $stmt->bindParam(':nome', $nomeCompleto);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':nick', $nick);
@@ -75,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         $stmt->bindParam(':senha', $senhaHash);
     }
 
-    if (!empty($foto)) {
-        $stmt->bindParam(':foto', $foto);
+    if (!empty($fotoPath)) {
+        $stmt->bindParam(':foto', $fotoPath);
     }
 
     $sucesso = $stmt->execute();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import updateTask from "../../api/tasks/editTask"; 
+import editTask from "../../api/tasks/editTask"; 
 import handleChangeUtil from "../../utils/handleChange";
 import InputField from "../InputField";
 import GenericModal from "./GenericModal";
@@ -137,8 +137,8 @@ function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
     };
 
     try {
-      // MUDANÇA: Chama updateTask com o ID da tarefa
-      const result = await updateTask(taskId, dadosParaApi); 
+      // MUDANÇA: Chama editTask com o ID da tarefa
+      const result = await editTask(taskId, dadosParaApi); 
       if (result.sucesso) {
         showToast(result.message || "Tarefa atualizada com sucesso!", "success");
         closeModal();

@@ -46,66 +46,51 @@ function ProjetoCard({ project, setProjects } ) {
     navigate(`/lista-tarefas/${projectId}`);
   }
 
+  const loggedInUserId = localStorage.getItem("idUsuario");
+  const isUserProjectLeader = Number(loggedInUserId) === project.id_lider;
+
   return (
-    <div className="bg-white shadow-md rounded-md border border-gray-400" onClick={()=>handleNavigateToTaskList(project.id_projeto)}>
-      <div className="border-b border-gray-300 flex justify-between items-center p-2">
-        <h2 className="text-2xl text-amber-600">
-          {project.nome_projeto}
-        </h2>
+    <div
+      className="bg-white shadow-md rounded-md border border-gray-400 flex flex-col h-full cursor-pointer"
+      onClick={() => handleNavigateToTaskList(project.id_projeto)}
+    >
+      <header className="border-b border-gray-300 flex justify-between items-center p-2">
+        <h2 className="text-2xl text-amber-600">{project.nome_projeto}</h2>
         <img
           className="w-8 h-8 rounded-lg object-cover border border-gray-400"
           src="/images/pessoa1.jpg"
-          alt=""
+          alt="Líder do projeto"
         />
-      </div>
-      <p className="font-semibold uppercase text-gray-800 text-3xl pt-5 text-center">{project.pontuacao_projeto == null ? "0" : project.pontuacao_projeto} pts</p>
-      <div className="py-2 px-5 text-center flex flex-col">
-        <ul className="flex justify-end mt-4">
-          <li>
-            <img
-              className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-              src="/images/pessoa1.jpg"
-              alt=""
-            />
-          </li>
-          <li>
-            <img
-              className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-              src="/images/pessoa2.jpg"
-              alt=""
-            />
-          </li>
-          <li>
-            <img
-              className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-              src="/images/pessoa3.jpg"
-              alt=""
-            />
-          </li>
-          <li>
-            <img
-              className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-              src="/images/pessoa4.jpg"
-              alt=""
-            />
-          </li>
-          <li>
-            <img
-              className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-              src="/images/pessoa5.jpg"
-              alt=""
-            />
-          </li>
+      </header>
+
+      <main className="flex-1 flex flex-col gap-2">
+        <div className="flex-1 flex items-center justify-center pt-1">
+          <p className="font-semibold uppercase text-gray-800 text-3xl">
+            {project.pontuacao_projeto == null ? "0" : project.pontuacao_projeto} pts
+          </p>
+        </div>
+
+        <ul className="flex justify-end p-2">
+          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa1.jpg" alt="" /></li>
+          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa2.jpg" alt="" /></li>
+          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa3.jpg" alt="" /></li>
+          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa4.jpg" alt="" /></li>
+          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa5.jpg" alt="" /></li>
         </ul>
-      </div>
-      <div className="flex gap-5 border-t border-gray-300 p-2">
-        <button className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
-          Editar
-        </button>
-        <button className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
-          Deletar
-        </button>
-      </div>
+      </main>
+
+      <footer className="mt-auto">
+        {isUserProjectLeader && (
+          <div className="flex gap-5 border-t border-gray-300 p-2">
+            <button className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
+              Editar
+            </button>
+            <button className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
+              Deletar
+            </button>
+          </div>
+        )}
+      </footer>
 
       <ModalEditarProjeto isOpen={isOpen} closeModal={closeModal} data={project} setProjects={setProjects}/>
     </div>

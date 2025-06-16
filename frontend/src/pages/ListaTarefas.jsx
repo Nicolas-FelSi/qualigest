@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Aside from "../components/Aside";
 import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
+import ModalEditarTarefa from "../components/Modais/ModalEditarTarefa";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
 import TarefaCard from "../components/ListaTarefas/TarefaCard";
@@ -16,6 +17,10 @@ function ListaTarefas() {
   const [tasks, setTasks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
+  const [isUserProjectLeader, setIsUserProjectLeader] = useState(false);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
@@ -84,7 +89,19 @@ function ListaTarefas() {
     }
 
     sessionStorage.setItem("lastProjectId", idToUse);
-    setProjectName(JSON.parse(sessionStorage.getItem("selectedProject")).nome_projeto);
+    const projectDataString = sessionStorage.getItem("selectedProject");
+
+    if (projectDataString) {
+      const projectData = JSON.parse(projectDataString);
+      setProjectName(projectData.nome_projeto);
+
+      const loggedInUserId = localStorage.getItem("idUsuario");
+      
+      // Compara os IDs (convertendo o do localStorage para número)
+      if (loggedInUserId && projectData.id_lider) {
+        setIsUserProjectLeader(Number(loggedInUserId) === projectData.id_lider);
+      }
+    }
 
     const fetchTasks = async () => {
       setLoading(true);
@@ -127,6 +144,11 @@ function ListaTarefas() {
     }
   };
 
+  const handleOpenEditModal = (task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
+
   return (
     <>
       <div className="flex gap-2 lg:gap-4 min-h-screen">
@@ -134,13 +156,15 @@ function ListaTarefas() {
         <main className="w-full pr-2 lg:pr-4 flex flex-col">
           <div className="px-2 py-2 bg-white shadow-md flex flex-col justify-between items-center gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
             <h2 className="text-2xl font-medium uppercase">{projectName}</h2>
-            <button
-              className="bg-amber-600 rounded-md text-white font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none"
-              type="button"
-              onClick={openModal}
-            >
-              Criar tarefa
-            </button>
+            {isUserProjectLeader && (
+              <button
+                className="bg-amber-600 rounded-md text-white font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                type="button"
+                onClick={openModal}
+              >
+                Criar tarefa
+              </button>
+            )}
           </div>
 
           <div className="flex-grow flex flex-col pt-2 lg:pt-4">
@@ -173,11 +197,9 @@ function ListaTarefas() {
                         </h2>
                         <div className="space-y-3">
                           {grupo.tarefas.map((tarefa) => (
-                            <TarefaCard
-                              key={tarefa.id_tarefa}
-                              task={tarefa}
-                              onTaskUpdate={handleTaskCreated}
-                            />
+                          <div key={tarefa.id_tarefa} onClick={() => handleOpenEditModal(tarefa)}>
+                            <TarefaCard task={tarefa} />
+                          </div>
                           ))}
                         </div>
                       </div>
@@ -200,6 +222,16 @@ function ListaTarefas() {
         isOpen={isOpen}
         closeModal={closeModal}
         onTaskCreated={handleTaskCreated}
+      />
+
+      <ModalEditarTarefa
+        isOpen={isEditModalOpen}
+        closeModal={() => setIsEditModalOpen(false)}
+        taskToEdit={selectedTask}
+        onTaskUpdated={() => {
+          // Lógica para recarregar as tarefas da API
+          // Ex: fetchTasks(); 
+        }}
       />
     </>
   );

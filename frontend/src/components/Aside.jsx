@@ -2,9 +2,9 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import {
   MdCheckCircle,
   MdExitToApp,
+  MdHome,
   MdInfo,
   MdLayers,
-  MdMenu,
   MdPersonPin,
 } from "react-icons/md";
 
@@ -30,7 +30,8 @@ function Aside() {
           <ul className="flex flex-col justify-between p-0 h-screen">
             <div>
               <li className="text-center p-4 w-full border-b-gray-500 border-b">
-                <NavLink to="/">
+                <NavLink className="flex items-center md:gap-3 w-full text-amber-500" to="/">
+                  <MdHome className="text-amber-600 text-3xl" />
                   <h1 className="text-amber-600 font-medium text-3xl hidden md:block">
                     QualiGest
                   </h1>

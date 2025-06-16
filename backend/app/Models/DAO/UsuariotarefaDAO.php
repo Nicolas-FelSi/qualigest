@@ -12,23 +12,24 @@ class UsuarioTarefaDAO {
     }
 
     // Método para inserir uma nova associação entre usuário e tarefa
-    public function inserirAssociacao($id_usuario, $id_tarefa) {
-        $query = "INSERT INTO responsaveistarefa (id_usuario, id_tarefa)
-                  VALUES (:id_usuario, :id_tarefa)";
-        
-        $stmt = $this->conn->prepare($query);
+    public function inserirAssociacoes($ids_usuario, $id_tarefa) {
+    $query = "INSERT INTO responsaveistarefa (id_usuario, id_tarefa)
+              VALUES (:id_usuario, :id_tarefa)";
+    
+    $stmt = $this->conn->prepare($query);
 
-        // Vinculando os parâmetros aos valores
+    foreach ($ids_usuario as $id_usuario) {
         $stmt->bindParam(':id_usuario', $id_usuario);
         $stmt->bindParam(':id_tarefa', $id_tarefa);
 
-        // Executando a query
-        if ($stmt->execute()) {
-            return true; // Retorna true se a inserção for bem-sucedida
-        } else {
-            return false; // Caso contrário, retorna false
+        if (!$stmt->execute()) {
+            return false; // Se falhar em algum, para e retorna false
         }
     }
+
+    return true;
+}
+
 
     // Método para buscar todas as tarefas de um usuário
     //public function buscarTarefasPorUsuario($id_usuario) {

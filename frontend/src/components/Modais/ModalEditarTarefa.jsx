@@ -8,6 +8,7 @@ import showToast from "../../utils/showToast";
 import getUsersByProject from "../../api/getUsersByProject";
 import MultiSelectUsers from "../MultiSelectUsers";
 import getTaskById from "../../api/tasks/getTaskById";
+import { format, parseISO } from "date-fns";
 
 function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
   const { idProjeto } = useParams();
@@ -128,19 +129,26 @@ function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
     }
     setErrors({});
 
+    const dataInicioFormatada = formData.data_inicio
+      ? format(parseISO(formData.data_inicio), "yyyy-MM-dd HH:mm")
+      : "";
+    const dataLimiteFormatada = formData.data_limite
+      ? format(parseISO(formData.data_limite), "yyyy-MM-dd HH:mm")
+      : "";
+
     const dadosParaApi = {
       ...formData,
       id_projeto: parseInt(idProjeto, 10),
       ids_responsaveis: formData.ids_responsaveis.map((id) => parseInt(id, 10)),
-      data_inicio: formData.data_inicio ? formData.data_inicio.replace("T", " ") : "",
-      data_limite: formData.data_limite ? formData.data_limite.replace("T", " ") : "",
+      data_inicio: dataInicioFormatada,
+      data_limite: dataLimiteFormatada,
     };
 
     try {
       // MUDANÇA: Chama editTask com o ID da tarefa
       const result = await editTask(taskId, dadosParaApi); 
-      if (result.sucesso) {
-        showToast(result.message || "Tarefa atualizada com sucesso!", "success");
+      if (result.mensagem) {
+        showToast(result.mensagem || "Tarefa atualizada com sucesso!", "success");
         closeModal();
       } else {
         showToast(result.erro || "Erro ao atualizar tarefa.", "error");

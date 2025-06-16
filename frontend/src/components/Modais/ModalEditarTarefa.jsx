@@ -7,13 +7,15 @@ import GenericModal from "./GenericModal";
 import showToast from "../../utils/showToast";
 import getUsersByProject from "../../api/getUsersByProject";
 import MultiSelectUsers from "../MultiSelectUsers";
+import getTaskById from "../../api/tasks/getTaskById";
 
-function ModalEditarTarefa({ isOpen, closeModal, onTaskUpdated, taskToEdit }) {
+function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
   const { idProjeto } = useParams();
   const [errors, setErrors] = useState({});
   const [projectUsers, setProjectUsers] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [minSelectableDateTime, setMinSelectableDateTime] = useState("");
+  const [taskData, setTaskData] = useState(null);
 
   const initialFormData = {
     titulo: "",
@@ -27,37 +29,53 @@ function ModalEditarTarefa({ isOpen, closeModal, onTaskUpdated, taskToEdit }) {
   };
   const [formData, setFormData] = useState(initialFormData);
 
-  // MUDANÇA: Popula o formulário com os dados da tarefa ao abrir o modal
   useEffect(() => {
-    if (isOpen && taskToEdit) {
-      // Formata as datas para o formato esperado pelo input datetime-local (YYYY-MM-DDTHH:mm)
-      const formattedDataInicio = taskToEdit.data_inicio
-        ? taskToEdit.data_inicio.replace(" ", "T")
-        : "";
-      const formattedDataLimite = taskToEdit.data_limite
-        ? taskToEdit.data_limite.replace(" ", "T")
-        : "";
+    console.log(taskId, isOpen)
+    if (isOpen && taskId) {
+      const fetchTask = async () => {
+        setTaskData(null); // Limpa dados antigos
+        try {
+          const data = await getTaskById(taskId);
+          if (data) {
+            setTaskData(data); // Armazena os dados recebidos da API
+          } else {
+            showToast("Não foi possível carregar os dados da tarefa.", "error");
+            closeModal();
+          }
+        } catch (error) {
+          showToast("Erro ao carregar a tarefa.", "error");
+          console.error(error);
+        }
+      };
 
+      fetchTask();
+    }
+  }, [isOpen, taskId, closeModal]);
+
+
+  // EFEITO 2: POPULAR O FORMULÁRIO QUANDO OS DADOS DA TAREFA SÃO CARREGADOS
+  useEffect(() => {
+    if (taskData) { // Dispara quando taskData for preenchido
+      const formattedDataInicio = taskData.data_inicio ? taskData.data_inicio.replace(" ", "T") : "";
+      const formattedDataLimite = taskData.data_limite ? taskData.data_limite.replace(" ", "T") : "";
       const capitalize = (s) => s && s.charAt(0).toUpperCase() + s.slice(1);
-        
+      
       setFormData({
-        titulo: taskToEdit.titulo || "",
-        descricao: taskToEdit.descricao || "",
+        titulo: taskData.titulo || "",
+        descricao: taskData.descricao || "",
         data_inicio: formattedDataInicio,
         data_limite: formattedDataLimite,
-        prioridade: capitalize(taskToEdit.prioridade) || "",
-        multiplicador: taskToEdit.multiplicador || "",
-        // Assumindo que taskToEdit.responsaveis é um array de objetos {id, nome}
-        ids_responsaveis: taskToEdit.responsaveis 
-          ? taskToEdit.responsaveis.map(user => String(user.id_usuario)) 
-          : [],
+        prioridade: capitalize(taskData.prioridade) || "",
+        multiplicador: taskData.multiplicador || "",
+        ids_responsaveis: taskData.responsaveis ? taskData.responsaveis.map(user => String(user.id_usuario)) : [],
       });
     }
-  }, [isOpen, taskToEdit]);
+  }, [taskData]); // Depende apenas dos dados da tarefa
 
 
   const handleClose = () => {
-    // Não é necessário resetar o form aqui, o useEffect acima cuidará disso na próxima abertura
+    setTaskData(null); // Limpa os dados ao fechar
+    setFormData(initialFormData); // Reseta o formulário
     setErrors({});
     closeModal();
   };
@@ -121,11 +139,10 @@ function ModalEditarTarefa({ isOpen, closeModal, onTaskUpdated, taskToEdit }) {
 
     try {
       // MUDANÇA: Chama updateTask com o ID da tarefa
-      const result = await updateTask(taskToEdit.id, dadosParaApi); 
+      const result = await updateTask(taskId, dadosParaApi); 
       if (result.sucesso) {
         showToast(result.message || "Tarefa atualizada com sucesso!", "success");
         closeModal();
-        if (onTaskUpdated) onTaskUpdated(); // Chama a função para atualizar a lista
       } else {
         showToast(result.erro || "Erro ao atualizar tarefa.", "error");
       }

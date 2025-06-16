@@ -37,19 +37,21 @@ function ModalEditarTarefa({ isOpen, closeModal, onTaskUpdated, taskToEdit }) {
       const formattedDataLimite = taskToEdit.data_limite
         ? taskToEdit.data_limite.replace(" ", "T")
         : "";
+
+      const capitalize = (s) => s && s.charAt(0).toUpperCase() + s.slice(1);
         
       setFormData({
         titulo: taskToEdit.titulo || "",
         descricao: taskToEdit.descricao || "",
         data_inicio: formattedDataInicio,
         data_limite: formattedDataLimite,
-        prioridade: taskToEdit.prioridade || "",
+        prioridade: capitalize(taskToEdit.prioridade) || "",
         multiplicador: taskToEdit.multiplicador || "",
         // Assumindo que taskToEdit.responsaveis é um array de objetos {id, nome}
-        ids_responsaveis: taskToEdit.responsaveis ? taskToEdit.responsaveis.map(user => user.id_usuario) : [],
+        ids_responsaveis: taskToEdit.responsaveis 
+          ? taskToEdit.responsaveis.map(user => String(user.id_usuario)) 
+          : [],
       });
-
-      console.log(formData)
     }
   }, [isOpen, taskToEdit]);
 

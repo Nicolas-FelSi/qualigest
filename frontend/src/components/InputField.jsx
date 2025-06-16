@@ -18,7 +18,7 @@ const InputField = ({ label, name, type = "text", value, onChange, error, placeh
       />
     </div>
     {error && (
-      <p id={`${name}-error`} className="py-1 px-3 bg-red-100 rounded-sm border border-red-500 mt-1 text-red-700">
+      <p id={`${name}-error`} className="py-1 rounded-sm text-sm text-red-700">
         {error}
       </p>
     )}

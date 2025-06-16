@@ -21,7 +21,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 // Inclui arquivos necessários
-require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../Models/DAO/TarefaDAO.php';
 require_once __DIR__ . '/../Models/DAO/UsuarioTarefaDAO.php';
 
@@ -36,13 +36,44 @@ $usuarioTarefaDAO = new UsuarioTarefaDAO($conn);
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Validação básica dos campos obrigatórios
-$camposObrigatorios = ['id_tarefa', 'titulo', 'descricao', 'data_inicio', 'data_limite', 'prioridade', 'pontuacao_tarefa', 'multiplicador', 'status', 'responsaveis'];
+$camposObrigatorios = ['id_tarefa', 'titulo', 'descricao', 'data_inicio', 'data_limite', 'prioridade', 'multiplicador', 'status', 'ids_responsaveis'];
 foreach ($camposObrigatorios as $campo) {
     if (!isset($data[$campo])) {
         http_response_code(400);
         echo json_encode(['erro' => "Campo obrigatório ausente: $campo"]);
         exit;
     }
+}
+
+// 🔒 VERIFICAÇÃO DE PERMISSÃO — apenas líderes do projeto podem editar
+
+// 1. Descobre o projeto da tarefa
+$queryProjeto = "SELECT id_projeto FROM tarefas WHERE id_tarefa = :id_tarefa";
+$stmtProjeto = $conn->prepare($queryProjeto);
+$stmtProjeto->bindParam(':id_tarefa', $data['id_tarefa']);
+$stmtProjeto->execute();
+$resultado = $stmtProjeto->fetch(PDO::FETCH_ASSOC);
+
+if (!$resultado) {
+    http_response_code(404);
+    echo json_encode(['erro' => 'Tarefa não encontrada.']);
+    exit;
+}
+
+$idProjeto = $resultado['id_projeto'];
+
+// 2. Verifica se o usuário é líder do projeto
+$queryLider = "SELECT is_lider FROM participantesprojeto WHERE id_projeto = :id_projeto AND id_usuario = :id_usuario";
+$stmtLider = $conn->prepare($queryLider);
+$stmtLider->bindParam(':id_projeto', $idProjeto);
+$stmtLider->bindParam(':id_usuario', $_SESSION['usuario_id']);
+$stmtLider->execute();
+
+$linha = $stmtLider->fetch(PDO::FETCH_ASSOC);
+if (!$linha || !$linha['is_lider']) {
+    http_response_code(403);
+    echo json_encode(['erro' => 'Você não tem permissão para editar esta tarefa.']);
+    exit;
 }
 
 // Validação de datas
@@ -61,6 +92,10 @@ if ($dataLimite < $dataInicio) {
     exit;
 }
 
+// Determina o status com base na data atual
+$agora = new DateTime();
+$status = ($dataInicio > $agora) ? 'Agendada' : 'Em andamento';
+
 // Atualiza a tarefa
 $tarefaAtualizada = $tarefaDAO->atualizarTarefa(
     $data['id_tarefa'],
@@ -69,13 +104,13 @@ $tarefaAtualizada = $tarefaDAO->atualizarTarefa(
     $data['data_inicio'],
     $data['data_limite'],
     $data['prioridade'],
-    $data['pontuacao_tarefa'],
+    $data['multiplicador'],
     floatval($data['multiplicador']),
-    $data['status']
+    $status
 );
 
 // Atualiza os responsáveis se houver mudança
-$responsaveisNovos = $data['responsaveis']; // array de IDs
+$responsaveisNovos = $data['ids_responsaveis']; // array de IDs
 $responsaveisAtuais = $usuarioTarefaDAO->buscarResponsaveisPorTarefa($data['id_tarefa']);
 $idsAtuais = array_column($responsaveisAtuais, 'id_usuario');
 

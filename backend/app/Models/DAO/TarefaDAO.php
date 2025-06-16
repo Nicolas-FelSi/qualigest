@@ -75,29 +75,57 @@ class TarefaDAO
     }
 
     // Método para atualizar uma tarefa
-    public function atualizarTarefa($id_tarefa, $titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $pontuacaoTarefa, $multiplicador, $status)
-    {
-        $query = "UPDATE tarefas 
-                  SET titulo = :titulo, descricao = :descricao, data_inicio = :dataInicio, 
-                      data_limite = :dataimite, prioridade = :prioridade, 
-                      pontuacaoTarefa = :pontuacaoTarefa, multiplicador = :multiplicador, status = :status
-                  WHERE id_tarefa = :id_tarefa";
+    public function atualizarTarefa($id_tarefa, $titulo, $descricao, $dataInicio, $dataLimite, $prioridade, $multiplicador, $status)
+{
+    // Multiplicadores por prioridade (caso precise usar, mesmo que o multiplicador venha direto)
+    $multiplicadoresPrioridade = [
+        'Baixa'     => 0.5,
+        'Moderada'  => 1.0,
+        'Alta'      => 1.5,
+        'Imediata'  => 2.0
+    ];
 
-        $stmt = $this->conn->prepare($query);
+    $pontuacaoBase = 20;
 
-        // Vinculando os parâmetros aos valores
-        $stmt->bindParam(':id_tarefa', $id_tarefa);
-        $stmt->bindParam(':titulo', $titulo);
-        $stmt->bindParam(':descricao', $descricao);
-        $stmt->bindParam(':dataInicio', $dataInicio);
-        $stmt->bindParam(':dataLimite', $dataLimite);
-        $stmt->bindParam(':prioridade', $prioridade);
-        $stmt->bindParam(':pontuacaoTarefa', $pontuacaoTarefa);
-        $stmt->bindValue(':multiplicador', $multiplicador);
-        $stmt->bindParam(':status', $status);
-
-        return $stmt->execute();
+    // Se quiser manter como fallback para multiplicador vazio ou inválido
+    if (!$multiplicador) {
+        $multiplicador = $multiplicadoresPrioridade[$prioridade] ?? 1.0;
     }
+
+    $pontuacaoTarefa = intval($pontuacaoBase * $multiplicador);
+
+    // Atualiza status com base na data de início
+    $agora = new DateTime();
+    $inicio = DateTime::createFromFormat('Y-m-d H:i', $dataInicio);
+
+    if ($inicio && $inicio > $agora) {
+        $status = 'Agendada';
+    } else {
+        $status = 'Em andamento';
+    }
+
+    $query = "UPDATE tarefas 
+              SET titulo = :titulo, descricao = :descricao, data_inicio = :dataInicio, 
+                  data_limite = :dataLimite, prioridade = :prioridade, 
+                  pontuacao_tarefa = :pontuacaoTarefa, multiplicador = :multiplicador, status = :status
+              WHERE id_tarefa = :id_tarefa";
+
+    $stmt = $this->conn->prepare($query);
+
+    $stmt->bindParam(':id_tarefa', $id_tarefa);
+    $stmt->bindParam(':titulo', $titulo);
+    $stmt->bindParam(':descricao', $descricao);
+    $stmt->bindParam(':dataInicio', $dataInicio);
+    $stmt->bindParam(':dataLimite', $dataLimite);
+    $stmt->bindParam(':prioridade', $prioridade);
+    $stmt->bindValue(':pontuacaoTarefa', $pontuacaoTarefa);
+    $stmt->bindValue(':multiplicador', $multiplicador);
+    $stmt->bindParam(':status', $status);
+
+    return $stmt->execute();
+}
+
+
 
     // Método para excluir uma tarefa
     public function excluirTarefa($id_tarefa)

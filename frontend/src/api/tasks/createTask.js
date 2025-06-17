@@ -1,14 +1,11 @@
-import URL_BASE from "../../utils/urlBase";
+import URL_BASE from "../urlBase";
 
 const urlBase = URL_BASE;
-const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
 const createTask = async (formData) => {
   try {
     const response = await fetch(
-      `http://localhost${
-        port != 80 ? `:${port}` : ""
-      }${urlBase}/criarTarefa.php`,
+      `${urlBase}/criarTarefa.php`,
       {
         method: "POST",
         credentials: "include",

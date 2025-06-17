@@ -1,12 +1,11 @@
-import URL_BASE from "../../utils/urlBase";
+import URL_BASE from "../urlBase";
 
 const urlBase = URL_BASE;
-const port = import.meta.env.VITE_PORT_BACKEND || 8080;
 
 async function getProfile() {
     try {
     const response = await fetch(
-        `http://localhost${port != 80 ? `:${port}` : ""}${urlBase}/perfil.php`,
+        `${urlBase}/perfil.php`,
         {
         method: "GET",
         credentials: "include",

@@ -3,6 +3,7 @@ import Aside from "../components/Aside";
 import { useNavigate, useParams } from "react-router-dom";
 import getDataProject from "../api/getDataProject"
 import { MdCheckBox, MdWarning, MdHourglassBottom } from "react-icons/md"
+import handleImageProfile from "../utils/handleImageProfile";
 
 function DetalhesProjeto() {
   const { idProjeto } = useParams();
@@ -86,37 +87,40 @@ function DetalhesProjeto() {
               </thead>
               <tbody>
                 {
-                  formData.participantes.map((participante, index) => (
-                  <tr key={participante.id_usuario} className="bg-white border-b border-gray-200 text-gray-900 font-medium">
-                      <th
-                        scope="row"
-                        className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
-                      >
-                        { index == 0 && (
-                            <span className="ml-[-50px] mr-7">🥇</span>
-                          )
-                        }
-                        { index == 1 && (
-                            <span className="ml-[-50px] mr-7">🥈</span>
-                          )
-                        }
-                        { index == 2 && (
-                            <span className="ml-[-50px] mr-7">🥉</span>
-                          )
-                        }
-                        <span>{index+1}</span>
-                      </th>
-                      <td className="px-3 py-2 hidden sm:block">
-                        <img
-                          className="w-12 h-12 object-cover rounded-full"
-                          src="/images/pessoa1.jpg"
-                          alt=""
-                        />
-                      </td>
-                      <td className="px-3 py-2">{ participante.nome_completo }</td>
-                      <td className="px-3 py-2">{ participante.pontuacao }</td>
-                    </tr>
-                  ))
+                  formData.participantes.map((participante, index) => {
+                    const imagemSrc = handleImageProfile(participante.foto_perfil);
+
+                    return (
+                      <tr key={participante.id_usuario} className="bg-white border-b border-gray-200 text-gray-900 font-medium">
+                        <th
+                          scope="row"
+                          className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
+                        >
+                          { index == 0 && (
+                              <span className="ml-[-50px] mr-7">🥇</span>
+                            )
+                          }
+                          { index == 1 && (
+                              <span className="ml-[-50px] mr-7">🥈</span>
+                            )
+                          }
+                          { index == 2 && (
+                              <span className="ml-[-50px] mr-7">🥉</span>
+                            )
+                          }
+                          <span>{index+1}</span>
+                        </th>
+                        <td className="px-3 py-2 hidden sm:block">
+                          <img
+                            className="w-12 h-12 object-cover rounded-full"
+                            src={imagemSrc}
+                            alt="Foto de perfil do usuário"
+                          />
+                        </td>
+                        <td className="px-3 py-2">{ participante.nome_completo }</td>
+                        <td className="px-3 py-2">{ participante.pontuacao }</td>
+                      </tr>
+                  )})
                 }
               </tbody>
             </table>

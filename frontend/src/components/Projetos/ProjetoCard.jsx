@@ -3,8 +3,9 @@ import ModalEditarProjeto from "../Modais/ModalEditarProjeto";
 import deleteProject from "../../api/projects/deleteProject";
 import { useNavigate } from "react-router-dom";
 import showToast from "../../utils/showToast";
+import handleImageProfile from "../../utils/handleImageProfile";
 
-function ProjetoCard({ project, setProjects } ) {
+function ProjetoCard({ project, setProjects }) {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +15,7 @@ function ProjetoCard({ project, setProjects } ) {
     e.stopPropagation();
 
     setIsOpen(true);
-  }
+  };
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -30,21 +31,23 @@ function ProjetoCard({ project, setProjects } ) {
         showToast(data.mensagem);
       }
 
-      setProjects(projetosAtuais =>
-        projetosAtuais.filter(p => p.id_projeto !== project.id_projeto)
+      setProjects((projetosAtuais) =>
+        projetosAtuais.filter((p) => p.id_projeto !== project.id_projeto)
       );
     }
-
-  }
+  };
 
   const handleNavigateToTaskList = (projectId) => {
-    sessionStorage.setItem("selectedProject", JSON.stringify({
-      id_projeto: projectId,
-      id_lider: project.id_lider,
-      nome_projeto: project.nome_projeto
-    }));
+    sessionStorage.setItem(
+      "selectedProject",
+      JSON.stringify({
+        id_projeto: projectId,
+        id_lider: project.id_lider,
+        nome_projeto: project.nome_projeto,
+      })
+    );
     navigate(`/lista-tarefas/${projectId}`);
-  }
+  };
 
   const loggedInUserId = localStorage.getItem("idUsuario");
   const isUserProjectLeader = Number(loggedInUserId) === project.id_lider;
@@ -66,33 +69,57 @@ function ProjetoCard({ project, setProjects } ) {
       <main className="flex-1 flex flex-col gap-2">
         <div className="flex-1 flex items-center justify-center pt-1">
           <p className="font-semibold uppercase text-gray-800 text-3xl">
-            {project.pontuacao_projeto == null ? "0" : project.pontuacao_projeto} pts
+            {project.pontuacao_projeto == null
+              ? "0"
+              : project.pontuacao_projeto}{" "}
+            pts
           </p>
         </div>
 
         <ul className="flex justify-end p-2">
-          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa1.jpg" alt="" /></li>
-          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa2.jpg" alt="" /></li>
-          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa3.jpg" alt="" /></li>
-          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa4.jpg" alt="" /></li>
-          <li><img className="w-8 h-8 rounded-lg object-cover border border-gray-400" src="/images/pessoa5.jpg" alt="" /></li>
+          {project.usuarios.map((usuario) => {
+
+            const imagemSrc = handleImageProfile(usuario.foto_perfil);            
+
+            return (
+              <li>
+                <img
+                  key={usuario.id_usuario}
+                  className="w-8 h-8 rounded-lg object-cover border border-gray-400"
+                  src={imagemSrc}
+                  alt="Foto de perfil do usuario"
+                />
+              </li>
+            )
+          })}
         </ul>
       </main>
 
       <footer className="mt-auto">
         {isUserProjectLeader && (
           <div className="flex gap-5 border-t border-gray-300 p-2">
-            <button className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={openModal}>
+            <button
+              className="border border-amber-600 text-gray-900 rounded-sm hover:bg-amber-600 hover:text-white cursor-pointer transition-all font-semibold p-2 w-full"
+              onClick={openModal}
+            >
               Editar
             </button>
-            <button className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full" onClick={handleDelete}>
+            <button
+              className="bg-red-800 rounded-sm hover:bg-red-950 text-white cursor-pointer transition-all font-semibold p-2 w-full"
+              onClick={handleDelete}
+            >
               Deletar
             </button>
           </div>
         )}
       </footer>
 
-      <ModalEditarProjeto isOpen={isOpen} closeModal={closeModal} data={project} setProjects={setProjects}/>
+      <ModalEditarProjeto
+        isOpen={isOpen}
+        closeModal={closeModal}
+        data={project}
+        setProjects={setProjects}
+      />
     </div>
   );
 }

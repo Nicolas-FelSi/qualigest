@@ -4,6 +4,7 @@ import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
 import getProjects from "../api/projects/getProjects";
 import ProjetoCard from "../components/Projetos/ProjetoCard";
 import Aside from "../components/Aside";
+import getUsersByProject from "../api/getUsersByProject";
 
 function Projetos() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,19 +27,38 @@ function Projetos() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getProjects();
-      // Garante que projects seja sempre um array
-      setProjects(Array.isArray(data?.projetos) ? data.projetos : []);
-      if (!data?.projetos) {
-        console.warn(
-          "API getProjects não retornou a estrutura esperada:",
-          data
-        );
+      // 1. Busca a lista inicial de projetos
+      const projectData = await getProjects();
+      const initialProjects = Array.isArray(projectData?.projetos) ? projectData.projetos : [];
+
+      if (initialProjects.length === 0) {
+        setProjects([]);
+        return; // Sai da função se não houver projetos
       }
+
+      // 2. Cria um array de Promises, onde cada uma busca os usuários de um projeto
+      const projectsWithUsersPromises = initialProjects.map(async (project) => {
+        try {
+          const users = await getUsersByProject(project.id_projeto);
+          // Retorna o objeto do projeto original + a nova propriedade 'usuarios'
+          return { ...project, usuarios: Array.isArray(users) ? users : [] };
+        } catch (userError) {
+          console.error(`Erro ao buscar usuários para o projeto ${project.id_projeto}:`, userError);
+          // Retorna o projeto mesmo se a busca por usuários falhar, com um array vazio
+          return { ...project, usuarios: [] };
+        }
+      });
+
+      // 3. Usa Promise.all para esperar que TODAS as buscas de usuários terminem
+      const projectsWithUsers = await Promise.all(projectsWithUsersPromises);
+
+      // 4. Atualiza o estado com os projetos já enriquecidos com os usuários
+      setProjects(projectsWithUsers);
+
     } catch (err) {
       console.error("Erro ao buscar projetos:", err);
       setError(err.message || "Falha ao buscar projetos.");
-      setProjects([]); // Define como array vazio em caso de erro
+      setProjects([]);
     } finally {
       setLoading(false);
     }

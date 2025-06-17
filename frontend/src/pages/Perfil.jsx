@@ -7,6 +7,8 @@ import InputField from "../components/InputField";
 import handleChange from "../utils/handleChange";
 import showToast from "../utils/showToast";
 import { MdStar, MdCheckBox, MdWarning, MdEdit } from "react-icons/md";
+import URL_BASE_IMAGE from "../api/urlBaseImage";
+import handleImageProfile from "../utils/handleImageProfile";
 
 // Função auxiliar para converter um arquivo para Base64 usando Promises
 const toBase64 = (file) =>
@@ -20,7 +22,7 @@ const toBase64 = (file) =>
 function Perfil() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-
+  
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -44,13 +46,15 @@ function Perfil() {
     const handleGetProfile = async () => {
       const data = await getProfile();
       if (data) {
+        const imageUrl = handleImageProfile(data.foto_perfil); 
+
         setFormData({
           nome_completo: data.nome_completo || "",
           nome_usuario: data.nome_usuario || "",
           email: data.email || "",
           senha: "", // Sempre iniciar senha como vazia no formulário
           // Ponto Chave 1: Mapeando a resposta da API para o estado
-          foto: data.foto_perfil || "", 
+          foto: imageUrl, 
           // O resto dos seus dados...
           pontuacao: data.pontuacao || 0,
           tarefas_concluidas: data.tarefas_concluidas || 0,

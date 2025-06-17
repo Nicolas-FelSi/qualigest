@@ -10,7 +10,7 @@ import MultiSelectUsers from "../MultiSelectUsers";
 import getTaskById from "../../api/tasks/getTaskById";
 import { format, parseISO } from "date-fns";
 
-function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
+function ModalEditarTarefa({ isOpen, closeModal, taskId, onTaskUpdated }) {
   const { idProjeto } = useParams();
   const [errors, setErrors] = useState({});
   const [projectUsers, setProjectUsers] = useState([]);
@@ -149,6 +149,9 @@ function ModalEditarTarefa({ isOpen, closeModal, taskId }) {
       const result = await editTask(taskId, dadosParaApi); 
       if (result.mensagem) {
         showToast(result.mensagem || "Tarefa atualizada com sucesso!", "success");
+        if (onTaskUpdated) {
+          onTaskUpdated();
+        }
         closeModal();
       } else {
         showToast(result.erro || "Erro ao atualizar tarefa.", "error");

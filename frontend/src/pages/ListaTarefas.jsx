@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Aside from "../components/Aside";
 import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
 import ModalEditarTarefa from "../components/Modais/ModalEditarTarefa";
@@ -67,6 +67,27 @@ function ListaTarefas() {
     return gruposOrdenados;
   };
 
+  const fetchTasks = useCallback(async () => {
+    // Usamos o idProjeto direto do hook useParams
+    if (!idProjeto || idProjeto === "undefined") {
+      // Lógica para lidar com projeto indefinido pode ser adicionada aqui se necessário
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getTasks(idProjeto);
+      setTasks(Array.isArray(response) ? response : []);
+    } catch (err) {
+      console.error("Erro ao buscar tarefas:", err);
+      setError(err.message || "Falha ao buscar tarefas.");
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [idProjeto]);
+
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
@@ -102,45 +123,13 @@ function ListaTarefas() {
       }
     }
 
-    const fetchTasks = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await getTasks(idToUse);
-        setTasks(Array.isArray(response) ? response : []);
-        if (!Array.isArray(response)) {
-          console.warn("API getTasks não retornou um array:", response);
-        }
-      } catch (err) {
-        console.error("Erro ao buscar tarefas:", err);
-        setError(err.message || "Falha ao buscar tarefas.");
-        setTasks([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTasks();
-  }, [idProjeto, navigate]);
+  }, [idProjeto, navigate, fetchTasks]);
 
   const gruposDeTarefas = useMemo(() => agruparTarefasPorData(tasks), [tasks]);
 
-  const handleTaskCreated = async () => {
-    if (idProjeto && idProjeto !== "undefined") {
-      setLoading(true);
-      try {
-        const response = await getTasks(idProjeto);
-        setTasks(Array.isArray(response) ? response : []);
-        if (!Array.isArray(response)) {
-          console.warn("API getTasks não retornou um array após criação de tarefa:", response);
-        }
-      } catch (err) {
-        console.error("Erro ao recarregar tarefas:", err);
-        setError(err.message || "Falha ao recarregar tarefas.");
-      } finally {
-        setLoading(false);
-      }
-    }
+  const handleTaskCreated = () => {
+    fetchTasks(); // Apenas chama a função reutilizável
   };
 
   const handleOpenEditModal = (task) => {
@@ -222,11 +211,17 @@ function ListaTarefas() {
         onTaskCreated={handleTaskCreated}
       />
 
-      <ModalEditarTarefa
-        isOpen={!!editingTaskId}
-        closeModal={() => setEditingTaskId(null)}
-        taskId={editingTaskId}
-      />
+      {editingTaskId && (
+        <ModalEditarTarefa
+          isOpen={!!editingTaskId}
+          closeModal={() => setEditingTaskId(null)}
+          taskId={editingTaskId}
+          onTaskUpdated={() => {
+            fetchTasks(); 
+            setEditingTaskId(null); 
+          }}
+        />
+      )}
     </>
   );
 }

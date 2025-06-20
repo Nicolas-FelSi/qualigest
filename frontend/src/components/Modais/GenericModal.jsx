@@ -11,7 +11,7 @@ function GenericModal({ isOpen, handleSubmit, title, handleClose, children, text
       onClick={handleOverlayClick}
     >
       <form
-        className="bg-white p-5 rounded-lg w-full max-w-lg mx-2 max-h-[90vh] overflow-y-auto"
+        className="bg-white p-5 rounded-lg w-full max-w-lg mx-2 max-h-[98vh] overflow-y-auto"
         onSubmit={handleSubmit}
         onClick={(e) => {
           e.stopPropagation();
@@ -34,15 +34,17 @@ function GenericModal({ isOpen, handleSubmit, title, handleClose, children, text
         </div>
         <hr className="mx-[-1.3rem] opacity-15 mt-4" />
         {children}
-        <hr className="mx-[-1.3rem] mt-5 opacity-15" />
-        <div>
-          <button
-            type="submit"
-            className="bg-amber-600 w-full rounded-sm mt-4 p-2 text-gray-900 cursor-pointer hover:bg-amber-700 font-medium transition-all"
-          >
-            {textButton}
-          </button>
-        </div>
+        { textButton && (
+          <div>
+            <hr className="mx-[-1.3rem] mt-5 opacity-15" />
+            <button
+              type="submit"
+              className="bg-amber-600 w-full rounded-sm mt-4 p-2 text-gray-900 cursor-pointer hover:bg-amber-700 font-medium transition-all"
+            >
+              {textButton}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   );

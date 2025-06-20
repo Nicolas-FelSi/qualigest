@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Aside from "../components/Aside";
 import ModalCriarTarefa from "../components/Modais/ModalCriarTarefa";
-import ModalEditarTarefa from "../components/Modais/ModalEditarTarefa";
+import ModalTarefa from "../components/Modais/ModalTarefa";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
 import TarefaCard from "../components/ListaTarefas/TarefaCard";
 import { parseISO, isToday, isTomorrow, format, compareAsc } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import showToast from "../utils/showToast";
 
 function ListaTarefas() {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ function ListaTarefas() {
         grupoKey = "amanha";
         grupoNome = "Amanhã";
       } else {
-        grupoKey = tarefa.data_limite;
+        grupoKey = format(data, 'yyyy-MM-dd');
         grupoNome = format(data, "EEEE, dd 'de' MMMM", { locale: ptBR });
         grupoNome = grupoNome.charAt(0).toUpperCase() + grupoNome.slice(1);
       }
@@ -133,7 +134,14 @@ function ListaTarefas() {
   };
 
   const handleOpenEditModal = (task) => {
-    setEditingTaskId(task.id_tarefa); // Salva apenas o ID
+    // Se o status da tarefa for 'Concluída', mostre um aviso e não faça nada.
+    if (task.status === 'Concluída') {
+      showToast('Tarefas concluídas não podem ser editadas.', 'info');
+      return; // Impede a execução do resto da função
+    }
+
+    // Se não estiver concluída, abre o modal normalmente.
+    setEditingTaskId(task.id_tarefa);
   };
 
   return (
@@ -185,7 +193,7 @@ function ListaTarefas() {
                         <div className="space-y-3">
                           {grupo.tarefas.map((tarefa) => (
                           <div key={tarefa.id_tarefa} onClick={() => handleOpenEditModal(tarefa)}>
-                            <TarefaCard task={tarefa} />
+                            <TarefaCard task={tarefa} onTaskStatusChanged={fetchTasks}/>
                           </div>
                           ))}
                         </div>
@@ -212,7 +220,7 @@ function ListaTarefas() {
       />
 
       {editingTaskId && (
-        <ModalEditarTarefa
+        <ModalTarefa
           isOpen={!!editingTaskId}
           closeModal={() => setEditingTaskId(null)}
           taskId={editingTaskId}
@@ -220,6 +228,7 @@ function ListaTarefas() {
             fetchTasks(); 
             setEditingTaskId(null); 
           }}
+          canEdit={isUserProjectLeader}
         />
       )}
     </>

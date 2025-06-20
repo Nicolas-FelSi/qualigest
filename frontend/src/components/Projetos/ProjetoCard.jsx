@@ -52,6 +52,12 @@ function ProjetoCard({ project, setProjects }) {
   const loggedInUserId = localStorage.getItem("idUsuario");
   const isUserProjectLeader = Number(loggedInUserId) === project.id_lider;
 
+  const liderDoProjeto = project.usuarios.find(
+    (usuario) => usuario.id_usuario === project.id_lider
+  );
+
+  const imagemLiderSrc = handleImageProfile(liderDoProjeto?.foto_perfil);
+
   return (
     <div
       className="bg-white shadow-md rounded-md border border-gray-400 flex flex-col h-full cursor-pointer"
@@ -61,8 +67,8 @@ function ProjetoCard({ project, setProjects }) {
         <h2 className="text-2xl text-amber-600">{project.nome_projeto}</h2>
         <img
           className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-          src="/images/pessoa1.jpg"
-          alt="Líder do projeto"
+          src={imagemLiderSrc}
+          alt="Foto de perfil do líder do projeto"
         />
       </header>
 
@@ -82,9 +88,8 @@ function ProjetoCard({ project, setProjects }) {
             const imagemSrc = handleImageProfile(usuario.foto_perfil);            
 
             return (
-              <li>
+              <li key={usuario.id_usuario}>
                 <img
-                  key={usuario.id_usuario}
                   className="w-8 h-8 rounded-lg object-cover border border-gray-400"
                   src={imagemSrc}
                   alt="Foto de perfil do usuario"

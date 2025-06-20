@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalCriarProjeto from "../components/Modais/ModalCriarProjeto";
 import getProjects from "../api/projects/getProjects";
@@ -17,13 +17,7 @@ function Projetos() {
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
 
-  useEffect(() => {
-    if (!localStorage.getItem("isLoggedIn")) {
-      navigate("/");
-    }
-  }, [navigate]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -62,11 +56,15 @@ function Projetos() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    if (!localStorage.getItem("isLoggedIn")) {
+      navigate("/");
+    } else {
+      fetchProjects();
+    }
+  }, [navigate, fetchProjects]);
 
   return (
     <>

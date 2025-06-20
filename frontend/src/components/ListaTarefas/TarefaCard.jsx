@@ -4,13 +4,26 @@ import handleImageProfile from "../../utils/handleImageProfile";
 import showToast from "../../utils/showToast";
 
 function TarefaCard({ task, onTaskStatusChanged }) {
+  const loggedInUserId = Number(localStorage.getItem("idUsuario"));
+
+  const isUserResponsible = task.responsaveis.some(
+    (user) => user.id_usuario === loggedInUserId
+  );
+
+  const canCompleteTask = isUserResponsible && task.status !== 'concluída';
 
   const handleToggleComplete = async (e) => {
     // Essencial: Impede que o clique no checkbox abra o modal de detalhes.
     e.stopPropagation();
 
+    if (!canCompleteTask) {
+      e.preventDefault();
+      showToast("Apenas responsáveis podem concluir esta tarefa.", "info");
+      return;
+    }
+
     // Uma confirmação opcional, mas recomendada
-    const confirmationText = task.status === 'Concluída' 
+    const confirmationText = task.status === 'concluída' 
       ? 'Deseja reabrir esta tarefa?'
       : 'Deseja marcar esta tarefa como concluída?';
       
@@ -55,7 +68,7 @@ function TarefaCard({ task, onTaskStatusChanged }) {
             checked={isCompleted}
             onClick={handleToggleComplete}
             // ADICIONE a propriedade 'disabled' para bloquear o checkbox
-            disabled={isCompleted}
+            disabled={!canCompleteTask}
             onChange={() => {}} 
           />
           <h3 className={`text-lg font-medium mb-2 ${titleStyles}`}>

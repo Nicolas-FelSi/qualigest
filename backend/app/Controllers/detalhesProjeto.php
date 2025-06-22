@@ -67,12 +67,19 @@ try {
 
     // Participantes + rank por pontuação
     $stmtParticipantes = $conn->prepare("
-        SELECT u.id_usuario, u.nome_completo, u.foto_perfil, u.pontuacao
-        FROM ParticipantesProjeto pp
-        JOIN Usuarios u ON pp.id_usuario = u.id_usuario
-        WHERE pp.id_projeto = :id
-        ORDER BY u.pontuacao DESC
-    ");
+    SELECT 
+        u.id_usuario,
+        u.nome_completo,
+        u.foto_perfil,
+        COALESCE(SUM(t.pontuacao_tarefa), 0) AS pontuacao
+    FROM ParticipantesProjeto pp
+    JOIN Usuarios u ON pp.id_usuario = u.id_usuario
+    LEFT JOIN ResponsaveisTarefa rt ON rt.id_usuario = u.id_usuario
+    LEFT JOIN Tarefas t ON t.id_tarefa = rt.id_tarefa AND t.id_projeto = pp.id_projeto AND t.status = 'concluída'
+    WHERE pp.id_projeto = :id
+    GROUP BY u.id_usuario, u.nome_completo, u.foto_perfil
+    ORDER BY pontuacao DESC
+");
     $stmtParticipantes->execute([':id' => $id_projeto]);
     $participantes = $stmtParticipantes->fetchAll(PDO::FETCH_ASSOC);
 

@@ -34,8 +34,8 @@ try {
     $db = new Database();
     $conn = $db->getConnection();
 
-    // Buscar dados da tarefa
-    $stmt = $conn->prepare("SELECT pontuacao_Tarefa, data_limite, multiplicador FROM Tarefas WHERE id_tarefa = :id");
+    // Verifica se a tarefa já está concluída
+    $stmt = $conn->prepare("SELECT pontuacao_tarefa, data_limite, multiplicador, status FROM Tarefas WHERE id_tarefa = :id");
     $stmt->execute([':id' => $id_tarefa]);
     $tarefa = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,12 +45,18 @@ try {
         exit;
     }
 
-    $pontuacaoBase = (float)$tarefa['pontuacao_Tarefa'];
+    if (strtolower($tarefa['status']) === 'concluída') {
+        http_response_code(400);
+        echo json_encode(['erro' => 'Tarefa já foi concluída anteriormente.']);
+        exit;
+    }
+
+    $pontuacaoBase = (float)$tarefa['pontuacao_tarefa'];
     $multiplicador = (float)$tarefa['multiplicador'];
     $dataLimite = new DateTime($tarefa['data_limite']);
     $hoje = new DateTime();
 
-    // Verifica se está dentro do prazo
+    // Calcula pontuação final com base no prazo
     $pontuacaoFinal = $hoje <= $dataLimite
         ? intval($pontuacaoBase * $multiplicador)
         : intval($pontuacaoBase);
@@ -66,22 +72,36 @@ try {
         exit;
     }
 
-    // Adiciona pontuação a cada responsável
+    // Adiciona pontuação e incrementa tarefas_concluidas
     foreach ($responsaveis as $resp) {
-        $stmt = $conn->prepare("UPDATE Usuarios SET pontuacao = pontuacao + :pontos WHERE id_usuario = :id");
+        $stmt = $conn->prepare("
+            UPDATE Usuarios 
+            SET pontuacao = pontuacao + :pontos,
+                tarefas_concluidas = tarefas_concluidas + 1
+            WHERE id_usuario = :id
+        ");
         $stmt->execute([
             ':pontos' => $pontuacaoFinal,
             ':id' => $resp['id_usuario']
         ]);
     }
 
-    // Atualiza status da tarefa
-    $stmt = $conn->prepare("UPDATE Tarefas SET status = 'concluída' WHERE id_tarefa = :id");
-    $stmt->execute([':id' => $id_tarefa]);
+    // Atualiza a pontuação final da tarefa e marca como concluída
+    $stmt = $conn->prepare("UPDATE Tarefas SET pontuacao_tarefa = :pontos, status = 'concluída' WHERE id_tarefa = :id");
+    $stmt->execute([
+        ':pontos' => $pontuacaoFinal,
+        ':id' => $id_tarefa
+    ]);
 
-    echo json_encode(['mensagem' => 'Tarefa concluída com sucesso.', 'pontuacao_aplicada' => $pontuacaoFinal]);
+    echo json_encode([
+        'mensagem' => 'Tarefa concluída com sucesso.',
+        'pontuacao_aplicada' => $pontuacaoFinal
+    ]);
 
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['erro' => 'Erro ao processar a entrega.', 'detalhes' => $e->getMessage()]);
+    echo json_encode([
+        'erro' => 'Erro ao processar a entrega.',
+        'detalhes' => $e->getMessage()
+    ]);
 }

@@ -52,9 +52,11 @@ function ProjetoCard({ project, setProjects }) {
   const loggedInUserId = localStorage.getItem("idUsuario");
   const isUserProjectLeader = Number(loggedInUserId) === project.id_lider;
 
-  const liderDoProjeto = project.usuarios.find(
-    (usuario) => usuario.id_usuario === project.id_lider
-  );
+  const liderDoProjeto = Array.isArray(project.usuarios)
+  ? project.usuarios.find(
+      (usuario) => usuario.id_usuario === project.id_lider
+    )
+  : null;
 
   const imagemLiderSrc = handleImageProfile(liderDoProjeto?.foto_perfil);
 
@@ -83,20 +85,20 @@ function ProjetoCard({ project, setProjects }) {
         </div>
 
         <ul className="flex justify-end p-2">
-          {project.usuarios.map((usuario) => {
+          {Array.isArray(project.usuarios) &&
+            project.usuarios.map((usuario) => {
+              const imagemSrc = handleImageProfile(usuario.foto_perfil);            
 
-            const imagemSrc = handleImageProfile(usuario.foto_perfil);            
-
-            return (
-              <li key={usuario.id_usuario}>
-                <img
-                  className="w-8 h-8 rounded-lg object-cover border border-gray-400"
-                  src={imagemSrc}
-                  alt="Foto de perfil do usuario"
-                />
-              </li>
-            )
-          })}
+              return (
+                <li key={usuario.id_usuario}>
+                  <img
+                    className="w-8 h-8 rounded-lg object-cover border border-gray-400"
+                    src={imagemSrc}
+                    alt="Foto de perfil do usuário"
+                  />
+                </li>
+              );
+            })}
         </ul>
       </main>
 

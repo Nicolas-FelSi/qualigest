@@ -11,7 +11,7 @@ function GenericModal({ isOpen, handleSubmit, title, handleClose, children, text
       onClick={handleOverlayClick}
     >
       <form
-        className="bg-white p-5 rounded-lg w-full max-w-lg mx-2 max-h-[98vh] overflow-y-auto"
+        className="bg-white p-5 rounded-lg w-full max-w-lg mx-2 max-h-[98vh] overflow-y-auto overflow-x-hidden"
         onSubmit={handleSubmit}
         onClick={(e) => {
           e.stopPropagation();

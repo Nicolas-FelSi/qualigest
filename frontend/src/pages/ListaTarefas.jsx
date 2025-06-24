@@ -181,13 +181,13 @@ function ListaTarefas() {
             {!loading && !error && (
               <>
                 {gruposDeTarefas.length > 0 ? (
-                  <section className="flex flex-wrap gap-2 lg:gap-4 lg:flex-nowrap lg:overflow-x-auto max-h-[calc(100vh-100px)] overflow-y-auto lg:scroll-pr-6 md:pb-4">
+                  <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-2 pb-4">
                     {gruposDeTarefas.map((grupo) => (
                       <div
                         key={grupo.dataISO + "-" + grupo.nome}
-                        className="bg-gray-100 p-4 rounded-lg min-h-[200px] mt-2 sm:mt-0 w-full lg:w-96 lg:flex-shrink-0 shadow"
+                        className="bg-gray-100 p-4 rounded-lg min-h-[200px] shadow"
                       >
-                        <h2 className="p-2 rounded-lg bg-blue-500 text-white w-full text-center mb-4 font-semibold text-lg shadow-sm sticky top-0 z-10">
+                        <h2 className="p-2 rounded-lg bg-blue-500 text-white w-full text-center mb-4 font-semibold text-lg shadow-sm">
                           {grupo.nome}
                         </h2>
                         <div className="space-y-3">

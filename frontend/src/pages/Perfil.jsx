@@ -139,9 +139,9 @@ function Perfil() {
 
 
   return (
-    <div className="flex gap-2 lg:gap-4">
+    <div className="flex gap-2 lg:gap-4 h-screen">
       <Aside />
-      <main className="h-screen w-full lg:mr-4 mr-2">
+      <main className="flex-1 w-full lg:mr-4 mr-2 flex flex-col overflow-y-auto">
         <div className="p-3 bg-white shadow-sm rounded-lg mb-2 lg:mb-4">
           <h2 className="text-2xl font-medium uppercase">Perfil</h2>
         </div>

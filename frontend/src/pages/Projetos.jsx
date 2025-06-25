@@ -68,9 +68,9 @@ function Projetos() {
 
   return (
     <>
-      <div className="flex gap-2 lg:gap-4 min-h-screen">
+      <div className="flex gap-2 lg:gap-4 h-screen">
         <Aside />
-        <main className="w-full mr-2 lg:mr-4 flex flex-col">
+        <main className="w-full mr-2 lg:mr-4 flex flex-col flex-1 overflow-y-auto">
           <div className="p-3 bg-white shadow-sm rounded-lg mb-2 lg:mb-4">
             <h2 className="text-2xl font-medium uppercase">Projetos</h2>
           </div>

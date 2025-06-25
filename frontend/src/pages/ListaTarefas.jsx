@@ -146,11 +146,11 @@ function ListaTarefas() {
 
   return (
     <>
-      <div className="flex gap-2 lg:gap-4 min-h-screen">
+      <div className="flex gap-2 lg:gap-4 h-screen">
         <Aside className="lg:sticky lg:top-0 lg:h-screen lg:z-30" />
-        <main className="w-full pr-2 lg:pr-4 flex flex-col">
+        <main className="flex-1 flex flex-col overflow-y-auto pr-2 lg:pr-4">
           <div className="px-2 py-2 bg-white shadow-md flex flex-col justify-between items-center gap-2 md:flex-row rounded-lg lg:sticky lg:top-0 lg:z-20">
-            <h2 className="text-2xl font-medium uppercase">{projectName}</h2>
+            <h2 className="text-2xl font-medium uppercase text-center">{projectName}</h2>
             {isUserProjectLeader && (
               <button
                 className="bg-amber-600 rounded-md text-white font-medium py-2 px-6 text-nowrap hover:bg-amber-700 cursor-pointer transition-all focus:ring-2 focus:ring-amber-500 focus:outline-none"
@@ -181,7 +181,7 @@ function ListaTarefas() {
             {!loading && !error && (
               <>
                 {gruposDeTarefas.length > 0 ? (
-                  <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-2 pb-4">
+                  <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 pb-4">
                     {gruposDeTarefas.map((grupo) => (
                       <div
                         key={grupo.dataISO + "-" + grupo.nome}

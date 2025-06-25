@@ -33,7 +33,7 @@ function DetalhesProjeto() {
   return (
     <div className="flex gap-2 sm:gap-4 h-screen">
       <Aside />
-      <main className="w-full mr-2 lg:mr-4">
+      <main className="w-full mr-2 lg:mr-4 flex-1 overflow-y-auto">
         <section className="flex flex-col gap-2 sm:gap-4">
           <div className="p-3 bg-white shadow-sm rounded-lg">
             <h2 className="text-2xl uppercase font-medium">{ formData.nome_projeto }</h2>
@@ -97,15 +97,15 @@ function DetalhesProjeto() {
                           className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap"
                         >
                           { index == 0 && (
-                              <span className="ml-[-50px] mr-7">🥇</span>
+                              <span className="ml-[-10px] lg:ml-[-50px] mr-7">🥇</span>
                             )
                           }
                           { index == 1 && (
-                              <span className="ml-[-50px] mr-7">🥈</span>
+                              <span className="ml-[-10px] lg:ml-[-50px] mr-7">🥈</span>
                             )
                           }
                           { index == 2 && (
-                              <span className="ml-[-50px] mr-7">🥉</span>
+                              <span className="ml-[-10px] lg:ml-[-50px] mr-7">🥉</span>
                             )
                           }
                           <span>{index+1}</span>
@@ -117,7 +117,7 @@ function DetalhesProjeto() {
                             alt="Foto de perfil do usuário"
                           />
                         </td>
-                        <td className="px-3 py-2">{ participante.nome_completo }</td>
+                        <td className="px-3 py-2 overflow-ellipsis overflow-hidden whitespace-nowrap">{ participante.nome_completo }</td>
                         <td className="px-3 py-2">{ participante.pontuacao }</td>
                       </tr>
                   )})

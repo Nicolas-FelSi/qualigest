@@ -66,7 +66,7 @@ function ProjetoCard({ project, setProjects }) {
       onClick={() => handleNavigateToTaskList(project.id_projeto)}
     >
       <header className="border-b border-gray-300 flex justify-between items-center p-2">
-        <h2 className="text-2xl text-amber-600">{project.nome_projeto}</h2>
+        <h2 className="text-2xl text-amber-600 overflow-ellipsis overflow-hidden whitespace-nowrap">{project.nome_projeto}</h2>
         <img
           className="w-8 h-8 rounded-lg object-cover border border-gray-400"
           src={imagemLiderSrc}

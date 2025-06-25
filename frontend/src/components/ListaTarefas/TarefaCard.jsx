@@ -61,7 +61,7 @@ function TarefaCard({ task, onTaskStatusChanged }) {
   return (
     <div className={`w-full border-gray-400 border p-4 rounded-md shadow-md transition-all ${cardStyles}`}>
       <div className="flex justify-between items-start gap-2">
-        <div className="flex items-start gap-3">
+        <div className="flex flex-1 items-start gap-3 min-w-0">
           <input
             type="checkbox"
             className={`mt-1 h-5 w-5 accent-green-600 ${isCompleted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -71,7 +71,7 @@ function TarefaCard({ task, onTaskStatusChanged }) {
             disabled={!canCompleteTask}
             onChange={() => {}} 
           />
-          <h3 className={`text-lg font-medium mb-2 ${titleStyles}`}>
+          <h3 className={`text-lg font-medium mb-2 ${titleStyles} overflow-ellipsis overflow-hidden whitespace-nowrap`}>
             {task.titulo}
           </h3>
         </div>

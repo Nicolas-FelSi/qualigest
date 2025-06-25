@@ -25,21 +25,21 @@ function Aside() {
 
   return (
     <>
-      <aside className="w-12 md:w-64 bg-gray-700 h-full shadow-md">
+      <aside className="w-10 lg:w-52 bg-gray-700 h-full shadow-md">
         <nav>
           <ul className="flex flex-col justify-between p-0 h-screen">
             <div>
               <li className="text-center p-4 w-full border-b-gray-500 border-b">
                 <NavLink className="flex items-center md:gap-3 w-full text-amber-500" to="/">
                   <MdHome className="text-amber-600 text-3xl" />
-                  <h1 className="text-amber-600 font-medium text-3xl hidden md:block">
+                  <h1 className="text-amber-600 font-medium text-3xl hidden lg:block">
                     QualiGest
                   </h1>
                 </NavLink>
               </li>
               <NavLink
                 to="/projetos"
-                className={`flex items-center md:gap-3 p-3 w-full border-b-gray-500 border-b ${
+                className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
                   urlPath.pathname == "/projetos"
                     ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
                     : "text-white"
@@ -52,13 +52,13 @@ function Aside() {
                       : "text-white"
                   }  text-xl`}
                 />
-                <span className="hidden md:block font-medium">Projetos</span>
+                <span className="hidden lg:block font-medium">Projetos</span>
               </NavLink>
               {currentProjectId && ( // Só mostra se tivermos algum ID
                 <>
                   <NavLink
                     to={`/lista-tarefas/${currentProjectId}`}
-                    className={`flex items-center md:gap-3 p-3 w-full border-b-gray-500 border-b ${
+                    className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
                       urlPath.pathname ===
                       `/lista-tarefas/${currentProjectId}`
                         ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
@@ -73,11 +73,11 @@ function Aside() {
                           : "text-white"
                       }  text-xl`}
                     />
-                    <span className="hidden md:block font-medium">Tarefas</span>
+                    <span className="hidden lg:block font-medium">Tarefas</span>
                   </NavLink>
                   <NavLink
                     to={`/detalhes-projeto/${currentProjectId}`}
-                    className={`flex items-center md:gap-3 p-3 w-full border-b-gray-500 border-b ${
+                    className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
                       urlPath.pathname ===
                       `/detalhes-projeto/${currentProjectId}`
                         ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
@@ -92,7 +92,7 @@ function Aside() {
                           : "text-white"
                       }  text-xl`}
                     />
-                    <span className="hidden md:block font-medium">
+                    <span className="hidden lg:block font-medium">
                       Detalhes do projeto
                     </span>
                   </NavLink>
@@ -100,7 +100,7 @@ function Aside() {
               )}
               <NavLink
                 to="/perfil"
-                className={`flex items-center md:gap-3 p-3 w-full border-b-gray-500 border-b ${
+                className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
                   urlPath.pathname == "/perfil"
                     ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
                     : "text-white"
@@ -113,7 +113,7 @@ function Aside() {
                       : "text-white"
                   }  text-xl`}
                 />
-                <span className="hidden md:block font-medium">Perfil</span>
+                <span className="hidden lg:block font-medium">Perfil</span>
               </NavLink>
             </div>
             <NavLink
@@ -122,7 +122,7 @@ function Aside() {
               onClick={logout}
             >
               <MdExitToApp className="text-white text-xl" />
-              <span className="hidden md:block font-medium">Sair</span>
+              <span className="hidden lg:block font-medium">Sair</span>
             </NavLink>
           </ul>
         </nav>

@@ -113,6 +113,16 @@ if ($dataInicio < $dataInicioOriginal) {
     exit;
 }
 
+// 🎯 Validação do multiplicador
+$multiplicador = isset($data['multiplicador']) ? floatval($data['multiplicador']) : 1;
+
+if ($multiplicador < 1) {
+    $multiplicador = 1;
+} elseif ($multiplicador > 10) {
+    $multiplicador = 10;
+}
+
+
 // Determina o status com base na nova data de início
 $agora = new DateTime();
 $status = ($dataInicio > $agora) ? 'Agendada' : 'Em andamento';
@@ -125,7 +135,7 @@ $tarefaAtualizada = $tarefaDAO->atualizarTarefa(
     $data['data_inicio'],
     $data['data_limite'],
     $data['prioridade'],
-    $data['multiplicador'],
+    $multiplicador,
     $status
 );
 

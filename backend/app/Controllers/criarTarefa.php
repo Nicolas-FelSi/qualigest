@@ -40,7 +40,14 @@ $dataInicio = $data['data_inicio'] ?? '';
 $dataLimite = $data['data_limite'] ?? '';
 $prioridade = $data['prioridade'] ?? '';
 $pontuacaoTarefa = $data['pontuacao_tarefa'] ?? 20;
-$multiplicador = $data['multiplicador'] ?? 1;
+$multiplicador = isset($data['multiplicador']) ? floatval($data['multiplicador']) : 1;
+
+if ($multiplicador < 1) {
+    $multiplicador = 1;
+} elseif ($multiplicador > 10) {
+    $multiplicador = 10;
+}
+
 $status = $data['status'] ?? null;
 $id_projeto = $data['id_projeto'] ?? null;
 $responsaveis = $data['ids_responsaveis'] ?? []; // array de usuários responsáveis
@@ -72,4 +79,3 @@ if ($sucesso) {
     http_response_code(500);
     echo json_encode(['erro' => 'Erro ao criar a tarefa.']);
 }
-?>

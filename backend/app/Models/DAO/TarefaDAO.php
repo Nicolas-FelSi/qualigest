@@ -88,11 +88,9 @@ class TarefaDAO
     $pontuacaoBase = 20;
 
     // Se quiser manter como fallback para multiplicador vazio ou inválido
-    if (!$multiplicador) {
-        $multiplicador = $multiplicadoresPrioridade[$prioridade] ?? 1.0;
-    }
+    $mprioridade = $multiplicadoresPrioridade[$prioridade] ?? 1.0;
 
-    $pontuacaoTarefa = intval($pontuacaoBase * $multiplicador);
+    $pontuacaoTarefa = intval($pontuacaoBase * $mprioridade);
 
     // Atualiza status com base na data de início
     $agora = new DateTime();

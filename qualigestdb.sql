@@ -45,7 +45,7 @@ COLLATE = utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS `qualigestdb`.`Projetos` (
   `id_projeto` INT NULL DEFAULT NULL AUTO_INCREMENT,
   `nome_projeto` VARCHAR(255) NOT NULL,
-  `pontuacao_projeto` INT NULL,
+  `pontuacao_projeto` INT DEFAULT 0,
   `id_usuario` INT NOT NULL,
   PRIMARY KEY (`id_projeto`),
   INDEX (`id_usuario` ASC) ,
@@ -125,7 +125,7 @@ COLLATE = utf8mb4_unicode_ci;
 DELIMITER $$
 
 CREATE EVENT IF NOT EXISTS atualizar_status_tarefas
-ON SCHEDULE EVERY 1 MINUTE
+ON SCHEDULE EVERY 30 SECOND
 DO
 BEGIN
     -- 1. Marcar como "em andamento" tarefas que já começaram e ainda não terminaram

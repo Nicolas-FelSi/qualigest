@@ -34,8 +34,8 @@ try {
     $db = new Database();
     $conn = $db->getConnection();
 
-    // Verifica se a tarefa já está concluída
-    $stmt = $conn->prepare("SELECT pontuacao_tarefa, data_limite, multiplicador, status FROM Tarefas WHERE id_tarefa = :id");
+    // Verifica se a tarefa já está concluída e obtém dados
+    $stmt = $conn->prepare("SELECT pontuacao_tarefa, data_limite, multiplicador, status, id_projeto FROM Tarefas WHERE id_tarefa = :id");
     $stmt->execute([':id' => $id_tarefa]);
     $tarefa = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -53,6 +53,8 @@ try {
 
     $pontuacaoBase = (float)$tarefa['pontuacao_tarefa'];
     $multiplicador = (float)$tarefa['multiplicador'];
+    $id_projeto = $tarefa['id_projeto'];
+
     $dataLimite = new DateTime($tarefa['data_limite']);
     $hoje = new DateTime();
 
@@ -86,8 +88,15 @@ try {
         ]);
     }
 
+    // Atualiza pontuação no projeto
+    $stmt = $conn->prepare("UPDATE projetos SET pontuacao_projeto = pontuacao_projeto + :pontos WHERE id_projeto = :id");
+    $stmt->execute([
+        ':pontos' => $pontuacaoFinal,
+        ':id' => $id_projeto
+    ]);
+
     // Atualiza a pontuação final da tarefa e marca como concluída
-    $stmt = $conn->prepare("UPDATE Tarefas SET pontuacao_tarefa = :pontos, status = 'concluída' WHERE id_tarefa = :id");
+    $stmt = $conn->prepare("UPDATE tarefas SET pontuacao_tarefa = :pontos, status = 'concluída' WHERE id_tarefa = :id");
     $stmt->execute([
         ':pontos' => $pontuacaoFinal,
         ':id' => $id_tarefa

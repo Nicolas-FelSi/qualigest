@@ -5,7 +5,7 @@ import ModalTarefa from "../components/Modais/ModalTarefa";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
 import TarefaCard from "../components/ListaTarefas/TarefaCard";
-import { parseISO, isToday, isTomorrow, format, compareAsc } from "date-fns";
+import { parseISO, isToday, isTomorrow, format, compareAsc, isBefore, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import showToast from "../utils/showToast";
 
@@ -30,6 +30,7 @@ function ListaTarefas() {
     if (!tarefas || tarefas.length === 0) return [];
 
     const grupos = {};
+    const hoje = startOfToday();
 
     tarefas.forEach((tarefa) => {
       if (!tarefa.data_limite) return;
@@ -39,7 +40,11 @@ function ListaTarefas() {
       let grupoNome;
       let dataISO = tarefa.data_limite;
 
-      if (isToday(data)) {
+      if (isBefore(data, hoje)) {
+        grupoKey = "atrasadas";
+        grupoNome = "Atrasadas";
+        dataISO = '1970-01-01T00:00:00';
+      } else if (isToday(data)) {
         grupoKey = "hoje";
         grupoNome = "Hoje";
       } else if (isTomorrow(data)) {
@@ -58,10 +63,13 @@ function ListaTarefas() {
     });
 
     const gruposOrdenados = Object.values(grupos).sort((a, b) => {
+      if (a.nome === "Atrasadas") return -1;
+      if (b.nome === "Atrasadas") return 1;
       if (a.nome === "Hoje") return -1;
       if (b.nome === "Hoje") return 1;
-      if (a.nome === "Amanhã" && b.nome !== "Hoje") return -1;
-      if (b.nome === "Amanhã" && a.nome !== "Hoje") return 1;
+      if (a.nome === "Amanhã") return -1;
+      if (b.nome === "Amanhã") return 1;
+      
       return compareAsc(parseISO(a.dataISO), parseISO(b.dataISO));
     });
 

@@ -79,6 +79,8 @@ code .
 
 - Importe o arquivo .sql na aba "Importar".
 
+- Após importar é recomendado ativar os eventos do banco de dados, para ativar selecione o banco de dados, vá na aba eventos e precione o botão em Status do agendador de eventos para ativar.
+
 - Verifique se as configurações de conexão com o banco (ex.: host, user, password, database) estão corretas no arquivo de configuração do PHP (backend/config/database.php).
 
 

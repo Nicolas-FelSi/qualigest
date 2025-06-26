@@ -76,7 +76,7 @@ if (!$linha || !$linha['is_lider']) {
     exit;
 }
 
-// Validação de datas
+// Validação de datas recebidas
 $dataInicio = DateTime::createFromFormat('Y-m-d H:i', $data['data_inicio']);
 $dataLimite = DateTime::createFromFormat('Y-m-d H:i', $data['data_limite']);
 
@@ -92,7 +92,28 @@ if ($dataLimite < $dataInicio) {
     exit;
 }
 
-// Determina o status com base na data atual
+// 3. Verifica se a nova data de início não é anterior à original
+$queryDataOriginal = "SELECT data_inicio FROM tarefas WHERE id_tarefa = :id_tarefa";
+$stmtData = $conn->prepare($queryDataOriginal);
+$stmtData->bindParam(':id_tarefa', $data['id_tarefa']);
+$stmtData->execute();
+$tarefaOriginal = $stmtData->fetch(PDO::FETCH_ASSOC);
+
+if (!$tarefaOriginal) {
+    http_response_code(404);
+    echo json_encode(['erro' => 'Tarefa não encontrada para verificar a data original.']);
+    exit;
+}
+
+$dataInicioOriginal = DateTime::createFromFormat('Y-m-d H:i:s', $tarefaOriginal['data_inicio']);
+
+if ($dataInicio < $dataInicioOriginal) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Você não pode definir uma nova data de início anterior à data original da tarefa.']);
+    exit;
+}
+
+// Determina o status com base na nova data de início
 $agora = new DateTime();
 $status = ($dataInicio > $agora) ? 'Agendada' : 'Em andamento';
 
@@ -105,7 +126,6 @@ $tarefaAtualizada = $tarefaDAO->atualizarTarefa(
     $data['data_limite'],
     $data['prioridade'],
     $data['multiplicador'],
-    floatval($data['multiplicador']),
     $status
 );
 
@@ -126,7 +146,7 @@ if ($idsAtuais !== $responsaveisNovos) {
 
     // Insere novos
     foreach ($responsaveisNovos as $id_usuario) {
-        $usuarioTarefaDAO->inserirAssociacoes($responsaveisNovos, $data['id_tarefa']);
+        $usuarioTarefaDAO->inserirAssociacoes($id_usuario, $data['id_tarefa']);
     }
 }
 

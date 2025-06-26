@@ -29,7 +29,7 @@ function Aside() {
         <nav>
           <ul className="flex flex-col justify-between p-0 h-screen">
             <div>
-              <li className="text-center p-4 w-full border-b-gray-500 border-b">
+              <li className="text-center p-2.5 w-full border-b-gray-500 border-b">
                 <NavLink className="flex items-center md:gap-3 w-full text-amber-500" to="/">
                   <MdHome className="text-amber-600 text-3xl" />
                   <h1 className="text-amber-600 font-medium text-3xl hidden lg:block">

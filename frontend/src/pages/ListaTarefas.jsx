@@ -5,7 +5,7 @@ import ModalTarefa from "../components/Modais/ModalTarefa";
 import { useNavigate, useParams } from "react-router-dom";
 import getTasks from "../api/tasks/getTasks";
 import TarefaCard from "../components/ListaTarefas/TarefaCard";
-import { parseISO, isToday, isTomorrow, format, compareAsc, isBefore, startOfToday } from "date-fns";
+import { parseISO, isToday, isTomorrow, format, compareAsc, isBefore } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import showToast from "../utils/showToast";
 
@@ -30,7 +30,7 @@ function ListaTarefas() {
     if (!tarefas || tarefas.length === 0) return [];
 
     const grupos = {};
-    const hoje = startOfToday();
+    const agora = new Date();
 
     tarefas.forEach((tarefa) => {
       if (!tarefa.data_limite) return;
@@ -40,7 +40,7 @@ function ListaTarefas() {
       let grupoNome;
       let dataISO = tarefa.data_limite;
 
-      if (isBefore(data, hoje)) {
+      if (isBefore(data, agora)) {
         grupoKey = "atrasadas";
         grupoNome = "Atrasadas";
         dataISO = '1970-01-01T00:00:00';

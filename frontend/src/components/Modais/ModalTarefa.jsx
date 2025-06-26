@@ -121,19 +121,19 @@ function ModalEditarTarefa({
     if (!formData.prioridade)
       newErrors.prioridade = "A prioridade é obrigatória";
 
-    if (formData.data_inicio) {
-      const dataInicio = new Date(formData.data_inicio);
-      if (dataInicio < now) {
-        newErrors.data_inicio =
-          "A data de início não pode ser anterior ao dia atual.";
-      }
-    }
+    // if (formData.data_inicio) {
+    //   const dataInicio = new Date(formData.data_inicio);
+    //   if (dataInicio < now) {
+    //     newErrors.data_inicio =
+    //       "A data de início não pode ser anterior ao dia atual.";
+    //   }
+    // }
     if (formData.data_limite) {
       const dataLimite = new Date(formData.data_limite);
-      if (dataLimite < now) {
-        newErrors.data_limite =
-          "A data limite não pode ser anterior ao dia atual.";
-      }
+      // if (dataLimite < now) {
+      //   newErrors.data_limite =
+      //     "A data limite não pode ser anterior ao dia atual.";
+      // }
       if (
         formData.data_inicio &&
         dataLimite <= new Date(formData.data_inicio)

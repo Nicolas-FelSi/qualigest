@@ -155,9 +155,7 @@ if ($idsAtuais !== $responsaveisNovos) {
     $stmt->execute();
 
     // Insere novos
-    foreach ($responsaveisNovos as $id_usuario) {
-        $usuarioTarefaDAO->inserirAssociacoes($id_usuario, $data['id_tarefa']);
-    }
+    $usuarioTarefaDAO->inserirAssociacoes($responsaveisNovos, $data['id_tarefa']);
 }
 
 echo json_encode(['mensagem' => 'Tarefa atualizada com sucesso.']);

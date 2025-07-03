@@ -37,7 +37,7 @@ try {
     }
 
     // Limita os resultados
-    $query .= " LIMIT 10";
+    //$query .= " LIMIT 10";
 
     $stmt = $db->prepare($query);
     $stmt->bindParam(':id_atual', $_SESSION['usuario_id'], PDO::PARAM_INT);

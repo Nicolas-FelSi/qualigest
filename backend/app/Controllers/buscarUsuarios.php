@@ -29,7 +29,7 @@ $nome = isset($_GET['nome']) ? trim($_GET['nome']) : '';
 
 try {
     // Monta a consulta base
-    $query = "SELECT id_usuario, nome_completo FROM usuarios WHERE id_usuario != :id_atual";
+    $query = "SELECT id_usuario, nome_usuario FROM usuarios WHERE id_usuario != :id_atual";
 
     // Se houver nome digitado, adiciona cláusula de busca
     if (!empty($nome)) {

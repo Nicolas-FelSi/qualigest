@@ -16,7 +16,7 @@ const MultiSelectUsers = ({
     return Array.isArray(allUsers)
       ? allUsers.map(user => ({
           value: String(user.id_usuario), // Garante que o valor seja string para consistência
-          label: user.nome_completo,
+          label: user.nome_usuario,
         }))
       : [];
   }, [allUsers]);

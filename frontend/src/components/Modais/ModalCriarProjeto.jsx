@@ -81,7 +81,7 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
         // Formata os usuários para o padrão { value: 'id', label: 'nome' }
         const options = users.map(user => ({
           value: user.id_usuario,
-          label: user.nome_completo,
+          label: user.nome_usuario,
         }));
         setParticipantesOptions(options);
       } else {

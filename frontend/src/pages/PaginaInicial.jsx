@@ -2,7 +2,8 @@ import ModalLogin from "../components/Modais/ModalLogin";
 import ModalCadastro from "../components/Modais/ModalCadastro";
 import Button from "../components/PaginaInicial/Button"
 import MobileMenu from "../components/PaginaInicial/MobileMenu"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom"
 
 function PaginaInicial() {
   const [modalState, setModalState] = useState({
@@ -11,9 +12,17 @@ function PaginaInicial() {
     menu: false,
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const toggleModal = (modal) => {
     setModalState((prev) => ({ ...prev, [modal]: !prev[modal] }));
   };
+
+  // useEffect para verificar o localStorage quando o componente montar
+  useEffect(() => {
+    const userIsLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(userIsLoggedIn);
+  }, []);
 
   return (
     <div>
@@ -22,14 +31,25 @@ function PaginaInicial() {
           Qualigest
         </h1>
         <nav className="hidden sm:flex sm:justify-between gap-6">
-          <Button children={"Entrar"} onClick={() => toggleModal("login")}/>
-          <Button children={"Cadastrar"} onClick={() => toggleModal("cadastro")}/>
+          {isLoggedIn ? (
+            // Se estiver logado, mostra o botão para acessar o sistema
+            <Link to="/projetos">
+              <Button children={"Acessar Projetos"} />
+            </Link>
+          ) : (
+            // Se não estiver logado, mostra os botões de Entrar e Cadastrar
+            <>
+              <Button children={"Entrar"} onClick={() => toggleModal("login")} />
+              <Button children={"Cadastrar"} onClick={() => toggleModal("cadastro")} />
+            </>
+          )}
         </nav>
-        <MobileMenu 
+        <MobileMenu
           isOpen={modalState.menu}
           onOpenCadastro={() => toggleModal("cadastro")}
           onOpenLogin={() => toggleModal("login")}
-          onToggle={() => toggleModal("menu")} 
+          onToggle={() => toggleModal("menu")}
+          isLoggedIn={isLoggedIn} // Passa o estado para o menu mobile
         />
       </header>
       <main className="flex items-center flex-col py-6 p-2">

@@ -98,7 +98,7 @@ function ModalCriarTarefa({ isOpen, closeModal, onTaskCreated }) {
     try {
       const result = await createTask(dadosParaApi);
       if (result.sucesso) {
-        showToast(result.message, "success");
+        showToast("Tarefa criada com sucesso", "success");
         resetForm();
         closeModal();
         if (onTaskCreated) onTaskCreated(); // Chama a função para atualizar a lista de tarefas

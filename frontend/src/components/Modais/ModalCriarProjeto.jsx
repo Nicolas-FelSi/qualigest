@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import getUsers from "../../api/getUsers";
-import getProjects from "../../api/projects/getProjects"
 import createProject from "../../api/projects/createProject";
 import showToast from "../../utils/showToast";
 import GenericModal from "./GenericModal";
 import InputField from "../InputField"
 import Select from "react-select"
 
-function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
+function ModalCriarProjeto({ isOpen, closeModal, refreshProjects }) {
   const [error, setError] = useState("");
   const [participantesOptions, setParticipantesOptions] = useState([]); // Opções para o react-select
   const [formData, setFormData] = useState({
@@ -61,8 +60,10 @@ function ModalCriarProjeto({ isOpen, closeModal, setProjects }) {
     } else {
       showToast(data.mensagem);
     }
-    const updatedProjects = await getProjects();
-    setProjects(updatedProjects.projetos);
+    // Atualiza a lista de projetos
+    if (refreshProjects) {
+      await refreshProjects();
+    }
   };
 
   // Função para lidar com a mudança no Select

@@ -134,7 +134,7 @@ function Projetos() {
         <ModalCriarProjeto
           isOpen={isOpen}
           closeModal={closeModal}
-          setProjects={setProjects}
+          refreshProjects={fetchProjects}
         />
       </div>
     </>

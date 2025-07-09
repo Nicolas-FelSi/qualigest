@@ -39,7 +39,7 @@ function GenericModal({ isOpen, handleSubmit, title, handleClose, children, text
             <hr className="mx-[-1.3rem] mt-5 opacity-15" />
             <button
               type="submit"
-              className="bg-amber-600 w-full rounded-sm mt-4 p-2 text-gray-900 cursor-pointer hover:bg-amber-700 font-medium transition-all"
+              className="bg-amber-600 w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-amber-700 font-medium transition-all"
             >
               {textButton}
             </button>

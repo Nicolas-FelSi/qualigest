@@ -21,6 +21,14 @@ function ListaTarefas() {
   const [isUserProjectLeader, setIsUserProjectLeader] = useState(false);
 
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [openGroups, setOpenGroups] = useState({});
+
+  const toggleGroup = (groupKey) => {
+    setOpenGroups(prevOpenGroups => ({
+      ...prevOpenGroups, // Mantém o estado dos outros grupos
+      [groupKey]: !prevOpenGroups[groupKey] // Inverte o estado do grupo clicado
+    }));
+  };
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
@@ -87,7 +95,17 @@ function ListaTarefas() {
     setError(null);
     try {
       const response = await getTasks(idProjeto);
-      setTasks(Array.isArray(response) ? response : []);
+      const fetchedTasks = Array.isArray(response) ? response : [];
+      setTasks(fetchedTasks);
+
+      const initialOpenState = {};
+      const grouped = agruparTarefasPorData(fetchedTasks);
+
+      grouped.forEach(g => {
+        initialOpenState[g.dataISO] = true;
+      });
+
+      setOpenGroups(initialOpenState);
     } catch (err) {
       console.error("Erro ao buscar tarefas:", err);
       setError(err.message || "Falha ao buscar tarefas.");
@@ -190,23 +208,51 @@ function ListaTarefas() {
               <>
                 {gruposDeTarefas.length > 0 ? (
                   <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 pb-4">
-                    {gruposDeTarefas.map((grupo) => (
-                      <div
-                        key={grupo.dataISO + "-" + grupo.nome}
-                        className="bg-gray-100 p-4 rounded-lg min-h-[200px] shadow"
-                      >
-                        <h2 className="p-2 rounded-lg bg-blue-500 text-white w-full text-center mb-4 font-semibold text-lg shadow-sm">
-                          {grupo.nome}
-                        </h2>
-                        <div className="space-y-3">
-                          {grupo.tarefas.map((tarefa) => (
-                          <div key={tarefa.id_tarefa} onClick={() => handleOpenEditModal(tarefa)}>
-                            <TarefaCard task={tarefa} onTaskStatusChanged={fetchTasks}/>
+                    {gruposDeTarefas.map((grupo) => {
+                      // Verifica se o grupo atual deve estar aberto
+                      const isOpen = !!openGroups[grupo.dataISO];
+                      return (
+                        // O container de cada grupo agora é um item do acordeão
+                        <div key={grupo.dataISO + "-" + grupo.nome}>
+                          {/* O cabeçalho agora é um botão clicável */}
+                          <button
+                            onClick={() => toggleGroup(grupo.dataISO)}
+                            className={`w-full p-3 text-white font-semibold text-lg flex justify-between items-center transition-colors duration-300
+                              ${grupo.nome === 'Atrasadas' ? 'bg-red-700 hover:bg-red-700' : 'bg-blue-500 hover:bg-blue-600'}
+                              ${isOpen ? 'rounded-t-lg' : 'rounded-lg'}` // Borda dinâmica
+                            }
+                          >
+                            <span>{grupo.nome} ({grupo.tarefas.length})</span>
+                            {/* Ícone de seta que gira com base no estado 'isOpen' */}
+                            <svg 
+                              xmlns="http://www.w3.org/2000/svg" 
+                              className={`h-6 w-6 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-90'}`} 
+                              fill="none" 
+                              viewBox="0 0 24 24" 
+                              stroke="currentColor"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          
+                          {/* A lista de tarefas só é renderizada se 'isOpen' for true */}
+                          {/* Adicionamos classes para uma animação suave de abertura/fechamento */}
+                          <div
+                            className={`transition-all duration-500 ease-in-out overflow-hidden bg-gray-100 rounded-b-lg
+                              ${isOpen ? 'max-h-[5000px] p-3' : 'max-h-0'}` // Padding é aplicado apenas quando aberto
+                            }
+                          >
+                            <div className="space-y-3 p-1">
+                              {grupo.tarefas.map((tarefa) => (
+                                <div key={tarefa.id_tarefa} onClick={() => handleOpenEditModal(tarefa)}>
+                                  <TarefaCard task={tarefa} onTaskStatusChanged={fetchTasks}/>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                          ))}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </section>
                 ) : (
                   <div className="flex-grow flex items-center justify-center">

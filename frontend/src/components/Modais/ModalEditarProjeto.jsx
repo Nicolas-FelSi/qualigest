@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import editProject from "../../api/projects/editProject";
-import getProjects from "../../api/projects/getProjects";
 import showToast from "../../utils/showToast";
 import GenericModal from "./GenericModal";
 import InputField from "../InputField";
@@ -9,7 +8,7 @@ import getUsersByProject from "../../api/getUsersByProject";
 import getUsers from "../../api/getUsers";
 import MultiSelectUsers from "../MultiSelectUsers"
 
-function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
+function ModalEditarProjeto({ isOpen, closeModal, data, refreshProjects }) {
   const navigate = useNavigate();
   const [error, setError] = useState({});
   const [allUsers, setAllUsers] = useState([]);
@@ -89,9 +88,9 @@ function ModalEditarProjeto({ isOpen, closeModal, data, setProjects }) {
         closeModal();
 
         // Atualiza a lista de projetos
-        const updatedProjectsResponse = await getProjects();
-        const updatedProjects = updatedProjectsResponse?.projetos || [];
-        setProjects(updatedProjects);
+        if (refreshProjects) {
+          await refreshProjects();
+        }
       } else {
         showToast(result.messages || "Erro ao editar o projeto.", "error");
         if (result.status === 401) {

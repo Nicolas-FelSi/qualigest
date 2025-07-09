@@ -111,7 +111,7 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
         <div>
           <button
             type="submit"
-            className="bg-amber-600 w-full rounded-sm mt-4 p-2 text-gray-900 cursor-pointer hover:bg-amber-700 font-medium transition-all"
+            className="bg-amber-600 w-full rounded-sm mt-4 p-2 text-white cursor-pointer hover:bg-amber-700 font-medium transition-all"
           >
             Entrar
           </button>

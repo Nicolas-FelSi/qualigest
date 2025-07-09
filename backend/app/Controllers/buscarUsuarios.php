@@ -32,7 +32,7 @@ try {
               WHERE id_usuario != :id_atual";
 
     if (!empty($nome)) {
-        $query .= " AND nome_usuario LIKE :nome";
+        $query .= " AND nome_completo LIKE :nome";
     }
 
     $stmt = $db->prepare($query);

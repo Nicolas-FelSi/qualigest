@@ -55,7 +55,9 @@ if (password_verify($senha, $usuario['senha'])) {
     echo json_encode([
         'status' => 'sucesso',
         'mensagem' => 'Login realizado com sucesso.',
-        'id_usuario' => $usuario['id_usuario']
+        'id_usuario' => $usuario['id_usuario'],
+        'nome_completo' => $usuario['nome_completo'],
+        'foto' => $usuario['foto'] ?? null
     ]);
 
 } else {

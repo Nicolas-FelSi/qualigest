@@ -1,5 +1,14 @@
 <h1>QualiGest</h1>
 
+
+
+
+<!-- https://docs.google.com/presentation/d/1Tmyn8OJSw1Zd6TwBF2gAuUL0KEB5muQr/edit?slide=id.g2d725bba5ac_0_73#slide=id.g2d725bba5ac_0_73 -->
+
+<!-- https://docs.google.com/spreadsheets/d/1D5EHew6gX-f26Q5cVADv6qd53XHDOAdPPzPaC5gxF_4/edit?gid=505199366#gid=505199366 -->  
+
+
+
 <p align="center">
   <img src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white"/>
   <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white"/>

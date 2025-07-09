@@ -5,7 +5,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 
-// Tratamento para requisição OPTIONS (CORS)
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -24,20 +23,17 @@ require_once __DIR__ . '/../../config/database.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Pega o parâmetro de busca (GET)
 $nome = isset($_GET['nome']) ? trim($_GET['nome']) : '';
 
 try {
-    // Monta a consulta base
-    $query = "SELECT id_usuario, nome_usuario FROM usuarios WHERE id_usuario != :id_atual";
+    // Atualiza os campos selecionados
+    $query = "SELECT id_usuario, nome_usuario, nome_completo, foto 
+              FROM usuarios 
+              WHERE id_usuario != :id_atual";
 
-    // Se houver nome digitado, adiciona cláusula de busca
     if (!empty($nome)) {
-        $query .= " AND nome LIKE :nome";
+        $query .= " AND nome_usuario LIKE :nome";
     }
-
-    // Limita os resultados
-    //$query .= " LIMIT 10";
 
     $stmt = $db->prepare($query);
     $stmt->bindParam(':id_atual', $_SESSION['usuario_id'], PDO::PARAM_INT);

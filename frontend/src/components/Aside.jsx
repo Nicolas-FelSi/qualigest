@@ -1,22 +1,54 @@
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useParams } from "react-router-dom";
 import {
-  MdCheckCircle,
-  MdExitToApp,
-  MdHome,
-  MdInfo,
-  MdLayers,
-  MdPersonPin,
+  MdLayers,      
+  MdPerson,      
+  MdExitToApp,   
+  MdFolderOpen,  
+  MdCheckCircle, 
+  MdInfo,        
+  MdHome
 } from "react-icons/md";
 
+const NavItem = ({ to, icon, children, isSubItem = false }) => {
+  const baseClasses = "flex items-center gap-3 p-3 w-full transition-colors duration-200";
+  const textClasses = "hidden lg:block font-medium";
+  const activeClasses = "shadow-inner border-l-4 border-l-amber-600 bg-gray-600 text-amber-500";
+  const inactiveClasses = "text-gray-300 hover:bg-gray-600 hover:text-white";
+  const subItemClasses = isSubItem ? "pl-8" : ""; // Adiciona recuo para sub-itens
+
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `${baseClasses} ${subItemClasses} ${isActive ? activeClasses : inactiveClasses}`
+      }
+    >
+      {icon}
+      <span className={textClasses}>{children}</span>
+    </NavLink>
+  );
+};
+
 function Aside() {
-  const urlPath = useLocation();
-  const params = useParams();
+  const { idProjeto } = useParams(); // Pega o ID da URL, se existir
+  const [selectedProject, setSelectedProject] = useState(null);
 
-  // 1. Busque o último ID do sessionStorage
-  const lastProjectId = sessionStorage.getItem("lastProjectId");
-
-  // 2. Determine o ID a ser usado: priorize o da URL, senão use o do storage
-  const currentProjectId = params.projectId || lastProjectId;
+  // Este useEffect monitora a URL e o sessionStorage para manter o Aside atualizado
+  useEffect(() => {
+    const projectDataString = sessionStorage.getItem("selectedProject");
+    if (projectDataString) {
+      const projectData = JSON.parse(projectDataString);
+      // Garante que o projeto no storage corresponde ao da URL
+      if (projectData.id_projeto == idProjeto) {
+        setSelectedProject(projectData);
+      } else {
+        setSelectedProject(null); // Limpa se o usuário navegar para fora de um projeto
+      }
+    } else {
+      setSelectedProject(null);
+    }
+  }, [idProjeto]); // Roda sempre que o idProjeto na URL mudar
 
   function logout() {
     localStorage.clear();
@@ -24,110 +56,66 @@ function Aside() {
   }
 
   return (
-    <>
-      <aside className="w-10 lg:w-52 bg-gray-700 h-full shadow-md">
-        <nav>
-          <ul className="flex flex-col justify-between p-0 h-screen">
-            <div>
-              <li className="text-center p-2.5 w-full border-b-gray-500 border-b">
-                <NavLink className="flex items-center md:gap-3 w-full text-amber-500" to="/">
-                  <MdHome className="text-amber-600 text-3xl" />
-                  <h1 className="text-amber-600 font-medium text-3xl hidden lg:block">
-                    QualiGest
-                  </h1>
-                </NavLink>
-              </li>
-              <NavLink
-                to="/projetos"
-                className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
-                  urlPath.pathname == "/projetos"
-                    ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
-                    : "text-white"
-                }`}
-              >
-                <MdLayers
-                  className={`${
-                    urlPath.pathname === `/projetos`
-                      ? "text-amber-500"
-                      : "text-white"
-                  }  text-xl`}
-                />
-                <span className="hidden lg:block font-medium">Projetos</span>
-              </NavLink>
-              {currentProjectId && ( // Só mostra se tivermos algum ID
-                <>
-                  <NavLink
-                    to={`/lista-tarefas/${currentProjectId}`}
-                    className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
-                      urlPath.pathname ===
-                      `/lista-tarefas/${currentProjectId}`
-                        ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
-                        : "text-white"
-                    }`}
-                  >
-                    <MdCheckCircle
-                      className={`${
-                        urlPath.pathname ===
-                        `/lista-tarefas/${currentProjectId}`
-                          ? "text-amber-500"
-                          : "text-white"
-                      }  text-xl`}
-                    />
-                    <span className="hidden lg:block font-medium">Tarefas</span>
-                  </NavLink>
-                  <NavLink
-                    to={`/detalhes-projeto/${currentProjectId}`}
-                    className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
-                      urlPath.pathname ===
-                      `/detalhes-projeto/${currentProjectId}`
-                        ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
-                        : "text-white"
-                    }`}
-                  >
-                    <MdInfo
-                      className={`${
-                        urlPath.pathname ===
-                        `/detalhes-projeto/${currentProjectId}`
-                          ? "text-amber-500"
-                          : "text-white"
-                      }  text-xl`}
-                    />
-                    <span className="hidden lg:block font-medium">
-                      Detalhes do projeto
-                    </span>
-                  </NavLink>
-                </>
-              )}
-              <NavLink
-                to="/perfil"
-                className={`flex items-center md:gap-3 p-2 w-full border-b-gray-500 border-b ${
-                  urlPath.pathname == "/perfil"
-                    ? "shadow-md border-l-4 border-l-amber-600 bg-gray-600 text-amber-500"
-                    : "text-white"
-                }`}
-              >
-                <MdPersonPin
-                  className={`${
-                    urlPath.pathname === `/perfil`
-                      ? "text-amber-500"
-                      : "text-white"
-                  }  text-xl`}
-                />
-                <span className="hidden lg:block font-medium">Perfil</span>
-              </NavLink>
+    <aside className="w-16 lg:w-60 bg-gray-700 h-screen flex flex-col shadow-lg">
+      <div className="text-center p-3 w-full border-b-gray-600 border-b">
+        <NavLink to="/" className="flex items-center justify-center lg:justify-start gap-2">
+          <MdHome size={32} className="text-amber-500 flex-shrink-0" />
+          <h1 className="text-amber-500 font-bold text-2xl hidden lg:block">
+            QualiGest
+          </h1>
+        </NavLink>
+      </div>
+
+      <nav className="flex-grow">
+        {/* -- NAVEGAÇÃO PRINCIPAL -- */}
+        <ul>
+          <li>
+            <NavItem to="/projetos" icon={<MdLayers size={24} />}>
+              Projetos
+            </NavItem>
+          </li>
+          <li>
+            <NavItem to="/perfil" icon={<MdPerson size={24} />}>
+              Meu Perfil
+            </NavItem>
+          </li>
+        </ul>
+
+        {/* -- NAVEGAÇÃO CONTEXTUAL DE PROJETO -- */}
+        {selectedProject && (
+          <div className="mt-4 pt-4 border-t border-gray-600">
+            {/* Título do Projeto Ativo */}
+            <div className="p-3 flex items-center gap-3 text-gray-400">
+              <MdFolderOpen size={24} />
+              <span className="hidden lg:block font-semibold truncate">
+                {selectedProject.nome_projeto}
+              </span>
             </div>
-            <NavLink
-              to="/"
-              className="flex items-center md:gap-3 p-2 w-full border-t-gray-500 text-white border-t"
-              onClick={logout}
-            >
-              <MdExitToApp className="text-white text-xl" />
-              <span className="hidden lg:block font-medium">Sair</span>
-            </NavLink>
-          </ul>
-        </nav>
-      </aside>
-    </>
+            {/* Sub-itens do Projeto */}
+            <ul>
+              <li>
+                <NavItem to={`/lista-tarefas/${selectedProject.id_projeto}`} icon={<MdCheckCircle size={24} />} isSubItem={true}>
+                  Tarefas
+                </NavItem>
+              </li>
+              <li>
+                <NavItem to={`/detalhes-projeto/${selectedProject.id_projeto}`} icon={<MdInfo size={24} />} isSubItem={true}>
+                  Detalhes
+                </NavItem>
+              </li>
+            </ul>
+          </div>
+        )}
+      </nav>
+
+      {/* -- BOTÃO DE SAIR -- */}
+      <div className="p-2 border-t border-gray-600">
+        <NavLink to="/" onClick={logout} className="flex items-center gap-3 p-3 w-full text-gray-300 hover:bg-red-900 hover:text-white rounded-md transition-colors duration-200">
+          <MdExitToApp size={24} />
+          <span className="hidden lg:block font-medium">Sair</span>
+        </NavLink>
+      </div>
+    </aside>
   );
 }
 

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import showToast from "../../utils/showToast";
 import handleImageProfile from "../../utils/handleImageProfile";
 
-function ProjetoCard({ project, setProjects }) {
+function ProjetoCard({ project, setProjects, refreshProjects }) {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -125,7 +125,7 @@ function ProjetoCard({ project, setProjects }) {
         isOpen={isOpen}
         closeModal={closeModal}
         data={project}
-        setProjects={setProjects}
+        refreshProjects={refreshProjects}
       />
     </div>
   );

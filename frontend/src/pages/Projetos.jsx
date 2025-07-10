@@ -5,12 +5,14 @@ import getProjects from "../api/projects/getProjects";
 import ProjetoCard from "../components/Projetos/ProjetoCard";
 import Aside from "../components/Aside";
 import getUsersByProject from "../api/getUsersByProject";
+import Header from "../components/Header";
 
 function Projetos() {
   const [isOpen, setIsOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true); // Estado de carregamento
   const [error, setError] = useState(null); // Estado de erro
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
 
@@ -62,6 +64,7 @@ function Projetos() {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
     } else {
+      setUser(JSON.parse(localStorage.getItem("user")))
       fetchProjects();
     }
   }, [navigate, fetchProjects]);
@@ -71,9 +74,7 @@ function Projetos() {
       <div className="flex gap-2 lg:gap-4 h-screen">
         <Aside />
         <main className="w-full mr-2 lg:mr-4 flex flex-col flex-1 overflow-y-auto">
-          <div className="p-3 bg-white shadow-sm rounded-lg mb-2 lg:mb-4">
-            <h2 className="text-2xl font-medium uppercase">Projetos</h2>
-          </div>
+          <Header titleHeader={"Projetos"} user={user}/>
           {/* Container para o conteúdo dinâmico (loading, error, projects list) */}
           <div className="flex-grow flex flex-col">
             {loading && (

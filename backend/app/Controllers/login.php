@@ -57,7 +57,8 @@ if (password_verify($senha, $usuario['senha'])) {
         'mensagem' => 'Login realizado com sucesso.',
         'id_usuario' => $usuario['id_usuario'],
         'nome_completo' => $usuario['nome_completo'],
-        'foto' => $usuario['foto'] ?? null
+        'nome_usuario' => $usuario['nome_usuario'],
+        'foto_perfil' => $usuario['foto_perfil'] ?? null
     ]);
 
 } else {

@@ -48,6 +48,12 @@ function ModalLogin({ isOpen, closeModal, openModalCadastro }) {
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("idUsuario", data.id_usuario);
 
+      localStorage.setItem("user", JSON.stringify({
+        nome_completo: data.nome_completo,
+        nome_usuario: data.nome_usuario,
+        foto_perfil: data.foto_perfil
+      }))
+
       showToast(data.mensagem, "success");
       resetForm();
       closeModal();

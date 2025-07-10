@@ -9,6 +9,7 @@ import showToast from "../utils/showToast";
 import { MdStar, MdCheckBox, MdWarning, MdEdit } from "react-icons/md";
 import URL_BASE_IMAGE from "../api/urlBaseImage";
 import handleImageProfile from "../utils/handleImageProfile";
+import Header from "../components/Header";
 
 // Função auxiliar para converter um arquivo para Base64 usando Promises
 const toBase64 = (file) =>
@@ -23,6 +24,7 @@ function Perfil() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   
+  const [user, setUser] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -36,32 +38,33 @@ function Perfil() {
     tarefas_em_atraso: 0,
   });
 
+  async function handleGetProfile() {
+    const data = await getProfile();
+    if (data) {
+      const imageUrl = handleImageProfile(data.foto_perfil); 
+
+      setFormData({
+        nome_completo: data.nome_completo || "",
+        nome_usuario: data.nome_usuario || "",
+        email: data.email || "",
+        senha: "", // Sempre iniciar senha como vazia no formulário
+        // Ponto Chave 1: Mapeando a resposta da API para o estado
+        foto: imageUrl, 
+        // O resto dos seus dados...
+        pontuacao: data.pontuacao || 0,
+        tarefas_concluidas: data.tarefas_concluidas || 0,
+        tarefas_em_atraso: data.tarefas_em_atraso || 0,
+      });
+    }
+  };
+
   // Efeito para buscar os dados do perfil ao carregar a página
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
       return;
     }
-
-    const handleGetProfile = async () => {
-      const data = await getProfile();
-      if (data) {
-        const imageUrl = handleImageProfile(data.foto_perfil); 
-
-        setFormData({
-          nome_completo: data.nome_completo || "",
-          nome_usuario: data.nome_usuario || "",
-          email: data.email || "",
-          senha: "", // Sempre iniciar senha como vazia no formulário
-          // Ponto Chave 1: Mapeando a resposta da API para o estado
-          foto: imageUrl, 
-          // O resto dos seus dados...
-          pontuacao: data.pontuacao || 0,
-          tarefas_concluidas: data.tarefas_concluidas || 0,
-          tarefas_em_atraso: data.tarefas_em_atraso || 0,
-        });
-      }
-    };
+    setUser(JSON.parse(localStorage.getItem("user")))
     handleGetProfile();
   }, [navigate]);
 
@@ -109,7 +112,22 @@ function Perfil() {
     const result = await editProfile(dadosParaApi);
 
     if (result.mensagem) {
-      showToast(result.mensagem, "success");
+        const updatedUserData = result.usuario;
+
+        localStorage.setItem("user", JSON.stringify(updatedUserData));
+
+        setUser(updatedUserData);
+
+        setFormData(prev => ({
+          ...prev,
+          nome_completo: updatedUserData.nome_completo,
+          nome_usuario: updatedUserData.nome_usuario,
+          email: updatedUserData.email,
+          foto: handleImageProfile(updatedUserData.foto_perfil), 
+          senha: "" 
+        }));
+        setImagePreview(null); 
+        showToast(result.mensagem, "success");
     } else {
       showToast(result.erro);
     }
@@ -142,9 +160,7 @@ function Perfil() {
     <div className="flex gap-2 lg:gap-4 h-screen">
       <Aside />
       <main className="flex-1 w-full lg:mr-4 mr-2 flex flex-col overflow-y-auto">
-        <div className="p-3 bg-white shadow-sm rounded-lg mb-2 lg:mb-4">
-          <h2 className="text-2xl font-medium uppercase">Perfil</h2>
-        </div>
+        <Header titleHeader={"Perfil"} user={user}/>
         <section className="bg-white flex justify-center rounded-lg items-center shadow-md">
           <form className="max-w-5xl w-full p-3 flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row gap-5">

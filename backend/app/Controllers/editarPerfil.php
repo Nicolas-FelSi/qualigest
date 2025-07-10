@@ -100,7 +100,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $sucesso = $stmt->execute();
 
     if ($sucesso) {
-        echo json_encode(['mensagem' => 'Perfil atualizado com sucesso.']);
+        // 1. Após o UPDATE, fazemos um SELECT para buscar os dados atualizados
+        $stmt_select = $pdo->prepare("SELECT id_usuario, nome_completo, email, nome_usuario, foto_perfil FROM usuarios WHERE id_usuario = :id");
+        $stmt_select->bindParam(':id', $id_usuario);
+        $stmt_select->execute();
+        $usuario_atualizado = $stmt_select->fetch(PDO::FETCH_ASSOC);
+
+        if ($usuario_atualizado) {
+            // 2. Retornamos uma resposta de sucesso JUNTO com o objeto do usuário atualizado
+            echo json_encode([
+                'status' => 'sucesso',
+                'mensagem' => 'Perfil atualizado com sucesso.',
+                'usuario' => $usuario_atualizado
+            ]);
+        } else {
+            // Caso raro onde o SELECT falha após um UPDATE bem-sucedido
+            http_response_code(500);
+            echo json_encode(['status' => 'erro', 'mensagem' => 'Perfil atualizado, mas não foi possível recuperar os dados.']);
+        }
     } else {
         http_response_code(500);
         echo json_encode(['erro' => 'Erro ao atualizar perfil.']);

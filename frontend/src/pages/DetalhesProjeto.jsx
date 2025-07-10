@@ -4,10 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import getDataProject from "../api/getDataProject"
 import { MdCheckBox, MdWarning, MdHourglassBottom } from "react-icons/md"
 import handleImageProfile from "../utils/handleImageProfile";
+import Header from "../components/Header";
 
 function DetalhesProjeto() {
   const { idProjeto } = useParams();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     nome_projeto: "",
     pontuacao_total: 0,
@@ -28,6 +30,7 @@ function DetalhesProjeto() {
       const data = await getDataProject(idProjeto);
       setFormData(data)
     }
+    setUser(JSON.parse(localStorage.getItem("user")))
     handleGetDataProject();
   }, [idProjeto]);
   return (
@@ -35,9 +38,7 @@ function DetalhesProjeto() {
       <Aside />
       <main className="w-full mr-2 lg:mr-4 flex-1 overflow-y-auto">
         <section className="flex flex-col gap-2 sm:gap-4">
-          <div className="p-3 bg-white shadow-sm rounded-lg">
-            <h2 className="text-2xl uppercase font-medium">{ formData.nome_projeto }</h2>
-          </div>
+          <Header titleHeader={formData.nome_projeto} user={user}/>
           <div className="p-3 bg-white shadow-sm rounded-lg">
             <h2 className="text-xl">
               Pontuação total: <span className="font-medium text-xl">{formData.pontuacao_total}</span> pontos

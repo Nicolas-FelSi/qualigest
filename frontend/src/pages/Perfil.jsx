@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Aside from "../components/Aside";
 import { useNavigate } from "react-router-dom";
 import getProfile from "../api/profile/getProfile";
@@ -7,7 +7,6 @@ import InputField from "../components/InputField";
 import handleChange from "../utils/handleChange";
 import showToast from "../utils/showToast";
 import { MdStar, MdCheckBox, MdWarning, MdEdit } from "react-icons/md";
-import URL_BASE_IMAGE from "../api/urlBaseImage";
 import handleImageProfile from "../utils/handleImageProfile";
 import Header from "../components/Header";
 
@@ -21,42 +20,41 @@ const toBase64 = (file) =>
   });
 
 function Perfil() {
+  console.log("%cRenderizando a página: PERFIL", "color: white; font-weight: bold;");
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   
   const [user, setUser] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     nome_completo: "",
     nome_usuario: "",
     email: "",
     senha: "",
-    foto: "",
+    foto_perfil: "",
     pontuacao: 0,
     tarefas_concluidas: 0,
     tarefas_em_atraso: 0,
   });
 
-  async function handleGetProfile() {
+  const handleGetProfile = useCallback(async () => {
     const data = await getProfile();
     if (data) {
-      const imageUrl = handleImageProfile(data.foto_perfil); 
-
+      setUser(data);
       setFormData({
         nome_completo: data.nome_completo || "",
         nome_usuario: data.nome_usuario || "",
         email: data.email || "",
-        senha: "", // Sempre iniciar senha como vazia no formulário
-        // Ponto Chave 1: Mapeando a resposta da API para o estado
-        foto: imageUrl, 
-        // O resto dos seus dados...
+        senha: "",
+        foto_perfil: handleImageProfile(data.foto_perfil),
         pontuacao: data.pontuacao || 0,
         tarefas_concluidas: data.tarefas_concluidas || 0,
         tarefas_em_atraso: data.tarefas_em_atraso || 0,
       });
     }
-  };
+  }, []);
 
   // Efeito para buscar os dados do perfil ao carregar a página
   useEffect(() => {
@@ -66,7 +64,7 @@ function Perfil() {
     }
     setUser(JSON.parse(localStorage.getItem("user")))
     handleGetProfile();
-  }, [navigate]);
+  }, [navigate, handleGetProfile]);
 
   // Função para validar o formulário
   function validate() {
@@ -88,7 +86,6 @@ function Perfil() {
     }
     setErrors({});
 
-    // Ponto Chave 2: Preparando os dados para enviar como JSON
     const dadosParaApi = {
       nome_completo: formData.nome_completo,
       nome_usuario: formData.nome_usuario,
@@ -99,12 +96,12 @@ function Perfil() {
       dadosParaApi.senha = formData.senha;
     }
 
-    if (formData.foto instanceof File) {
+    if (formData.foto_perfil instanceof File) {
       try {
-        dadosParaApi.foto = await toBase64(formData.foto);
+        dadosParaApi.foto_perfil = await toBase64(formData.foto_perfil);
       } catch (error) {
         showToast("Erro ao processar a imagem.", "error");
-        console.warn(error)
+        console.warn(error);
         return;
       }
     }
@@ -112,22 +109,22 @@ function Perfil() {
     const result = await editProfile(dadosParaApi);
 
     if (result.mensagem) {
-        const updatedUserData = result.usuario;
+      const updatedUserData = result.usuario;
+      localStorage.setItem("user", JSON.stringify(updatedUserData));
+      setUser(updatedUserData); // Atualiza os dados originais
 
-        localStorage.setItem("user", JSON.stringify(updatedUserData));
+      setFormData(prev => ({
+        ...prev,
+        nome_completo: updatedUserData.nome_completo,
+        nome_usuario: updatedUserData.nome_usuario,
+        email: updatedUserData.email,
+        foto_perfil: handleImageProfile(updatedUserData.foto_perfil),
+        senha: ""
+      }));
 
-        setUser(updatedUserData);
-
-        setFormData(prev => ({
-          ...prev,
-          nome_completo: updatedUserData.nome_completo,
-          nome_usuario: updatedUserData.nome_usuario,
-          email: updatedUserData.email,
-          foto: handleImageProfile(updatedUserData.foto_perfil), 
-          senha: "" 
-        }));
-        setImagePreview(null); 
-        showToast(result.mensagem, "success");
+      setImagePreview(null);
+      showToast(result.mensagem, "success");
+      setIsEditing(false); // Desativa o modo de edição após salvar
     } else {
       showToast(result.erro);
     }
@@ -141,9 +138,28 @@ function Perfil() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, foto: file }));
+      setFormData((prev) => ({ ...prev, foto_perfil: file }));
       setImagePreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleCancelEdit = () => {
+    // Restaura os dados do formulário para os originais
+    if (user) {
+      setFormData({
+        nome_completo: user.nome_completo || "",
+        nome_usuario: user.nome_usuario || "",
+        email: user.email || "",
+        senha: "",
+        foto_perfil: handleImageProfile(user.foto_perfil),
+        pontuacao: user.pontuacao || 0,
+        tarefas_concluidas: user.tarefas_concluidas || 0,
+        tarefas_em_atraso: user.tarefas_em_atraso || 0,
+      });
+    }
+    setImagePreview(null); // Limpa o preview da imagem
+    setErrors({}); // Limpa os erros
+    setIsEditing(false); // Sai do modo de edição
   };
 
   // Limpeza de memória para o preview
@@ -168,26 +184,31 @@ function Perfil() {
                 <img
                   className="w-full h-full object-cover rounded-full"
                   // Ponto Chave 3: Priorizando o preview da nova imagem
-                  src={imagePreview || formData.foto || "/images/usuario.png"}
+                  src={imagePreview || formData.foto_perfil || "/images/usuario.png"}
                   alt="Foto de perfil do usuário"
                 />
-                <div
-                  className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition-colors"
-                  onClick={handleImageClick}
-                >
-                  <MdEdit size={24} className="text-gray-700" />
-                </div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  accept="image/png, image/jpeg, image/gif"
-                />
+                {isEditing && (
+                  <>
+                    <div
+                      className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-200 transition-colors"
+                      onClick={handleImageClick}
+                    >
+                      <MdEdit size={24} className="text-gray-700" />
+                    </div>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept="image/png, image/jpeg, image/gif"
+                    />
+                  </>
+                )}
               </div>
 
               <div className="w-full">
                 <InputField
+                  disabled={!isEditing}
                   error={errors.nome_completo}
                   label={"Nome completo"}
                   name={"nome_completo"}
@@ -196,6 +217,7 @@ function Perfil() {
                   value={formData.nome_completo || ""}
                 />
                 <InputField
+                  disabled={!isEditing}
                   error={errors.nome_usuario}
                   label={"Usuário"}
                   name={"nome_usuario"}
@@ -204,6 +226,7 @@ function Perfil() {
                   value={formData.nome_usuario || ""}
                 />
                 <InputField
+                  disabled={!isEditing}
                   error={errors.email}
                   label={"E-mail"}
                   name={"email"}
@@ -213,6 +236,7 @@ function Perfil() {
                   type="email"
                 />
                 <InputField
+                  disabled={!isEditing}
                   error={errors.senha}
                   label={"Nova Senha (opcional)"}
                   name={"senha"}
@@ -242,12 +266,31 @@ function Perfil() {
               </div>
             </div>
             <div>
-              <button
-                type="submit"
-                className="bg-amber-500 text-white rounded-md cursor-pointer hover:bg-amber-600 font-medium transition-all py-2 px-6"
-              >
-                Salvar alterações
-              </button>
+              {isEditing ? (
+                <div className="flex items-center gap-4">
+                  <button
+                    type="submit"
+                    className="bg-green-600 text-white rounded-md cursor-pointer hover:bg-green-700 font-medium transition-all py-2 px-6"
+                  >
+                    Salvar Alterações
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="bg-gray-500 text-white rounded-md cursor-pointer hover:bg-gray-600 font-medium transition-all py-2 px-6"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="bg-amber-500 text-white rounded-md cursor-pointer hover:bg-amber-600 font-medium transition-all py-2 px-6 flex items-center gap-2"
+                >
+                  <MdEdit /> Editar Perfil
+                </button>
+              )}
             </div>
           </form>
         </section>

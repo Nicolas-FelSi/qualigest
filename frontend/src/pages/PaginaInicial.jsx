@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"
 
 function PaginaInicial() {
+  console.log("%cRenderizando a página: PAGINAINICIAL", "color: white; font-weight: bold;");
   const [modalState, setModalState] = useState({
     login: false,
     cadastro: false,

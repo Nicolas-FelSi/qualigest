@@ -8,6 +8,7 @@ import getUsersByProject from "../api/getUsersByProject";
 import Header from "../components/Header";
 
 function Projetos() {
+  console.log("Renderizando a página: PROJETOS");
   const [isOpen, setIsOpen] = useState(false);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true); // Estado de carregamento
@@ -29,6 +30,7 @@ function Projetos() {
 
       if (initialProjects.length === 0) {
         setProjects([]);
+        setLoading(false);
         return; // Sai da função se não houver projetos
       }
 

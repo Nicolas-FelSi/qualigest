@@ -3,30 +3,29 @@ import getUsers from "../../api/getUsers";
 import createProject from "../../api/projects/createProject";
 import showToast from "../../utils/showToast";
 import GenericModal from "./GenericModal";
-import InputField from "../InputField"
-import Select from "react-select"
+import InputField from "../InputField";
+import MultiSelectUsers from "../MultiSelectUsers"; 
 
 function ModalCriarProjeto({ isOpen, closeModal, refreshProjects }) {
-  const [error, setError] = useState("");
-  const [participantesOptions, setParticipantesOptions] = useState([]); // Opções para o react-select
+  const [error, setError] = useState({});
+  const [allUsers, setAllUsers] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  
   const [formData, setFormData] = useState({
     nome_projeto: "",
-    participantes: [],
-    selectedParticipants: []
+    participantes: [], // Este array conterá apenas os IDs ['1', '2', '3']
   });
 
   function validate() {
-      const newErrors = {};
-
-      if (formData.nome_projeto == "") newErrors.nome_projeto = "O nome do projeto é obrigatório";
-
-      return newErrors;
+    const newErrors = {};
+    if (!formData.nome_projeto) newErrors.nome_projeto = "O nome do projeto é obrigatório";
+    return newErrors;
   }
 
-  const resetForm = async () => {
+  const resetForm = () => {
     setFormData({
       nome_projeto: "",
-      selectedParticipants: [],
+      participantes: [],
     });
     setError({});
   };
@@ -39,7 +38,6 @@ function ModalCriarProjeto({ isOpen, closeModal, refreshProjects }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError({});
-
     const validationError = validate();
 
     if (Object.keys(validationError).length > 0) {
@@ -47,52 +45,43 @@ function ModalCriarProjeto({ isOpen, closeModal, refreshProjects }) {
       return;
     }
 
-    const participantIds = formData.selectedParticipants.map(p => p.value);
-
     const data = await createProject({
       nome_projeto: formData.nome_projeto,
-      participantes: participantIds, // Envia apenas os IDs
+      participantes: formData.participantes, // Envia diretamente o array de IDs
     });
 
     if (data.status === "sucesso") {
       handleClose();
       showToast(data.mensagem, "success");
+      if (refreshProjects) {
+        await refreshProjects();
+      }
     } else {
       showToast(data.mensagem);
     }
-    // Atualiza a lista de projetos
-    if (refreshProjects) {
-      await refreshProjects();
-    }
   };
 
-  // Função para lidar com a mudança no Select
-  const handleSelectChange = (selectedOptions) => {
+  const handleParticipantsChange = (selectedIds) => {
     setFormData((prev) => ({
-        ...prev,
-        selectedParticipants: selectedOptions || [] // Garante que seja sempre um array
+      ...prev,
+      participantes: selectedIds,
     }));
-  }
+  };
 
-   // Carrega os usuários e formata para o react-select
   useEffect(() => {
-    const handleUsers = async () => {
-      const users = await getUsers();
-      if (Array.isArray(users)) {
-        // Formata os usuários para o padrão { value: 'id', label: 'nome' }
-        const options = users.map(user => ({
-          value: user.id_usuario,
-          label: user.nome_usuario,
-        }));
-        setParticipantesOptions(options);
-      } else {
-        setParticipantesOptions([]);
+    const fetchUsers = async () => {
+      setIsLoadingUsers(true);
+      const usersData = await getUsers();
+      if (Array.isArray(usersData)) {
+        setAllUsers(usersData);
       }
+      setIsLoadingUsers(false);
     };
-    if (isOpen) { // Carrega apenas quando o modal for aberto (ou na primeira vez)
-        handleUsers();
+
+    if (isOpen) {
+      fetchUsers();
     }
-  }, [isOpen]); // Recarrega se o modal abrir (opcional)
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -110,45 +99,20 @@ function ModalCriarProjeto({ isOpen, closeModal, refreshProjects }) {
         name={"nome_projeto"}
         placeholder={"Informe o nome do projeto"}
         value={formData.nome_projeto}
-        onChange={(e) => {
-          setFormData((participantes) => ({
-            ...participantes,
-            nome_projeto: e.target.value
-          })
-        )}}
+        onChange={(e) => setFormData((prev) => ({ ...prev, nome_projeto: e.target.value }))}
         error={error.nome_projeto}
       />
-      <div className="mt-2">
-        <label
-          htmlFor="participantes"
-          className="mb-2 text-sm font-medium"
-        >
-          Participantes
-        </label>
-        <Select
-          id="participantes"
-          name="participantes"
-          options={participantesOptions} // Passa as opções formatadas
-          isMulti // Habilita a seleção múltipla
-          className="basic-multi-select"
-          classNamePrefix="select"
-          placeholder="Selecione participantes..."
-          value={formData.selectedParticipants} // Valor controlado
-          onChange={handleSelectChange} // Função para atualizar o estado
-          noOptionsMessage={() => "Nenhum participante encontrado"}
-          styles={{ // Exemplo básico de estilização (opcional)
-            control: (base) => ({
-              ...base,
-              borderColor: '#d1d5db', // Cor da borda similar ao seu select antigo
-              '&:hover': {
-                borderColor: '#9ca3af',
-              },
-            }),
-          }}
-        />
-      </div>
+      
+      <MultiSelectUsers
+        label="Participantes"
+        allUsers={allUsers}
+        selectedUserIds={formData.participantes}
+        onChange={handleParticipantsChange}
+        isLoading={isLoadingUsers}
+        placeholder="Selecione os participantes..."
+      />
     </GenericModal>
-  )        
+  );
 }
 
 export default ModalCriarProjeto;

@@ -27,7 +27,7 @@ $nome = isset($_GET['nome']) ? trim($_GET['nome']) : '';
 
 try {
     // Atualiza os campos selecionados
-    $query = "SELECT id_usuario, nome_usuario, nome_completo, foto 
+    $query = "SELECT id_usuario, nome_usuario, nome_completo, foto_perfil 
               FROM usuarios 
               WHERE id_usuario != :id_atual";
 

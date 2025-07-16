@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import { useNavigate, useParams } from "react-router-dom";
 import getDataProject from "../api/getDataProject"
@@ -7,6 +7,7 @@ import handleImageProfile from "../utils/handleImageProfile";
 import Header from "../components/Header";
 
 function DetalhesProjeto() {
+  console.log("%cRenderizando a página: DETALHESPROJETO", "color: white; font-weight: bold;");
   const { idProjeto } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -18,21 +19,29 @@ function DetalhesProjeto() {
     tarefas_em_andamento: 0,
     participantes: []
   })
+  
+  const handleGetDataProject = useCallback(async () => {
+    if (idProjeto) { // Garante que só executa com um ID válido
+      const data = await getDataProject(idProjeto);
+      if (data) {
+        setFormData(data);
+      }
+    }
+  }, [idProjeto]);
 
   useEffect(() => {
     if (!localStorage.getItem("isLoggedIn")) {
       navigate("/");
     }
-  }, [navigate]);
 
-  useEffect(() => {
-    const handleGetDataProject = async () => { 
-      const data = await getDataProject(idProjeto);
-      setFormData(data)
+    const localUser = localStorage.getItem("user");
+    if (localUser) {
+      setUser(JSON.parse(localUser));
     }
-    setUser(JSON.parse(localStorage.getItem("user")))
-    handleGetDataProject();
-  }, [idProjeto]);
+
+    handleGetDataProject()
+  }, [navigate, handleGetDataProject]);
+
   return (
     <div className="flex gap-2 sm:gap-4 h-screen">
       <Aside />

@@ -10,7 +10,50 @@ import { ptBR } from "date-fns/locale";
 import showToast from "../utils/showToast";
 import Header from "../components/Header"; // Importe o Header
 
+const agruparTarefasPorData = (tarefas) => {
+  if (!tarefas || tarefas.length === 0) return [];
+  const grupos = {};
+  const agora = new Date();
+  tarefas.forEach((tarefa) => {
+    if (!tarefa.data_limite) return;
+    const data = parseISO(tarefa.data_limite.replace(" ", "T"));
+    let grupoKey;
+    let grupoNome;
+    let dataISO = tarefa.data_limite;
+    if (isBefore(data, agora)) {
+      grupoKey = "atrasadas";
+      grupoNome = "Atrasadas";
+      dataISO = '1970-01-01T00:00:00';
+    } else if (isToday(data)) {
+      grupoKey = "hoje";
+      grupoNome = "Hoje";
+    } else if (isTomorrow(data)) {
+      grupoKey = "amanha";
+      grupoNome = "Amanhã";
+    } else {
+      grupoKey = format(data, 'yyyy-MM-dd');
+      grupoNome = format(data, "EEEE, dd 'de' MMMM", { locale: ptBR });
+      grupoNome = grupoNome.charAt(0).toUpperCase() + grupoNome.slice(1);
+    }
+    if (!grupos[grupoKey]) {
+      grupos[grupoKey] = { nome: grupoNome, dataISO: dataISO, tarefas: [] };
+    }
+    grupos[grupoKey].tarefas.push(tarefa);
+  });
+  const gruposOrdenados = Object.values(grupos).sort((a, b) => {
+    if (a.nome === "Atrasadas") return -1;
+    if (b.nome === "Atrasadas") return 1;
+    if (a.nome === "Hoje") return -1;
+    if (b.nome === "Hoje") return 1;
+    if (a.nome === "Amanhã") return -1;
+    if (b.nome === "Amanhã") return 1;
+    return compareAsc(parseISO(a.dataISO), parseISO(b.dataISO));
+  });
+  return gruposOrdenados;
+};
+
 function ListaTarefas() {
+  console.log("%cRenderizando a página: LISTATAREFAS", "color: white; font-weight: bold;");
   const navigate = useNavigate();
   const { idProjeto } = useParams();
 
@@ -36,49 +79,6 @@ function ListaTarefas() {
 
   const closeModal = () => setIsOpen(false);
   const openModal = () => setIsOpen(true);
-
-  // A função agruparTarefasPorData não precisa de alterações
-  const agruparTarefasPorData = (tarefas) => {
-    if (!tarefas || tarefas.length === 0) return [];
-    const grupos = {};
-    const agora = new Date();
-    tarefas.forEach((tarefa) => {
-      if (!tarefa.data_limite) return;
-      const data = parseISO(tarefa.data_limite.replace(" ", "T"));
-      let grupoKey;
-      let grupoNome;
-      let dataISO = tarefa.data_limite;
-      if (isBefore(data, agora)) {
-        grupoKey = "atrasadas";
-        grupoNome = "Atrasadas";
-        dataISO = '1970-01-01T00:00:00';
-      } else if (isToday(data)) {
-        grupoKey = "hoje";
-        grupoNome = "Hoje";
-      } else if (isTomorrow(data)) {
-        grupoKey = "amanha";
-        grupoNome = "Amanhã";
-      } else {
-        grupoKey = format(data, 'yyyy-MM-dd');
-        grupoNome = format(data, "EEEE, dd 'de' MMMM", { locale: ptBR });
-        grupoNome = grupoNome.charAt(0).toUpperCase() + grupoNome.slice(1);
-      }
-      if (!grupos[grupoKey]) {
-        grupos[grupoKey] = { nome: grupoNome, dataISO: dataISO, tarefas: [] };
-      }
-      grupos[grupoKey].tarefas.push(tarefa);
-    });
-    const gruposOrdenados = Object.values(grupos).sort((a, b) => {
-      if (a.nome === "Atrasadas") return -1;
-      if (b.nome === "Atrasadas") return 1;
-      if (a.nome === "Hoje") return -1;
-      if (b.nome === "Hoje") return 1;
-      if (a.nome === "Amanhã") return -1;
-      if (b.nome === "Amanhã") return 1;
-      return compareAsc(parseISO(a.dataISO), parseISO(b.dataISO));
-    });
-    return gruposOrdenados;
-  };
 
   // A função fetchTasks não precisa de alterações
   const fetchTasks = useCallback(async () => {
